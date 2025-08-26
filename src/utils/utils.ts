@@ -192,7 +192,7 @@ const convertTimestampToDate = (timestamp:string) => {
   const date = new Date(timestampNumber);
 
 const data = date.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' }).slice(0, 10)
-console.log(data)
+
   return data;
   } catch(error){
    console.log(error)
@@ -457,7 +457,6 @@ function formatPhoneNumberFlexible(input:string) {
     const [day, month, year] = dateString.split('/').map(Number);
     // Cria a data no fuso horário de São Paulo (UTC-3)
     const date = new Date(year, month - 1, day); // month é 0-indexed
-    console.log(date)
     return date;
   }
 
@@ -480,7 +479,7 @@ function formatPhoneNumberFlexible(input:string) {
       const data:any = convertTimestampToDate(customField.value)
        custom.selectedOptions = data
   }
-       console.log(custom)
+
       return custom
   }
   // Para campos do tipo "labels" (value é array de IDs)

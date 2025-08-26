@@ -198,8 +198,6 @@ export class RedisController {
    async updateTaksData(req: Request, res: Response): Promise<void> {
     try {
       const { dados_cadastro, task_id, phone } = req.body;
-      console.log(dados_cadastro)
-      console.log(phone)
       if (!dados_cadastro || !phone) {
         res.status(400).json({
           success: false,
@@ -217,7 +215,6 @@ export class RedisController {
         });
         return;
       }
-       console.log(lead)
       res.status(200).json({
         success: true,
         data:lead
