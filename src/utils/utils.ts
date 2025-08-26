@@ -517,7 +517,7 @@ function extractFirstName(fullName: string): string {
 export function extractLastName(fullName: string): string {
   if (!fullName) return "";
   const parts = fullName.trim().split(/\s+/);
-  if (parts.length < 2) return "";
+  if (parts.length < 2) return "none";
 
   const particles = new Set(["da","de","do","dos","das","e"]);
   const out: string[] = [parts.at(-1)!];
