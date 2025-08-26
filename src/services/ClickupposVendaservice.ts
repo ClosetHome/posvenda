@@ -55,6 +55,9 @@ export async function webHook(req: any) {
     const firstName = utils.extractFirstName(task[0].name);
     const lastName  = utils.extractLastName(task[0].name);
     if (!contact) contact = await createSubscriber(phone, firstName, lastName);
+    if(contact.status === 200){
+      contact = await getSubscriber(phone);
+    }
 
     const leadData = {
       name: task[0].name,

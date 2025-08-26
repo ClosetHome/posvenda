@@ -514,13 +514,18 @@ function extractFirstName(fullName: string): string {
   }
 }
 
-function extractLastName(fullName: string): string {
-  const names = fullName.split(' ');
-  if (names.length > 1) {
-    return names[names.length - 1];
-  } else {
-    return ""; // or throw an error, depending on desired behavior
+export function extractLastName(fullName: string): string {
+  if (!fullName) return "";
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length < 2) return "";
+
+  const particles = new Set(["da","de","do","dos","das","e"]);
+  const out: string[] = [parts.at(-1)!];
+  for (let i = parts.length - 2; i >= 1; i--) {
+    const p = parts[i].toLowerCase();
+    if (particles.has(p)) out.unshift(parts[i]); else break;
   }
+  return out.join(" ");
 }
 
 export default {extractCompanyInfo, isOlderThanTwoDays, formatTimestampToSaoPaulo, convertTimestampToDate, replaceTagsLead, cleanTelefone, formatEcomS,formatMessagesToString, shouldProcessLead, toTitleCaseWithPrepositions, isHtmlMessage, addTrackingPixelToHtml, formatPhoneNumberFlexible, convertTimestampToDateEmalis, parseDate, delay, extractPhoneFromString, extractCustomFields, extractFirstName, extractLastName}

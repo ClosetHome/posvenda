@@ -26,11 +26,11 @@ return response.data;
 
 
 export async function createSubscriber(phone: string, firtName:string, lastName:string) {
-  const data = JSON.stringify({
+  const data = {
     phone: phone,
-    first_name: firtName,
-    last_name: lastName
-  })
+    first_name: firtName ?? "",
+    last_name: lastName ?? ""
+  }
 
 const response = await axios.post(
   `https://backend.botconversa.com.br/api/v1/webhook/subscriber/`,
