@@ -29,7 +29,7 @@ export async function createSubscriber(phone: string, firtName:string, lastName:
   const data = {
     phone: phone,
     first_name: firtName ?? "",
-    last_name: lastName ?? ""
+    last_name: lastName ?? "none"
   }
 
 const response = await axios.post(
