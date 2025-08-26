@@ -75,7 +75,6 @@ return response.data;
 }
 
 export async function sendHook(phone: string, task_id:string ,messages:any[], customFields:string, messageHistory:string) {
-  //console.log(messageHistory)
     const data = {
         "phone": phone,
         "task_id": task_id,
