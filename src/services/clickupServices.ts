@@ -230,7 +230,6 @@ async function cliCkupTaskGet(listId: number, name?:string, status?: string ,ema
    
 
     const response: any = await clickup.lists.getTasks(listId, taskData);
-    console.log(response.body)
     return response.body
   } catch (error) {
     console.error('Erro ao criar tarefa:', error);
@@ -318,7 +317,7 @@ export async function getTasksCustom(listId:number ,phone?:string) {
 
 export async function webHook(req:any){
   try{
-   console.log(req.body)
+   
    const response:any = await clickup.tasks.get(req.body.task_id);
    const phone:any = utils.formatPhoneNumberFlexible(response.body.custom_fields.find((field: { name: string; }) => field.name === "👤 Telefone Cliente")?.value)
    const task = await getTasksCustom(901108902349, phone)
@@ -340,10 +339,9 @@ export async function webHook(req:any){
     }
     if(customField.type === 'date'){
       const data:any = utils.convertTimestampToDate(customField.value)
-      console.log(data)
        custom.selectedOptions = data
   }
-       console.log(custom)
+       
       return custom
   }
   // Para campos do tipo "labels" (value é array de IDs)
@@ -373,7 +371,6 @@ export async function webHook(req:any){
             owner: task[0].assignees[0]?.username || task[0].watchers[0]?.username || 'assistente',
             customFields: customFields
           }
-console.log(JSON.stringify(obj, null, 2))
 
   const contact = await getSubscriber(phone)
   const dataEntrega = obj.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Prazo de Entrega")?.selectedOptions || 0

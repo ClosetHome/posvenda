@@ -186,7 +186,6 @@ export async function webHook(req: any) {
     
 ////criar mensagens de cadastro
  const clienteRetira:boolean = leadCustom.customFields.find((field: { fieldName: string }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Sim";
- console.log(clienteRetira)
  if (clienteRetira) {
   messagesPosDirect = messagesPosDirect.filter(
     (msg) => msg.modelo !== "INFORMAÇÕES DA ENTREGA"
@@ -228,7 +227,6 @@ if(extractedCadastro.dataDeNascimento != undefined){
 
      const messagesCreated = await messageService.bulkCreate(allMessages)
      messagesHistory = await messageService.findByLeadId(leadToUpdate.leadId, true)
-     console.log(messagesHistory)
      messagesHistory = messagesHistory.filter((message:any) => message.sent === true)
      .map((message:any) => {
     return `
