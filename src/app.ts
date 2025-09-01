@@ -2,22 +2,17 @@ import express from 'express';
 import redisRoutes from './routes/redisRoutes.js';
 import clickupHook from './routes/clickupHook.js';
 import { filesRouter } from './routes/filesRoute.js';
-import  opaenAiHook  from './routes/opeanAi.js';
-
-const app = express();
 import cors from 'cors'
+const app = express();
 
-
-//app.use(express.text({ type: "application/json" }));
-
-const PORT = process.env.PORT || 3010; 
+const PORT = process.env.PORT || 3006; 
 
 app.use(cors());
 app.use(express.json());
 app.use('/api/redis', redisRoutes);
 app.use('/api/clickup', clickupHook);
 app.use('/api', filesRouter);
-//app.use('/api/stream', opaenAiHook);
+
 
 
 app.get('/api/status', (req, res) => {
@@ -27,6 +22,7 @@ app.get('/api/status', (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
     console.log(`📧 Dashboard disponível em: http://localhost:${PORT}`);
+    console.log('hora inicio', new Date().toISOString())
 });
 
 

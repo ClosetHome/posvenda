@@ -26,167 +26,6 @@ export const modelsSchadules = [
 ];
  export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`]
 
-export function messagesReturn2(name: string,  models:string[], dataentrega?: string, birthday?:string) {
-  const mensagens = [
-    {
-      modelo: 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)',
-      message: `Oii ${name} como está? Esperamos que esteja bem! 😄
-Sou assistente virtual de pós-venda da Closet Home. Parabéns pela sua compra! Com nosso closet modular, seu dia a dia será mais prático.
-`
-    },
-    {
-      modelo: 'ENTREGA VIA TRANSPORTADORA',
-      message: `Já iniciamos a produção das peças que faltam para o seu Closet! Cada peça é feita com atenção garantindo toda a qualidade do produto!
-As peças prontas já estão embaladas também com muito cuidado, para garantir toda a segurança durante o transporte!
-Você receberá o seu closet no dia ${dataentrega}, entretanto, não podemos garantir um horário específico para a entrega.`
-    },
-    {
-      modelo: 'CLIENTE RETIRA',
-      message: `As suas peças do Closet estarão prontas para serem retiradas ${dataentrega} aqui na loja!😁
-Estaremos esperando por você!`
-    },
-    {
-      modelo: 'DADOS PARA CADASTRO',
-      message: `${name}, para garantir o processamento adequado do seu pedido, preciso dos seguintes dados para preencher o seu cadastro e emitir a nota fiscal do seu closet, você pode preencher as informações ao lado e me enviar novamente:
-Nome completo:
-Data de Nascimento:
-CPF:
-Telefone:
-E-mail:
-Casa própria ou alugada:
-Cidade:
-Bairro:
-Rua:
-Número:
-CEP:`
-    },
-    {
-      modelo: 'CLIENTE JÁ CADASTRADO',
-      message: `${name}, dei uma olhada no sistema, e vi que você já tem cadastro aqui na loja, então para confirmar esse cadastro e emitir a sua nota fiscal, vou pedir que você me envie seu CPF!`
-    },
-    {
-      modelo: 'PEDIDO DE AVALIAÇÃO NO GOOGLE', 
-      message: `${name}, que ótimo que tudo deu certo! 😊
-Se possível, gostaríamos de pedir um grande favor: que tal compartilhar sua experiência avaliando nossa empresa no Google? Sua opinião é muito importante e ajuda outras pessoas a confiarem no nosso trabalho!
-É simples e rápido! Basta clicar no link abaixo para deixar sua avaliação:
-https://bit.ly/3CU8zZI`
-    },
-      {
-      modelo: 'CUPOM ESPECIAL',
-      message: `Obrigada ${name}! 😊
-E para tornar a entrega do seu closet ainda mais especial, você vai receber com ele um presente nosso 🎁
-Um cupom de 20% de desconto para usar em itens que ajudam a deixar seu espaço ainda mais prático e organizado, como colmeias, caixas e outros acessórios pensados para facilitar sua rotina!
-A gente sabe o quanto cada detalhe faz diferença, então criamos esse benefício para você usar com calma, e completar seu closet do seu jeito.
-Ele é válido por 3 meses!`
-    },
-           {
-      modelo: 'TUTORIAL MONTAGEM',
-      message: `Agora, para dar aquela força na montagem do seu closet, vou te mandar um vídeo bem explicadinho, mostrando todo o passo a passo do processo.
-Para facilitar ainda mais, com os módulos, você vai receber os gabaritos, assim ficará tudo mais simples.`
-    },
-    {
-      modelo: 'INFORMAÇÕES DA ENTREGA',
-      message: `${name}, tenho somente mais duas informações bem importantes para lhe passar, uma referente à entrega e outra sobre a nossa garantia vitalícia!
-Se ao receber o seu pedido notar qualquer dano na caixa, peça para o entregador esperar, abra e verifique as peças.
-Se tiver alguma avaria, anote atrás do papel do entregador e devolva para ele. Assim a transportadora se responsabiliza. Tudo certo até aqui?`
-    },
-    { 
-      modelo: 'GARANTIA VITALÍCIA',
-      message: `Agora ${name}, para finalizar, irei lhe apresentar nossa Garantia Vitalícia, um benefício exclusivo oferecido pela nossa empresa para trazer ainda mais segurança e tranquilidade ao adquirir nossos produtos.
-Esse é o nosso Termo que comprova a nossa Garantia, pedimos que deixe guardado junto ao Documento Fiscal do seu produto em local de fácil acesso!`
-    },
-    {
-      modelo: 'ENCERRAMENTO DO 1º CONTATO',
-      message: `${name}, gostaria de garantir que todas as suas dúvidas foram esclarecidas.
-Você tem mais alguma pergunta ou algo que não tenha ficado claro para você?`
-    },
-    {
-      modelo: 'RÉPLICA A DÚVIDA',
-      message: `Fico feliz em ajudar! Por favor, sinta-se à vontade para me perguntar qualquer coisa. Estou aqui para garantir que você tenha todas as informações necessárias.`
-    },
-    {
-      modelo: 'SEM DÚVIDAS',
-      message: `Perfeito! Se surgir qualquer dúvida no futuro ou se precisar de mais alguma informação, não hesite em me contatar. Estou sempre à disposição para ajudar.`
-    },
-    {
-      modelo: 'CÓDIGO DE RASTREAMENTO',
-      message: `Vamos lá ${name}, referente ao seu código de rastreio você vai entrar neste link, selecionar Nota Fiscal, digitar o número da sua nota, juntamente com seu CPF:
-https://portaldocliente.expressosaomiguel.com.br:2041/track
-Depois é só confirmar a sequência de letras que o sistema pedir, e prontinho! Você terá acesso a todas as informações do seu envio e vai poder acompanhar este pedido até a sua casa!`
-    },
-    {
-      modelo: 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ', // um dia antes do prazo de entrega
-      message: `${name}, tenho uma ótima notícia, a entrega do seu closet está programada para amanhã. 😁
-Não conseguimos prever o horário de entrega, por isso peço que certifique se terá alguém em casa para receber o seu closet!`
-    },
-    {
-      modelo: 'FOLLOW-UP 02 - RECEBEU O CLOSET', // dois dias após o prazo de entrega
-      message: `Oii, ${name}! Espero que esteja tudo bem. Estou entrando em contato para certificar que você recebeu seu closet.
-Como foi a entrega? Ocorreu conforme o esperado?`
-    },
-    {
-    modelo: 'FOLLOW-UP 02 - BUSCOU O CLOSET', // dois dias após o prazo de entrega
-    message: `Oii, ${name}!Espero que esteja tudo bem. Estou entrando em contato para certificar que você retirou seu Closet. Tudo certo com o produto? Ocorreu conforme o esperado?`
-    },
-    {
-      modelo: 'FOLLOW-UP 03 - MONTAGEM', // 10 dias após entrega
-      message: `Oii, ${name}, tudo certo? Já se passaram alguns dias da entrega do seu Closet!
-Como foi realizar a montagem? O vídeo explicativo e os gabaritos fornecidos foram suficientes?
-Para nós é importante ter esse feedback para poder auxiliar nossos clientes da melhor forma possível!`
-    },
-    {
-      modelo: 'PESQUISA DE SATISFAÇÃO 30 DIAS',
-      message: `Oii, ${name}, Bom dia! Aqui quem fala é a Stella!
-Gostaria de saber sua opinião sobre três coisas importantes para nós:
-1° Está tudo certinho com seu produto? Tem alguma sugestão de melhoria?
-2° O que mais influenciou sua decisão de escolher nosso produto e nossa empresa?
-3° Tem algo que você sente que ainda falta na sua rotina com o closet?
-Sua avaliação nos ajuda bastante!😊`
-    },
-    {
-      modelo: 'LEMBRETE DO CUPOM - 2 MESES', // 60 dias após entrega
-      message: `Oi, ${name}! Passando aqui para compartilhar algumas inspirações incríveis de clientes que já montaram seus closets e deixaram tudo super organizado. Dá uma olhada! 👀
-🔗 [Link com fotos ou depoimentos de clientes]
-Seu cupom de 20% continua ativo até [data]! Me chama se quiser ajuda para usar. 😉`
-    },
-    {
-      modelo: 'ÚLTIMO AVISO DO CUPOM', // 90 dias após entrega
-      message: `Oi, ${name}! Tudo bem?
-Passando para te lembrar que seu cupom exclusivo de 20% de desconto expira em 2 dias!
-Ainda temos algumas opções disponíveis para o seu espaço, mas o cupom está quase expirando.
-🔗 [Inserir link dos combos ou produtos]
-Se precisar de sugestão, estou aqui para te ajudar! 😊`
-    },
-    {
-      modelo: 'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM', // 120 dias após entrega
-      message: `Oi, ${name}! Tudo bem? 😊
-Quero te enviar um guia exclusivo de organização para deixar seu closet ainda mais funcional! 📖✨
-Ele está cheio de dicas práticas para te ajudar a aproveitar cada cantinho do seu espaço da melhor forma.
-🔗 [Inserir link do guia]
-Depois me conta qual delas foi mais útil para você! Vou adorar saber. 😉`
-    },
-     {
-      modelo: 'ANIVERSÁRIO - INÍCIO DO MÊS',
-      message: `Olá, ${name}!
-Sabemos que este mês é muito especial para você, e não poderíamos deixar passar em branco. 🎉
-Seu presente de aniversário é frete grátis em compras acima de R$ 300! Essa condição exclusiva é válida até [data]. Se quiser saber mais, estou por aqui! 💛`
-    },
-    {
-      modelo: 'ANIVERSÁRIO - NO DIA',
-      message: `Parabéns, ${name}! 🎈🎂
-Hoje é o seu dia, e espero que esteja cercado de pessoas queridas e bons momentos! Que este novo ciclo traga ainda mais conquistas e alegrias.
-Aproveite cada instante! 🥂💛`
-    },
-    {
-      modelo: 'ANIVERSÁRIO - FINAL DO MÊS',
-      message: `Oi, ${name}!
-Passamos aqui para lembrar que seu presente de aniversário continua disponível, mas só até [data]! 🎉
-Frete grátis em compras acima de R$ 300 até o fim do mês! Me avise se quiser ajuda para aproveitar. 😊`
-    }
-  ]
-  return mensagens.filter((message) => models.includes(message.modelo))
-}
-
 export function treatMessageType(modelo:string){
  if(modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
    return 'recebeu o material'
@@ -220,8 +59,7 @@ export function treatMessageType(modelo:string){
  }
 }
 
-export function treatMessageDate(message:message, deliverDate:string, leadCustom:any){
- const dates = calculateTriggerDates(deliverDate)
+export function treatMessageDate(message:message, deliverDate?:string, leadCustom?:any){
  let messageData = null
  if(modelsDirect.includes(message.modelo)){
    messageData = {
@@ -231,6 +69,8 @@ export function treatMessageDate(message:message, deliverDate:string, leadCustom
         leadId: leadCustom.id
     }
  }
+ if(!deliverDate) return messageData
+ const dates = calculateTriggerDates(deliverDate)
  if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
       messageData = {
         title: message.modelo,
@@ -340,7 +180,7 @@ export function treatMessageBirthday(message:message, birthDate:string, leadCust
     return messageData
 }
 
-export function treatMessageDirect(message:message, birthDate:string, leadCustom:any){
+export function treatMessageDirect(message:message, leadCustom:any, birthDate:string, ){
  const datesBirthday = calculateMonthDates(birthDate)
  let messageData = null
  if(message.modelo === 'ANIVERSÁRIO - INÍCIO DO MÊS'){
@@ -371,165 +211,6 @@ export function treatMessageDirect(message:message, birthDate:string, leadCustom
     }
   }
     return messageData
-}
-
-export function messagesReturn3(name: string,  models:string[], dataentrega?: string, birthday?:string) {
-  const mensagens = [
-    {
-      modelo: 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)',
-      message: `Oii ${name} como está? Esperamos que esteja bem! 😄
-Sou assistente virtual de pós-venda da Closet Home. Parabéns pela sua compra! Com nosso closet modular, seu dia a dia será mais prático.
-`
-    },
-    {
-      modelo: 'ENTREGA VIA TRANSPORTADORA',
-      message: `Já iniciamos a produção das peças que faltam para o seu Closet! Cada peça é feita com atenção garantindo toda a qualidade do produto!
-As peças prontas já estão embaladas também com muito cuidado, para garantir toda a segurança durante o transporte!
-Você receberá o seu closet no dia ${dataentrega}, entretanto, não podemos garantir um horário específico para a entrega.`
-    },
-    {
-      modelo: 'CLIENTE RETIRA',
-      message: `As suas peças do Closet estarão prontas para serem retiradas ${dataentrega} aqui na loja!😁
-Estaremos esperando por você!`
-    },
-    {
-      modelo: 'DADOS PARA CADASTRO',
-      message: `${name}, para garantir o processamento adequado do seu pedido, preciso dos seguintes dados para preencher o seu cadastro e emitir a nota fiscal do seu closet, você pode preencher as informações ao lado e me enviar novamente:
-Nome completo:
-Data de Nascimento:
-CPF:
-Telefone:
-E-mail:
-Casa própria ou alugada:
-Cidade:
-Bairro:
-Rua:
-Número:
-CEP:`
-    },
-    {
-      modelo: 'CLIENTE JÁ CADASTRADO',
-      message: `${name}, dei uma olhada no sistema, e vi que você já tem cadastro aqui na loja, então para confirmar esse cadastro e emitir a sua nota fiscal, vou pedir que você me envie seu CPF!`
-    },
-    {
-      modelo: 'PEDIDO DE AVALIAÇÃO NO GOOGLE', 
-      message: `${name}, que ótimo que tudo deu certo! 😊
-Se possível, gostaríamos de pedir um grande favor: que tal compartilhar sua experiência avaliando nossa empresa no Google? Sua opinião é muito importante e ajuda outras pessoas a confiarem no nosso trabalho!
-É simples e rápido! Basta clicar no link abaixo para deixar sua avaliação:
-https://bit.ly/3CU8zZI`
-    },
-      {
-      modelo: 'CUPOM ESPECIAL',
-      message: `Obrigada ${name}! 😊
-Para deixar sua entrega ainda mais especial, junto ao closet você receberá um cupom de 20% OFF para acessórios como colmeias e caixas organizadoras.
-É válido por 3 meses, para você completar seu closet do seu jeito! 🎁`
-    },
-           {
-      modelo: 'TUTORIAL MONTAGEM',
-      message: `Para facilitar a montagem do seu closet, vou te enviar um vídeo com o passo a passo.
-Você também receberá gabaritos junto aos módulos, deixando tudo ainda mais simples.`
-    },
-    {
-      modelo: 'INFORMAÇÕES DA ENTREGA',
-      message: `${name}, tenho mais duas informações importantes: entrega e garantia vitalícia!
-Na entrega, se notar dano na caixa, peça para o entregador esperar, abra e verifique as peças.
-Se houver avarias, anote no verso do papel do entregador e devolva a caixa. Assim a transportadora se responsabiliza.`
-    },
-    { 
-      modelo: 'GARANTIA VITALÍCIA',
-      message: ` Para finalizar, apresento nossa Garantia Vitalícia 🛡️.
-Guarde este Termo junto à Nota Fiscal em local de fácil acesso, garantindo tranquilidade e segurança com seu closet.`
-    },
-    {
-      modelo: 'ENCERRAMENTO DO 1º CONTATO',
-      message: `${name}, gostaria de garantir que todas as suas dúvidas foram esclarecidas.
-Você tem mais alguma pergunta ou algo que não tenha ficado claro para você?`
-    },
-    {
-      modelo: 'RÉPLICA A DÚVIDA',
-      message: `Fico feliz em ajudar! Por favor, sinta-se à vontade para me perguntar qualquer coisa. Estou aqui para garantir que você tenha todas as informações necessárias.`
-    },
-    {
-      modelo: 'SEM DÚVIDAS',
-      message: `Perfeito! Se surgir qualquer dúvida no futuro ou se precisar de mais alguma informação, não hesite em me contatar. Estou sempre à disposição para ajudar.`
-    },
-    {
-      modelo: 'CÓDIGO DE RASTREAMENTO',
-      message: `Vamos lá ${name}, referente ao seu código de rastreio você vai entrar neste link, selecionar Nota Fiscal, digitar o número da sua nota, juntamente com seu CPF:
-https://portaldocliente.expressosaomiguel.com.br:2041/track
-Depois é só confirmar a sequência de letras que o sistema pedir, e prontinho! Você terá acesso a todas as informações do seu envio e vai poder acompanhar este pedido até a sua casa!`
-    },
-    {
-      modelo: 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ', // um dia antes do prazo de entrega
-      message: `${name}, tenho uma ótima notícia, a entrega do seu closet está programada para amanhã. 😁
-Não conseguimos prever o horário de entrega, por isso peço que certifique se terá alguém em casa para receber o seu closet!`
-    },
-    {
-      modelo: 'FOLLOW-UP 02 - RECEBEU O CLOSET', // dois dias após o prazo de entrega
-      message: `Oii, ${name}! Espero que esteja tudo bem. Estou entrando em contato para certificar que você recebeu seu closet.
-Como foi a entrega? Ocorreu conforme o esperado?`
-    },
-    {
-    modelo: 'FOLLOW-UP 02 - BUSCOU O CLOSET', // dois dias após o prazo de entrega
-    message: `Oii, ${name}!Espero que esteja tudo bem. Estou entrando em contato para certificar que você retirou seu Closet. Tudo certo com o produto? Ocorreu conforme o esperado?`
-    },
-    {
-      modelo: 'FOLLOW-UP 03 - MONTAGEM', // 10 dias após entrega
-      message: `Oii, ${name}, tudo certo? Já se passaram alguns dias da entrega do seu Closet!
-Como foi realizar a montagem? O vídeo explicativo e os gabaritos fornecidos foram suficientes?
-Para nós é importante ter esse feedback para poder auxiliar nossos clientes da melhor forma possível!`
-    },
-    {
-      modelo: 'PESQUISA DE SATISFAÇÃO 30 DIAS',
-      message: `Oii, ${name}, Bom dia! Aqui quem fala é a Stella!
-Gostaria de saber sua opinião sobre três coisas importantes para nós:
-1° Está tudo certinho com seu produto? Tem alguma sugestão de melhoria?
-2° O que mais influenciou sua decisão de escolher nosso produto e nossa empresa?
-3° Tem algo que você sente que ainda falta na sua rotina com o closet?
-Sua avaliação nos ajuda bastante!😊`
-    },
-    {
-      modelo: 'LEMBRETE DO CUPOM - 2 MESES', // 60 dias após entrega
-      message: `Oi, ${name}! Passando aqui para compartilhar algumas inspirações incríveis de clientes que já montaram seus closets e deixaram tudo super organizado. Dá uma olhada! 👀
-🔗 [Link com fotos ou depoimentos de clientes]
-Seu cupom de 20% continua ativo até [data]! Me chama se quiser ajuda para usar. 😉`
-    },
-    {
-      modelo: 'ÚLTIMO AVISO DO CUPOM', // 90 dias após entrega
-      message: `Oi, ${name}! Tudo bem?
-Passando para te lembrar que seu cupom exclusivo de 20% de desconto expira em 2 dias!
-Ainda temos algumas opções disponíveis para o seu espaço, mas o cupom está quase expirando.
-🔗 [Inserir link dos combos ou produtos]
-Se precisar de sugestão, estou aqui para te ajudar! 😊`
-    },
-    {
-      modelo: 'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM', // 120 dias após entrega
-      message: `Oi, ${name}! Tudo bem? 😊
-Quero te enviar um guia exclusivo de organização para deixar seu closet ainda mais funcional! 📖✨
-Ele está cheio de dicas práticas para te ajudar a aproveitar cada cantinho do seu espaço da melhor forma.
-🔗 [Inserir link do guia]
-Depois me conta qual delas foi mais útil para você! Vou adorar saber. 😉`
-    },
-     {
-      modelo: 'ANIVERSÁRIO - INÍCIO DO MÊS',
-      message: `Olá, ${name}!
-Sabemos que este mês é muito especial para você, e não poderíamos deixar passar em branco. 🎉
-Seu presente de aniversário é frete grátis em compras acima de R$ 300! Essa condição exclusiva é válida até [data]. Se quiser saber mais, estou por aqui! 💛`
-    },
-    {
-      modelo: 'ANIVERSÁRIO - NO DIA',
-      message: `Parabéns, ${name}! 🎈🎂
-Hoje é o seu dia, e espero que esteja cercado de pessoas queridas e bons momentos! Que este novo ciclo traga ainda mais conquistas e alegrias.
-Aproveite cada instante! 🥂💛`
-    },
-    {
-      modelo: 'ANIVERSÁRIO - FINAL DO MÊS',
-      message: `Oi, ${name}!
-Passamos aqui para lembrar que seu presente de aniversário continua disponível, mas só até [data]! 🎉
-Frete grátis em compras acima de R$ 300 até o fim do mês! Me avise se quiser ajuda para aproveitar. 😊`
-    }
-  ]
-  return mensagens.filter((message) => models.includes(message.modelo))
 }
 
 export function messagesReturn(name: string,  models:string[], dataentrega?: string, ninetyTwoDaysAfter?: string) {

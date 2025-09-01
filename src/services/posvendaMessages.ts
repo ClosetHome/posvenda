@@ -283,6 +283,19 @@ class PosVendaMessagesService {
     }
   }
 
+    async updateForTask(message: UpdatePosVendaMessageData): Promise<PosVendaMessages | null> {
+    try {
+      const [count ,messageReturn ] =  await PosVendaMessages.update(
+       { schadule: message.schadule, message_text: message.message_text }, // as 2 colunas
+      { where: { leadId: message.leadId, title: message.title },
+       returning: true } // condição de busca
+      );
+      return messageReturn[0];
+    } catch (error) {
+      throw new Error(`Erro ao atualizar mensagem pós-venda: ${error}`);
+    }
+  }
+
   /**
    * Marcar mensagem como enviada
    */

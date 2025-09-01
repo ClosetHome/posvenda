@@ -30,6 +30,7 @@ interface UpdateLeadPosVendaData {
   cpf?: string;
   birthday?: Date | null;
   phone?: string;
+  customFields?: any;
 }
 
 interface FindLeadPosVendaOptions {

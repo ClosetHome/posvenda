@@ -495,6 +495,13 @@ function formatPhoneNumberFlexible(input:string) {
       selectedOptions = [selectedOption];
     }
   }
+
+   else if (customField.type === "drop_down" && typeof customField.value === "string") {
+    const selectedOption = customField.type_config.options.find((option) => option.id === customField.value)
+    if (selectedOption) {
+      selectedOptions = [selectedOption];
+    }
+  }
   return selectedOptions.length > 0 ? {
     fieldId: customField.id,
     fieldName: customField.name,

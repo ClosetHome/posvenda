@@ -23,5 +23,5 @@ export async function cronJobMessages(){
       timezone: "America/Sao_Paulo" // Ajuste para seu timezone
     });
 
-    console.log('📅 Cron job de e-commerce configurada para executar a cada 3 horas');
+    console.log('📅 Cron job configurada para executar diariamente às 09:00 (America/Sao_Paulo)');
   }

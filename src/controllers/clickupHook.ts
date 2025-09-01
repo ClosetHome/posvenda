@@ -1,4 +1,4 @@
-import { webHook, sendMedia, botFail} from "../services/ClickupposVendaservice";
+import { webHook, sendMedia, botFail, taskUpdatedHook} from "../services/ClickupposVendaservice";
 import {respChat} from '../services/botconversaService'
 import {Request, Response} from 'express'
 
@@ -38,5 +38,14 @@ export async function clickupHookChat(req: Request, res: Response) {
     void respChat(phone, message);
   } catch (error) {
     if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar mensagem' });
+  }
+}
+
+export async function clickupTaskUpdatedHook(req: Request, res: Response) {
+  try {
+    res.status(200).json({ message: 'webhook recebido' }); // ACK imediato
+    void taskUpdatedHook(req); // executa fora do ciclo da resposta
+  } catch (error) {
+    if (!res.headersSent) res.status(500).json({ message: 'Erro ao processar webhook' });
   }
 }

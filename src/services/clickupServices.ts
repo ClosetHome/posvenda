@@ -23,7 +23,7 @@ interface EmailBatchResult {
   }>;
 }
 
-async function updateTask(taskId:string, status?:string, description?: string, chatEcom?:number) {
+export async function updateTask(taskId:string, status?:string, description?: string, assingeTo?:number) {
   
   let taskData: any = {};
   let customFields: any[] = [];
@@ -35,11 +35,8 @@ async function updateTask(taskId:string, status?:string, description?: string, c
    if(description) {
     taskData.description = description
    }
-    if(chatEcom){
-       customFields.push({
-        id: 'e5d18511-9c48-4c01-bcba-f4ae6120e623',
-        value: chatEcom
-      });
+    if(assingeTo){
+      taskData.assignees = { add: [assingeTo] };
     }
     try{
     const response:any = await clickup.tasks.update(taskId, taskData);

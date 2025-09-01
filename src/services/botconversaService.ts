@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const  bot_key = process.env.BOT_CONVERSA_TOKEN as string
+
 export async function getSubscriber(phone: string) {
   const encodedPhone = encodeURIComponent(phone);
 try{
@@ -18,14 +19,15 @@ const response = await axios.get(
 );
 
 return response.data;
-} catch(error){
-  console.log(error)
+} catch(error:any){
+  console.log(error.message)
   return null
 }
 }
 
 
 export async function createSubscriber(phone: string, firtName:string, lastName:string) {
+  try{
   const data = {
     phone: phone,
     first_name: firtName ?? "",
@@ -45,6 +47,10 @@ const response = await axios.post(
 );
 
 return response.data;
+} catch(error:any){
+  console.log(error.message)
+  return null
+}
 }
 
 export async function sendMessage(subscriber: number, type:string, value:string): Promise<any> {
@@ -68,14 +74,29 @@ const response = await axios.post(
 
 
 return response.data;
-} catch(error){
-  console.log(error)
+}catch(error:any){
+  console.log(error.message)
   return null
 }
 }
 
 export async function sendHook(phone: string, task_id:string ,messages:any[], customFields:string, messageHistory:string) {
-    const data = {
+  try{
+let data = {}
+let url
+   if(!messages.find((message) => message.modelo === '')){
+   data = {
+    "phone": phone,
+    "task_id": task_id,
+    "message_1": messages.find((message) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message,
+    "message_3": messages.find((message) => message.modelo === 'DADOS PARA CADASTRO').message,
+    "message_4": messages.find((message) => message.modelo === 'CUPOM ESPECIAL').message,
+    "message_5": customFields,
+    "messageHistory": messageHistory
+   }
+   url = `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/5ik8HZQcD3bI/`
+   } else {
+     data = {
         "phone": phone,
         "task_id": task_id,
         "message_1": messages.find((message) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message,
@@ -86,9 +107,14 @@ export async function sendHook(phone: string, task_id:string ,messages:any[], cu
         "message_5": customFields,
         "messageHistory": messageHistory
     }
+     url = `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/0oVuhB6JMDjG/`
+   }
+
+
+   
 
 const response = await axios.post(
-  `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/0oVuhB6JMDjG/`,
+  url,
   data,
   {
     headers: {
@@ -98,10 +124,15 @@ const response = await axios.post(
   }
 );
 return response.data;
+ }catch(error:any){
+  console.log(error.message)
+  return null
+}
 }
 
 
 export async function sendHookSegundaEtapa(phone: string, messages:any[], messageHistory:string) {
+  try{
     const data = {
         "phone": phone,
         "messageTutorial": messages.find((message) => message.modelo === 'TUTORIAL MONTAGEM').message,
@@ -123,6 +154,10 @@ const response = await axios.post(
 );
 
 return response.data;
+} catch(error:any){
+  console.log(error.message)
+  return null
+}
 }
 
 export async function respChat(phone: string, message: string) {
@@ -173,5 +208,58 @@ return message
 } catch(error) {
   console.log(error)
   return ''
+}
+}
+
+
+export async function sendMessagesWithDelay(
+subscriber: number,
+messages: Array<string | undefined>,
+type: string = 'text',
+intervalMs: number = 3000
+): Promise<void> {
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+for (let i = 0; i < messages.length; i++) {
+const value = messages[i];
+// Skip undefined/empty messages (e.g., missing "INFORMAÇÕES DA ENTREGA")
+if (typeof value !== 'string' || value.trim().length === 0) continue;
+
+try {
+await sendMessage(subscriber, type, value);
+} catch (err) {
+// Log and continue with the next message
+console.error('sendMessagesWithDelay error:', err);
+}
+
+// Wait 3s before the next message (no wait after the last one)
+if (i < messages.length - 1) {
+await delay(intervalMs);
+}
+}
+}
+
+export async function setCustomFieldValue(subscriber:number, custom_field_id:number, value:string){
+ 
+  try{
+  const data = {
+    value: value
+  }
+
+const response = await axios.post(
+  `https://backend.botconversa.com.br/api/v1/webhook/subscriber/${subscriber}/custom_fields/${custom_field_id}/`,
+  data,
+  {
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'API-KEY': bot_key
+    }
+  }
+);
+
+return response.data;
+} catch(error:any){
+  console.log(error.message)
+  return null
 }
 }
