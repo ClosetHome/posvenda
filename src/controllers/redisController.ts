@@ -206,7 +206,7 @@ export class RedisController {
         return;
       }
 
-     const lead = await getMessageBot(phone, task_id, dados_cadastro)
+     const lead = await getMessageBot(task_id, dados_cadastro)
      
       if (!lead) {
         res.status(404).json({

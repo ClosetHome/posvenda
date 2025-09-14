@@ -24,7 +24,7 @@ export const modelsSchadules = [
   'ÚLTIMO AVISO DO CUPOM',
   'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'
 ];
- export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`]
+ export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`]
 
 export function treatMessageType(modelo:string){
  if(modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
@@ -80,7 +80,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
         leadId: leadCustom.id
     }
     }
-    if(message.modelo === 'FOLLOW-UP 02 - BUSCOU O CLOSET' && leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira")){
+    if(message.modelo === 'FOLLOW-UP 02 - BUSCOU O CLOSET' && leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Sim"){
       messageData = {
         title: message.modelo,
         message_text: message.message,
@@ -89,7 +89,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
         leadId: leadCustom.id
   } 
 }
-   if(message.modelo === 'FOLLOW-UP 02 - RECEBEU O CLOSET'  && !leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira")){
+   if(message.modelo === 'FOLLOW-UP 02 - RECEBEU O CLOSET'  && leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Não"){
       messageData = {
         title: message.modelo,
         message_text: message.message,

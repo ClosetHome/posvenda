@@ -157,7 +157,7 @@ export async function webHook(req: any) {
   }
 }
 
-  export async function getMessageBot(phone: string, task_id: string, description: string): Promise<any> {
+  export async function getMessageBot(task_id: string, description: string): Promise<any> {
 
     let directMessages: any[] = [];
     let schaduleMessages: any[] = [];
@@ -294,10 +294,17 @@ export async function verifyScheduledMessages() {
         .join('\n');
 
       // Envia a mensagem
-      await shcadulesMessagesender(message.leadposvenda.phone, message.message_text, messagesHistory);
+      //await shcadulesMessagesender(message.leadposvenda.phone, message.message_text, messagesHistory);
 
+       const messageHistoryId  = getCustomFieldId('messagehistory')
+   
+       await setCustomFieldValue(Number(message.leadposvenda.subscriberbot), messageHistoryId[0].id, messagesHistory)
+       await sendMessage(Number(message.leadposvenda.subscriberbot), "text", message.message_text)
+       await utils.delay(5000);
+      if(message.title === 'FOLLOW-UP 02 - RECEBEU O CLOSET' || message.title === 'FOLLOW-UP 02 - BUSCOU O CLOSET'){
+        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[6])
+      }
       const status = treatMessageType(message.title);
-
       // Atualiza somente o status de enviado, se não houver mudança de tarefa
       if (!status) {
         await messageService.update(message.id, { sent: true });
