@@ -301,10 +301,45 @@ export async function verifyScheduledMessages() {
        await setCustomFieldValue(Number(message.leadposvenda.subscriberbot), messageHistoryId[0].id, messagesHistory)
        await sendMessage(Number(message.leadposvenda.subscriberbot), "text", message.message_text)
        await utils.delay(5000);
+        const status = treatMessageType(message.title);
       if(message.title === 'FOLLOW-UP 02 - RECEBEU O CLOSET' || message.title === 'FOLLOW-UP 02 - BUSCOU O CLOSET'){
         await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[6])
       }
-      const status = treatMessageType(message.title);
+        if(message.title === 'ANIVERSÁRIO - INÍCIO DO MÊS'){
+            if (!status) return;
+        const phoneField = getField(message.leadposvenda?.customFields ?? [], '👤 Telefone Cliente');
+        const phoneOpts = getSelectedArray(phoneField);
+        const taskCreated = await clickupServices.cliCkupTask(901111606565 ,message.leadposvenda.name, status, undefined, phoneOpts[0])
+        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[7])
+
+         const taskDataPosVenda = {
+      id: taskCreated.id,
+      name: message.leadposvenda.name,
+      listId: 901111606565,
+      status: status,
+      data: taskCreated,
+      leadId: message.leadposvenda.id
+    };
+        await taskService.create(taskDataPosVenda)
+        messageService.update(message.id, { sent: true })
+        return
+      }
+      if(message.title === 'ANIVERSÁRIO - NO DIA' || message.title === 'ANIVERSÁRIO - FINAL DO MÊS'){
+        const taskToUpdate = message.leadposvenda.tasks.find(
+        (task: { listId: string }) => task.listId === '901111606565'
+      )?.id;
+      if(!taskToUpdate || !status) return
+      const taskUpdated = await clickupServices.updateTask(taskToUpdate, status)
+      await Promise.all([
+        taskService.update(taskUpdated.id, {
+          status: taskUpdated.status.status,
+          data: taskUpdated
+        }),
+        messageService.update(message.id, { sent: true })
+      ]);
+       return
+      }
+      
       // Atualiza somente o status de enviado, se não houver mudança de tarefa
       if (!status) {
         await messageService.update(message.id, { sent: true });
@@ -358,18 +393,19 @@ export async function sendMedia(task_id: string): Promise<any> {
 }
 
 
-export async function botFail(task_id: string, summary:string): Promise<any> {
+export async function botStop(task_id: string, summary:string): Promise<any> {
     try {
        const leadToHelp:any = await taskService.findById(task_id, true)
        if(!leadToHelp) return
 
-       const leadToHelpData =` 
+       const leadToHelpData = ` 
         Cliente precisa de ajuda
         nome: ${leadToHelp.lead.name},
         telefone: ${leadToHelp.lead.phone},
         task_id: ${task_id},
         summary: ${summary}
        `
+        console.log(leadToHelpData)
         await sendMessage(795504790, "text", leadToHelpData)
        
       return 'notificado';
@@ -378,6 +414,7 @@ export async function botFail(task_id: string, summary:string): Promise<any> {
       throw new Error('Falha ao buscar chaves no Redis');
     }
 }
+
 
 
 export async function taskUpdatedHook(req: any) {

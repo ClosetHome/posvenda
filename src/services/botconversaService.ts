@@ -1,7 +1,11 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import PosVendaLeadsService from './posvendaLeads'
+import {historyCreate, query, dadosPedido} from './FlowiseService'
+import {botStop} from './ClickupposVendaservice'
 
 dotenv.config();
+const leadService = new PosVendaLeadsService()
 
 const  bot_key = process.env.BOT_CONVERSA_TOKEN as string
 
@@ -160,29 +164,91 @@ return response.data;
 }
 }
 
-export async function respChat(phone: string, message: string) {
-   const data = {
-    "phone": phone,
-    "message": message,
-   }
-   try{
-   const response = await axios.post(
-  `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/4NRVIGfvGY1t/`,
-  data,
+export async function respChat(phone: string, message: string, task_id?:any) {
+ try{
+const options = {
+  phone: phone,
+  includeTasks: true
+}
+
+  const lead:any = await leadService.findAll(options)
+const conversationHistory = await historyCreate(lead[0])
+console.log(conversationHistory)
+
+const info_pedido = dadosPedido(lead[0])
+console.log(info_pedido)
+  const data = {
+  question: message,
+  overrideConfig:  {
+        sessionId: phone,
+        // ChatPromptTemplate variables should be passed via promptValues
+        promptValues: {
+            historico_mensagens: conversationHistory,
+            info_pedido: info_pedido
+        },
+  },
+}
+
+  const response = await query(data)
+ 
+const respostaUser = JSON.parse(response.text)
+ console.log(respostaUser)
+ const status = respostaUser.status
+ const summary = respostaUser.summary
+const subscriberId = Number(lead[0].subscriberbot);
+  if(status === 'failure' || status === 'success' && summary && task_id != undefined){
+        console.log(status)
+        console.log(summary)
+        console.log(task_id)
+        await botStop(task_id, summary)
+        await deleteTag(subscriberId, 15296727)
+      }
+
+function getDelayTime(messageText: string): number {
+  const wordCount = messageText.trim().split(/\s+/).length;
+  const baseDelay = 1000;
+  const delayPerWord = 400;
+  const maxDelay = 5000;
+
+  const delayTime = Math.min(baseDelay + wordCount * delayPerWord, maxDelay);
+  return delayTime;
+}
+
+
+
+ const splitMessages = respostaUser.message.split(/(?:\n\s*\n|(?<=[.?!])\s+)/);
+ console.log(splitMessages.length)
+for (const messageText of splitMessages) {
+        const formattedMessageText = messageText.trim();
+    
+        const finalPunctuation = /[.]$/;
+        const formattedMessageTextWithoutPunctuation = formattedMessageText.replace(finalPunctuation, '');
+            const data2 = {
+        "type": 'text',
+        "value": messageText
+    }
+       const response2 = await axios.post(
+  `https://backend.botconversa.com.br/api/v1/webhook/subscriber/${subscriberId}/send_message/`,
+  data2,
   {
     headers: {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-     // 'API-KEY': bot_key
+      'API-KEY': bot_key
     }
   }
 );
+      
+        const delayTime = getDelayTime(formattedMessageTextWithoutPunctuation);
+        await new Promise((resolve) => setTimeout(resolve, delayTime));
+      }
+
+
 return response
-} catch(error) {
-  console.log(error)
+} catch(error:any) {
+  console.log(error.message)
   return ''
-}
-}
+}}
 
 export async function shcadulesMessagesender(phone: string, message: string, messagehistory:string) {
   
@@ -259,6 +325,28 @@ const response = await axios.post(
 
 return response.data;
 } catch(error:any){
+  console.log(error.message)
+  return null
+}
+}
+
+
+export async function deleteTag(subscriber: number, tag:number): Promise<any> {
+  try{
+const response = await axios.delete(
+  `https://backend.botconversa.com.br/api/v1/webhook/subscriber/${subscriber}/tags/${tag}/`,
+  {
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'API-KEY': bot_key
+    }
+  }
+);
+
+
+return response.data;
+}catch(error:any){
   console.log(error.message)
   return null
 }

@@ -24,7 +24,7 @@ export const modelsSchadules = [
   'ÚLTIMO AVISO DO CUPOM',
   'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'
 ];
- export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`]
+ export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`, `${backendUrl}/api/files/cupomaniversario.jpg`]
 
 export function treatMessageType(modelo:string){
  if(modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
@@ -389,8 +389,8 @@ Depois me conta qual delas foi mais útil para você! Vou adorar saber. 😉`,
     modelo: 'ANIVERSÁRIO - INÍCIO DO MÊS',
     message: `Olá, ${name}!
 Sabemos que este mês é muito especial para você, e não poderíamos deixar passar em branco. 🎉
-Seu presente de aniversário é frete grátis em compras acima de R$ 300! Essa condição exclusiva é válida até [data]. Se quiser saber mais, estou por aqui! 💛`,
-    messageBot: `Este mês é seu aniversário, ${name}. Frete grátis em compras acima de R$ 300 até [data]. Posso ajudar?`
+Seu presente de aniversário é frete grátis em compras acima de R$ 300! Essa condição exclusiva é válida até o ultimo dia deste mês. Se quiser saber mais, estou por aqui! 💛`,
+    messageBot: `Este mês é seu aniversário, ${name}. Frete grátis em compras acima de R$ 300 até o ultimo dia deste mês. Posso ajudar?`
   },
   {
     modelo: 'ANIVERSÁRIO - NO DIA',

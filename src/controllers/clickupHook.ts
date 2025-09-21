@@ -1,4 +1,4 @@
-import { webHook, sendMedia, botFail, taskUpdatedHook} from "../services/ClickupposVendaservice";
+import { webHook, sendMedia, botStop, taskUpdatedHook} from "../services/ClickupposVendaservice";
 import {respChat} from '../services/botconversaService'
 import {Request, Response} from 'express'
 
@@ -25,17 +25,17 @@ export async function clickupHookFail(req: Request, res: Response) {
   const { task_id, summary } = req.body ?? {};
   try {
     res.status(200).json({ message: 'notificação enviada' });
-    void botFail(task_id, summary);
+    void botStop(task_id, summary);
   } catch (error) {
     if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar notificação' });
   }
 }
 
 export async function clickupHookChat(req: Request, res: Response) {
-  const { phone, message } = req.body ?? {};
+  const { phone, message, task_id } = req.body ?? {};
   try {
     res.status(200).json({ message: 'mensagem enviada' });
-    void respChat(phone, message);
+    void respChat(phone, message, task_id);
   } catch (error) {
     if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar mensagem' });
   }
