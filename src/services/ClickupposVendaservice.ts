@@ -101,7 +101,7 @@ export async function webHook(req: any) {
     const prazoOpts  = getSelectedArray(prazoField);
     const dataEntrega:any = prazoOpts[0] ?? 0;
     let modelsFirst = modelsFirtsContact
-    let messages
+    let messages:any
     let clienteRetira:any = 'off'
    if(dataEntrega === 0){
       modelsFirst = modelsFirtsContact.filter((m) => m !== 'CLIENTE RETIRA' && m !== 'ENTREGA VIA TRANSPORTADORA');
@@ -113,8 +113,8 @@ export async function webHook(req: any) {
     clienteRetira = retiraOpts.includes('Sim');
 
     messages = clienteRetira
-      ? messages.filter(m => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
-      : messages.filter(m => m.modelo !== 'CLIENTE RETIRA');
+      ? (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
+      : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
 
     const messagesData = messages.map((m: any) => ({
@@ -209,21 +209,21 @@ export async function webHook(req: any) {
       }
 
       // Agendadas dependem do prazo
-      let messagesSchadule: any[] = [];
+      let messagesSchadule: any = [];
       if (dataEntrega) {
         const dates = calculateTriggerDates(dataEntrega);
         messagesSchadule = messagesReturn(firsName, modelsSchadules, dataEntrega, dates.ninetyTwoDaysAfter);
       }
 
       // Diretas
-      let messagesPosDirect = messagesReturn(firsName, modelsDirect, dataEntrega);
+      let messagesPosDirect:any = messagesReturn(firsName, modelsDirect, dataEntrega);
 
       // Cliente Retira (filtra mensagem de entrega)
       const retiraField = getField(leadCustom?.customFields ?? [], '⚠️ Cliente Retira');
       const retiraOpts = getSelectedArray(retiraField);
       const clienteRetira = retiraOpts.includes('Sim');
       if (clienteRetira || !dataEntrega) {
-        messagesPosDirect = messagesPosDirect.filter(m => m.modelo !== 'INFORMAÇÕES DA ENTREGA');
+        messagesPosDirect = messagesPosDirect.filter((m: { modelo: string; }) => m.modelo !== 'INFORMAÇÕES DA ENTREGA');
       }
 
       // Monta mensagens diretas
@@ -263,7 +263,7 @@ export async function webHook(req: any) {
       messagesHistory = (sentHistory ?? [])
         .filter((m: any) => m?.sent === true)
         .map((m: any) => {
-          const botMsg = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? '';
+          const botMsg = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? m.message_text;
           return `\n   role: assistant,\n   content: ${botMsg}\n    `;
         })
         .join('\n');
@@ -281,17 +281,31 @@ export async function webHook(req: any) {
 export async function verifyScheduledMessages() {
   try {
     const messagesToSend: any[] = await messageService.findScheduledForToday(true);
-
+    console.log(messagesToSend)
     // Processa todas as mensagens em paralelo
     await Promise.all(messagesToSend.map(async (message) => {
       // Busca histórico de mensagens enviadas
-      const sentMessages = await messageService.findByLeadId(message.leadId);
-      const messagesHistory = [
-        ...sentMessages.filter((m: any) => m.sent),
-        message
-      ]
-        .map((m: any) => `role: assistant,\ncontent: ${messagesReturn(utils.extractFirstName(message.leadposvenda.name), [m.title], message.leadposvenda.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Prazo de Entrega")?.selectedOptions || 0)[0].messageBot}`)
-        .join('\n');
+     const sentMessages = await messageService.findByLeadId(message.leadId);
+
+const messagesHistory = [
+  ...sentMessages.filter((m: any) => m.sent),
+  message
+]
+  .map((m: any) => {
+    const firstName = utils.extractFirstName(message.leadposvenda.name);
+    const prazo = message.leadposvenda.customFields
+      .find((field: { fieldName: string }) => field.fieldName === "⚠️ Prazo de Entrega")
+      ?.selectedOptions || 0;
+
+    const res = messagesReturn(firstName, [m.title], prazo);
+    const content =
+      Array.isArray(res) && res.length > 0 && res[0]?.messageBot
+        ? res[0].messageBot
+        : (message.message_text ?? "");
+
+    return `role: assistant,\ncontent: ${content}`;
+  })
+  .join('\n');
 
       // Envia a mensagem
       //await shcadulesMessagesender(message.leadposvenda.phone, message.message_text, messagesHistory);
@@ -328,6 +342,7 @@ export async function verifyScheduledMessages() {
         const taskToUpdate = message.leadposvenda.tasks.find(
         (task: { listId: string }) => task.listId === '901111606565'
       )?.id;
+      messageService.update(message.id, { sent: true })
       if(!taskToUpdate || !status) return
       const taskUpdated = await clickupServices.updateTask(taskToUpdate, status)
       await Promise.all([
@@ -335,7 +350,7 @@ export async function verifyScheduledMessages() {
           status: taskUpdated.status.status,
           data: taskUpdated
         }),
-        messageService.update(message.id, { sent: true })
+        
       ]);
        return
       }
@@ -467,8 +482,8 @@ Depois é só confirmar a sequência de letras que o sistema pedir, e prontinho!
       let messagesHistoryArr = (sentHistory ?? [])
         .filter((m: any) => m?.sent === true)
         .map((m: any) => {
-          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0];
-          return `\n   role: assistant,\n   content: ${messagesSent.messageBot}\n    `;
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0].messageBot ?? m.message_text;
+          return `\n   role: assistant,\n   content: ${messagesSent}\n    `;
         });   
 
       messagesHistoryArr.push(messageFirst);
@@ -503,7 +518,7 @@ await sendMessage(subscriberId, 'file', toSend[0])
       const firsName = utils.extractFirstName(leadCustom.name)
       const dataEntrega = leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Prazo de Entrega")?.selectedOptions || 0
     const dates = calculateTriggerDates(dataEntrega)
-    const messagesSchadule = messagesReturn(firsName, modelsSchadules, dataEntrega, dates.ninetyTwoDaysAfter)
+    const messagesSchadule:any = messagesReturn(firsName, modelsSchadules, dataEntrega, dates.ninetyTwoDaysAfter)
 
     for(const message of messagesSchadule){
       messageData = treatMessageDate(message, dataEntrega, leadCustom)
@@ -524,8 +539,8 @@ await sendMessage(subscriberId, 'file', toSend[0])
       let messagesHistoryArr = (sentHistory ?? [])
         .filter((m: any) => m?.sent === true)
         .map((m: any) => {
-          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0];
-          return `\n   role: assistant,\n   content: ${messagesSent.messageBot}\n    `;
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0].messageBot ?? m.message_text;
+          return `\n   role: assistant,\n   content: ${messagesSent}\n    `;
         });
       const reschaduleMessage = `Olá ${firsName}, por meio deste gostaria de informar que o prazo de entrega do seu Closet foi alterado para dia ${dataEntrega}`;
       messagesHistoryArr.push(reschaduleMessage);
@@ -558,11 +573,16 @@ await sendMessage(subscriberId, 'file', toSend[0])
            let allMessages: any[] = []
 
 
-       let messagesfirst = messagesReturn(firsName, modelsFirtsContact, dataEntrega);
-        messagesfirst = clienteRetira
-          ? messagesfirst.filter(m => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
-          : messagesfirst.filter(m => m.modelo !== 'CLIENTE RETIRA');
+       let messagesfirst:any = messagesReturn(firsName, modelsFirtsContact, dataEntrega);
+      const alvo = clienteRetira ? 'CLIENTE RETIRA' : 'ENTREGA VIA TRANSPORTADORA';
 
+// Mantém SOMENTE a opção desejada (case-insensitive) e garante array
+const selecionadas = messagesfirst.filter(
+  (m: any) => (m?.modelo ?? '').toUpperCase() === alvo
+);
+
+// Se quiser garantir exatamente um item:
+       messagesfirst = selecionadas.length ? [selecionadas[0]] : [];
           let FirstContact: any[] = []
        
        for (const message of messagesfirst ?? []) {
@@ -571,10 +591,10 @@ await sendMessage(subscriberId, 'file', toSend[0])
       } 
       allMessages = FirstContact
 
-      let messagesPosDirect = messagesReturn(firsName, modelsDirect, dataEntrega);
+      let messagesPosDirect:any = messagesReturn(firsName, modelsDirect, dataEntrega);
        let directMessages: any[] = []
         if (clienteRetira) {
-        messagesPosDirect = messagesPosDirect.filter(m => m.modelo !== 'INFORMAÇÕES DA ENTREGA');
+        messagesPosDirect = messagesPosDirect.filter((m: { modelo: string; }) => m.modelo !== 'INFORMAÇÕES DA ENTREGA');
       }
     for (const message of messagesPosDirect ?? []) {
         messageData = treatMessageDate(message, dataEntrega, leadCustom);
@@ -618,8 +638,8 @@ await messageService.bulkCreate(toCreate);
       const messagesHistory = (sentHistory ?? [])
         .filter((m: any) => m?.sent === true)
         .map((m: any) => {
-          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0];
-          return `\n   role: assistant,\n   content: ${messagesSent.messageBot}\n    `;
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0].messageBot ?? m.message_text;
+          return `\n   role: assistant,\n   content: ${messagesSent}\n    `;
         })
         .join('\n');
 

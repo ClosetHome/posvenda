@@ -2,7 +2,10 @@ import express from 'express';
 import redisRoutes from './routes/redisRoutes.js';
 import clickupHook from './routes/clickupHook.js';
 import { filesRouter } from './routes/filesRoute.js';
-import cors from 'cors'
+import usersRouter from './routes/userRouter.js';
+import LeadsRouter from './routes/leadsPovendaRoute.js';
+import messagesRouter from './routes/messagesRouter.js';
+import cors from 'cors';
 const app = express();
 
 const PORT = process.env.PORT || 3006; 
@@ -12,6 +15,9 @@ app.use(express.json());
 app.use('/api/redis', redisRoutes);
 app.use('/api/clickup', clickupHook);
 app.use('/api', filesRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/leads', LeadsRouter);
+app.use('/api/messages', messagesRouter);
 
 
 

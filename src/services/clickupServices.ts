@@ -372,11 +372,11 @@ export async function webHook(req:any){
   const contact = await getSubscriber(phone)
   const dataEntrega = obj.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Prazo de Entrega")?.selectedOptions || 0
   
- let messages = messagesReturn(task[0].name, modelsFirtsContact, dataEntrega)
+ let messages:any = messagesReturn(task[0].name, modelsFirtsContact, dataEntrega)
  
   messages = customFields.find((field: { fieldName: string; }) => field.fieldName === '⚠️ Cliente Retira')
-   ? messages.filter(msg => msg.modelo !== 'ENTREGA VIA TRANSPORTADORA')
-   : messages.filter(msg => msg.modelo !== 'CLIENTE RETIRA');
+   ? messages.filter((msg: { modelo: string; }) => msg.modelo !== 'ENTREGA VIA TRANSPORTADORA')
+   : messages.filter((msg: { modelo: string; }) => msg.modelo !== 'CLIENTE RETIRA');
   await sendHook(contact.phone, obj.id,messages, '', '')
 return obj
 //redis.set(`clickup:${req.body.task_id}`, JSON.stringify(req.body))

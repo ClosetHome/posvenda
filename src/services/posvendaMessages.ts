@@ -1,7 +1,9 @@
 import PosVendaMessages from '../modules/posvendaMessages.js';
 import LeadsPosVenda from '../modules/leadsPosVenda.js';
+import {sendMessage} from './botconversaService.js'
 import { Op } from 'sequelize';
 import Tasks from '../modules/clickupTasks.js';
+import { DateTime } from 'luxon';
 
 interface CreatePosVendaMessageData {
   title: string;
@@ -75,12 +77,13 @@ class PosVendaMessagesService {
         whereClause.sent = true;
       }
 
-      if (options.includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com name e phone
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false // LEFT JOIN para não excluir mensagens sem lead
+      });
 
       const messages = await PosVendaMessages.findAll({
         where: whereClause,
@@ -103,12 +106,13 @@ class PosVendaMessagesService {
     try {
       const include = [];
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const message = await PosVendaMessages.findByPk(id, { include });
       return message;
@@ -120,16 +124,17 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens por leadId
    */
-  async findByLeadId(leadId: number, includeLead: boolean = false): Promise<PosVendaMessages[]> {
+  async findByLeadId(leadId: number, includeLead: boolean = true): Promise<PosVendaMessages[]> {
     try {
       const include = [];
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const messages = await PosVendaMessages.findAll({
         where: { leadId },
@@ -146,16 +151,17 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens enviadas
    */
-  async findSentMessages(includeLead: boolean = false): Promise<PosVendaMessages[]> {
+  async findSentMessages(includeLead: boolean = true): Promise<PosVendaMessages[]> {
     try {
       const include = [];
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const messages = await PosVendaMessages.findAll({
         where: { sent: true },
@@ -172,16 +178,17 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens não enviadas
    */
-  async findPendingMessages(includeLead: boolean = false): Promise<PosVendaMessages[]> {
+  async findPendingMessages(includeLead: boolean = true): Promise<PosVendaMessages[]> {
     try {
       const include = [];
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const messages = await PosVendaMessages.findAll({
         where: { sent: false },
@@ -198,16 +205,17 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens agendadas
    */
-  async findScheduledMessages(includeLead: boolean = false): Promise<PosVendaMessages[]> {
+  async findScheduledMessages(includeLead: boolean = true): Promise<PosVendaMessages[]> {
     try {
       const include = [];
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const messages = await PosVendaMessages.findAll({
         where: { 
@@ -228,43 +236,37 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens agendadas para hoje
    */
-  async findScheduledForToday(includeLead: boolean = false): Promise<PosVendaMessages[]> {
-    try {
-      const include = [];
-      const today = new Date();
-      const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-      const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+ async findScheduledForToday(includeLead: boolean = false): Promise<PosVendaMessages[]> {
+  try {
+    const tz = 'America/Sao_Paulo';
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda',
-           include: [
-          {
-            model: Tasks,
-            as: 'tasks'
-          }
-        ],
-        });
-      }
-
-      const messages = await PosVendaMessages.findAll({
-        where: { 
-          schadule: {
-            [Op.between]: [startOfDay, endOfDay]
-          },
-          sent: false
-        },
-        include,
-        order: [['schadule', 'ASC']]
+    // Limites do dia *em São Paulo*, convertidos para UTC (Date) para comparar no banco
+  const startOfDay = DateTime.utc().startOf('day').toJSDate(); // 2025-09-24T00:00:00.000Z
+  const endOfDay   = DateTime.utc().endOf('day').toJSDate();
+     console.log(startOfDay, endOfDay)
+    const include: any[] = [];
+    if (includeLead) {
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        include: [{ model: Tasks, as: 'tasks' }],
       });
-
-      return messages.map(message => message.toJSON());
-    } catch (error) {
-      throw new Error(`Erro ao buscar mensagens agendadas para hoje: ${error}`);
     }
-  }
 
+    const messages = await PosVendaMessages.findAll({
+      where: {
+        schadule: { [Op.between]: [startOfDay, endOfDay] },
+        sent: false,
+      },
+      include,
+      order: [['schadule', 'ASC']],
+    });
+
+    return messages.map(m => m.toJSON());
+  } catch (error) {
+    throw new Error(`Erro ao buscar mensagens agendadas para hoje: ${error}`);
+  }
+}
   /**
    * Atualizar mensagem por ID
    */
@@ -418,12 +420,13 @@ class PosVendaMessagesService {
         };
       }
 
-      if (filters.includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const { count, rows } = await PosVendaMessages.findAndCountAll({
         where: whereClause,
@@ -490,16 +493,17 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens recentes
    */
-  async findRecent(limit: number = 10, includeLead: boolean = false): Promise<PosVendaMessages[]> {
+  async findRecent(limit: number = 10, includeLead: boolean = true): Promise<PosVendaMessages[]> {
     try {
       const include = [];
 
-      if (includeLead) {
-        include.push({
-          model: LeadsPosVenda,
-          as: 'leadposvenda'
-        });
-      }
+      // Sempre incluir o lead com informações básicas
+      include.push({
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email'],
+        required: false
+      });
 
       const messages = await PosVendaMessages.findAll({
         include,
@@ -546,6 +550,31 @@ class PosVendaMessagesService {
       return affectedCount;
     } catch (error) {
       throw new Error(`Erro ao marcar mensagens como enviadas: ${error}`);
+    }
+  }
+  async sendMessage(id: number): Promise<PosVendaMessages | null> {
+    try {
+      const message:any = await PosVendaMessages.findByPk(id, {
+        include: [
+          {
+            model: LeadsPosVenda,
+            as: 'leadposvenda',
+            attributes: ['id', 'name', 'phone', 'email', 'subscriberbot']
+          }
+        ]
+      });
+
+      
+      if (!message) {
+        return null;
+      }
+     await sendMessage(Number(message.leadposvenda.subscriberbot), 'text',message.message_text)
+
+
+      await message.update({ sent: true });
+      return message;
+    } catch (error) {
+      throw new Error(`Erro ao marcar mensagem como enviada: ${error}`);
     }
   }
 }

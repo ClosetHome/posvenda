@@ -214,6 +214,7 @@ export function treatMessageDirect(message:message, leadCustom:any, birthDate:st
 }
 
 export function messagesReturn(name: string,  models:string[], dataentrega?: string, ninetyTwoDaysAfter?: string) {
+  try{
 const mensagens = [
   {
     modelo: 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)',
@@ -350,6 +351,13 @@ Como foi realizar a montagem? O vídeo explicativo e os gabaritos fornecidos for
 Para nós é importante ter esse feedback para poder auxiliar nossos clientes da melhor forma possível!`,
     messageBot: `Como foi a montagem, ${name}? O vídeo e os gabaritos foram suficientes? Seu feedback é importante.`
   },
+   {
+    modelo: 'AVALIAÇÃO GOOGLE',
+    message: `${name}, que ótimo que tudo deu certo! É muito gratificante saber que conseguimos atender às suas expectativas! 😊
+Se possível, gostaríamos de pedir um grande favor: que tal compartilhar sua experiência avaliando nossa empresa no Google? Sua opinião é muito importante e ajuda outras pessoas a confiarem no nosso trabalho!
+É simples e rápido! Basta clicar no link abaixo para deixar sua avaliação: https://www.google.com/search?sca_esv=7b640742644021d7&sxsrf=AE3TifNArfihhjOBmaKENPEYOQn5Cm7kCQ:1750265114087&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E35ZwIOdXYbmfLUc8cjjiRIvFvMhPDH6f3usPkrBCJCfJul_xLQUIEF9iOc0Hd4HW49Do0UjUpiL1AhkFg7WTAzHvYoP6J2s4o3RyyBxogUHwUaZjA%3D%3D&q=Closet+home+Coment%C3%A1rios&sa=X&ved=2ahUKEwj5go3TtfuNAxW0pZUCHUNXJ5cQ0bkNegQIKhAE&biw=1920&bih=911&dpr=1 Agradecemos imensamente pela confiança e pelo carinho. Sempre que precisar, estaremos à disposição para ajudar!`,
+    messageBot: `Como foi a montagem, ${name}? O vídeo e os gabaritos foram suficientes? Seu feedback é importante.`
+  },
   {
     modelo: 'PESQUISA DE SATISFAÇÃO 30 DIAS',
     message: `Oii, ${name}, Bom dia!
@@ -407,5 +415,9 @@ Frete grátis em compras acima de R$ 300 até o fim do mês! Me avise se quiser 
     messageBot: `Últimos dias do seu presente: frete grátis em compras acima de R$ 300 até [data]. Precisa de ajuda?`
   }
 ];
-  return mensagens.filter((message) => models.includes(message.modelo))
+    return mensagens.filter((message) => models.includes(message.modelo))
+  } catch (error) {
+    console.error('mensagem não encontrada');
+    return null
+  }
 }
