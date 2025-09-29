@@ -164,7 +164,7 @@ return response.data;
 }
 }
 
-export async function respChat(phone: string, message: string, prompt:string, task_id?:any ) {
+export async function respChat(phone: string, message: string, task_id?:any ) {
  try{
 const options = {
   phone: phone,
@@ -184,8 +184,7 @@ console.log(info_pedido)
         // ChatPromptTemplate variables should be passed via promptValues
         promptValues: {
             historico_mensagens: conversationHistory,
-            info_pedido: info_pedido,
-            prompt: prompt
+            info_pedido: info_pedido
         },
   },
 }
