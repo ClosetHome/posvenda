@@ -2,7 +2,7 @@ import {getTasksCustom, clickup} from './clickupServices'
 import clickupServices from './clickupServices.js';
 import utils from '../utils/utils';
 import {extrairDadosPessoais} from '../utils/dataExtractor';
-import {getSubscriber, sendMessage, sendHook, sendHookSegundaEtapa, setCustomFieldValue,shcadulesMessagesender, createSubscriber, sendMessagesWithDelay} from './botconversaService'
+import {getSubscriber, sendMessage, sendHook, sendHookSegundaEtapa, setCustomFieldValue, shcadulesMessagesender, createSubscriber, sendMessagesWithDelay} from './botconversaService'
 import PosVendaLeadsService from './posvendaLeads'
 import {getCustomFieldId} from '../utils/utlsBotConversa'
 import Tasks from './taskService'
@@ -52,25 +52,39 @@ export async function webHook(req: any) {
         ?.value;
 
     if (!phone) return [];
-   const task = await getTasksCustom(901108902349, phone);
+    const task = await getTasksCustom(901108902349, phone);
     phone = phone.replace(/[^\d+]/g, '');
 
-   
-    if (!Array.isArray(task) || task.length === 0) return [];
-
-    const customFields: any[] = utils.extractCustomFields(task[0]?.custom_fields);
-    if (!customFields?.length) return [];
+    let customFields: any[] = [];
+    let taskData: any = null;
+    let firstName: string = '';
+    let lastName: string = '';
+    
+    if (!Array.isArray(task) || task.length === 0) {
+      // Usa dados de taskPosVenda quando não encontra task no getTasksCustom
+      customFields = utils.extractCustomFields(taskPosVenda.body.custom_fields);
+      if (!customFields?.length) return [];
+      
+      firstName = utils.extractFirstName(taskPosVenda.body.name);
+      lastName = utils.extractLastName(taskPosVenda.body.name);
+    } else {
+      // Usa dados da task encontrada
+      customFields = utils.extractCustomFields(task[0]?.custom_fields);
+      if (!customFields?.length) return [];
+      
+      taskData = task[0];
+      firstName = utils.extractFirstName(task[0].name);
+      lastName = utils.extractLastName(task[0].name);
+    }
 
     let contact = await getSubscriber(phone);
-    const firstName = utils.extractFirstName(task[0].name);
-    const lastName  = utils.extractLastName(task[0].name);
     if (!contact) contact = await createSubscriber(phone, firstName, lastName);
     if(contact.status === 200){
       contact = await getSubscriber(phone);
     }
 
     const leadData = {
-      name: task[0].name,
+      name: taskData ? taskData.name : taskPosVenda.body.name,
       phone,
       subscriberbot: contact.id,
       customFields
@@ -85,16 +99,21 @@ export async function webHook(req: any) {
       data: taskPosVenda.body,
       leadId: leadCreated.id
     };
-    const taskDataCloser = {
-      id: task[0].id,
-      name: task[0].name,
-      listId: Number(task[0].list.id),
-      status: task[0].status.status,
-      data: task[0],
-      leadId: leadCreated.id
-    };
 
-    await taskService.bulkCreate([taskDataPosVenda, taskDataCloser]);
+    // Só cria taskDataCloser se encontrou task no getTasksCustom
+    if (taskData) {
+      const taskDataCloser = {
+        id: taskData.id,
+        name: taskData.name,
+        listId: Number(taskData.list.id),
+        status: taskData.status.status,
+        data: taskData,
+        leadId: leadCreated.id
+      };
+      await taskService.bulkCreate([taskDataPosVenda, taskDataCloser]);
+    } else {
+      await taskService.bulkCreate([taskDataPosVenda]);
+    }
 
     // Prazo de entrega (opcional)
     const prazoField = getField(customFields, '⚠️ Prazo de Entrega');
@@ -149,7 +168,7 @@ export async function webHook(req: any) {
     }
 
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
-
+    
     return leadData;
   } catch (error) {
     console.log(error);

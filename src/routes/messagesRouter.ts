@@ -1,10 +1,20 @@
 import { Router } from 'express';
 import messagesController from '../controllers/messagesController.js';
+import { handleUpload } from '../middlewares/upload.js';
 
 const router = Router();
 
 // Criar nova mensagem pós-venda
 router.post('/', messagesController.create);
+
+// Upload de arquivo para anexo
+router.post('/upload', handleUpload, messagesController.uploadAttachment);
+
+// Criar mensagem com anexo (upload + mensagem em uma única requisição)
+router.post('/with-upload', handleUpload, messagesController.createMessageWithUpload);
+
+// Criar mensagem com anexo (dados do arquivo já processados)
+router.post('/with-attachment', messagesController.createWithAttachment);
 
 // Buscar todas as mensagens com filtros
 router.get('/', messagesController.findAll);

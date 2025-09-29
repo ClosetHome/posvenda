@@ -3,7 +3,7 @@ import { sequelize } from './db.js';
 import './modules/associations.js'
 import {cronJobMessages} from './services/cronJobMessages.js'
 import {verifyScheduledMessages, webHook} from './services/ClickupposVendaservice.js'
-import usermigration from './migrations/20240924-create-users-table.js'
+import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
 
 
 
@@ -54,7 +54,7 @@ async function main() {
 
 
 cronJobMessages()
-//usermigration.up(sequelize.getQueryInterface())
+//messagesMigration.up(sequelize.getQueryInterface())
 }
 
 main().catch(console.error);

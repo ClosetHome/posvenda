@@ -7,6 +7,10 @@ class PosVendaMessages extends Model {
   public message_text?: string; 
   public sent!: boolean;
   public schadule?: Date;
+  public mimetype!: string;
+  public media_name!: string;
+  public media_json!: string;
+  public mediaurl!: string;
   public leadId!: number;
 }
 
@@ -24,6 +28,28 @@ PosVendaMessages.init({
   message_text: {
     type: DataTypes.STRING(65536),
     allowNull: true
+  },
+   mimetype: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  media_name: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  media_json: {
+    type: DataTypes.STRING(65536),
+    allowNull: true,
+  },
+  mediaurl: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    get() {
+      if (this.getDataValue("mediaurl")) {
+        return `${process.env.BACKEND_URL}/api/files/${this.getDataValue("mediaurl")}`;
+      }
+      return null;
+    }
   },
   schadule: {
     type: DataTypes.DATE,

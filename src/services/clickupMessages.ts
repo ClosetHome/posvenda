@@ -13,7 +13,7 @@ export const backendUrl = process.env.BACKEND_URL;
 
 export const modelsFirtsContact = ['RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)', 'ENTREGA VIA TRANSPORTADORA', 'CLIENTE RETIRA', 'DADOS PARA CADASTRO', 'CUPOM ESPECIAL']
 export const modelsDirect = ['TUTORIAL MONTAGEM', 'INFORMAÇÕES DA ENTREGA', 'GARANTIA VITALÍCIA'];
-export const modelsAniversary = ['ANIVERSÁRIO - INÍCIO DO MÊS', 'ANIVERSÁRIO - NO DIA', 'ANIVERSÁRIO - FINAL DO MÊS']
+export const modelsAniversary = ['ANIVERSÁRIO - INÍCIO DO MÊS', 'ANIVERSÁRIO - NO DIA', 'ANIVERSÁRIO - FINAL DO MÊS'];
 export const modelsSchadules = [
   'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ',
   'FOLLOW-UP 02 - BUSCOU O CLOSET', 
@@ -356,7 +356,21 @@ Para nós é importante ter esse feedback para poder auxiliar nossos clientes da
     message: `${name}, que ótimo que tudo deu certo! É muito gratificante saber que conseguimos atender às suas expectativas! 😊
 Se possível, gostaríamos de pedir um grande favor: que tal compartilhar sua experiência avaliando nossa empresa no Google? Sua opinião é muito importante e ajuda outras pessoas a confiarem no nosso trabalho!
 É simples e rápido! Basta clicar no link abaixo para deixar sua avaliação: https://www.google.com/search?sca_esv=7b640742644021d7&sxsrf=AE3TifNArfihhjOBmaKENPEYOQn5Cm7kCQ:1750265114087&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E35ZwIOdXYbmfLUc8cjjiRIvFvMhPDH6f3usPkrBCJCfJul_xLQUIEF9iOc0Hd4HW49Do0UjUpiL1AhkFg7WTAzHvYoP6J2s4o3RyyBxogUHwUaZjA%3D%3D&q=Closet+home+Coment%C3%A1rios&sa=X&ved=2ahUKEwj5go3TtfuNAxW0pZUCHUNXJ5cQ0bkNegQIKhAE&biw=1920&bih=911&dpr=1 Agradecemos imensamente pela confiança e pelo carinho. Sempre que precisar, estaremos à disposição para ajudar!`,
-    messageBot: `Como foi a montagem, ${name}? O vídeo e os gabaritos foram suficientes? Seu feedback é importante.`
+    messageBot: `"${name}, que bom que deu tudo certo! 😊 Pode nos ajudar deixando uma avaliação no Google? Isso fortalece nossa credibilidade e ajuda outras pessoas a confiarem em nós. É rápido, basta clicar: https://www.google.com/search?sca_esv=7b640742644021d7&sxsrf=AE3TifNArfihhjOBmaKENPEYOQn5Cm7kCQ:1750265114087&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E35ZwIOdXYbmfLUc8cjjiRIvFvMhPDH6f3usPkrBCJCfJul_xLQUIEF9iOc0Hd4HW49Do0UjUpiL1AhkFg7WTAzHvYoP6J2s4o3RyyBxogUHwUaZjA%3D%3D&q=Closet+home+Coment%C3%A1rios&sa=X&ved=2ahUKEwj5go3TtfuNAxW0pZUCHUNXJ5cQ0bkNegQIKhAE&biw=1920&bih=911&dpr=1"
+Quer que eu monte também uma variação mais curta ainda, estilo push notification de WhatsApp?`
+  },
+  {
+     modelo: 'AVALIAÇÃO SITE',
+    message: `Oi ${name}! Tudo bem? Aqui é da Closet Home 😊
+
+Queremos saber se deu tudo certo com a entrega e se o closet atendeu suas expectativas. Se ele realmente te ajudou e você gostou da experiência com a gente, queria te pedir uma ajudinha:
+
+Você pode entrar no nosso site e deixar uma avaliação? Pode ser positiva ou negativa — o importante é sua opinião sincera. Isso nos ajuda muuuito a crescer, alcançar mais pessoas e continuar entregando um atendimento de qualidade! 💬✨
+
+Segue o link direto para avaliar: closethome.com.br
+
+Desde já, muito obrigado! `,
+    messageBot: `Oi ${name}! Tudo certo? Queremos saber se o closet atendeu suas expectativas. Se puder, deixe sua avaliação no nosso site (positiva ou negativa). Sua opinião nos ajuda a crescer! 💬✨ Link: closethome.com.br`
   },
   {
     modelo: 'PESQUISA DE SATISFAÇÃO 30 DIAS',

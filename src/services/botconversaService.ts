@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import PosVendaLeadsService from './posvendaLeads'
 import {historyCreate, query, dadosPedido} from './FlowiseService'
 import {botStop} from './ClickupposVendaservice'
+import {prompt_coleta_dados} from '../utils/createhumanMessagePrompt'
 
 dotenv.config();
 const leadService = new PosVendaLeadsService()
@@ -84,7 +85,7 @@ return response.data;
 }
 }
 
-export async function sendHook(phone: string, task_id:string ,messages:any[], customFields:string, messageHistory:string) {
+export async function sendHook(phone: string, task_id:string , messages:any[], customFields:string, messageHistory:string) {
   try{
 let data = {}
 let url
@@ -98,9 +99,11 @@ let url
     "message_5": customFields,
     "messageHistory": messageHistory
    }
-   url = `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/5ik8HZQcD3bI/`
+
+  url = `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/5ik8HZQcD3bI/`
+   
    } else {
-     data = {
+    data = {
         "phone": phone,
         "task_id": task_id,
         "message_1": messages.find((message) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message,
@@ -114,9 +117,6 @@ let url
      url = `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/0oVuhB6JMDjG/`
    }
 
-
-   
-
 const response = await axios.post(
   url,
   data,
@@ -127,7 +127,7 @@ const response = await axios.post(
     }
   }
 );
-return response.data;
+return response;
  }catch(error:any){
   console.log(error.message)
   return null
@@ -164,7 +164,7 @@ return response.data;
 }
 }
 
-export async function respChat(phone: string, message: string, task_id?:any) {
+export async function respChat(phone: string, message: string, prompt:string, task_id?:any ) {
  try{
 const options = {
   phone: phone,
@@ -184,7 +184,8 @@ console.log(info_pedido)
         // ChatPromptTemplate variables should be passed via promptValues
         promptValues: {
             historico_mensagens: conversationHistory,
-            info_pedido: info_pedido
+            info_pedido: info_pedido,
+            prompt: prompt
         },
   },
 }

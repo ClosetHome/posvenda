@@ -13,6 +13,18 @@ interface CreatePosVendaMessageData {
   leadId: number;
 }
 
+interface CreatePosVendaMessageWithAttachmentData {
+  title: string;
+  message_text?: string;
+  sent?: boolean;
+  schadule?: Date;
+  leadId: number;
+  mimetype?: string;
+  media_name?: string;
+  media_json?: string;
+  mediaurl?: string;
+}
+
 interface UpdatePosVendaMessageData {
   title?: string;
   message_text?: string;
@@ -518,6 +530,18 @@ class PosVendaMessagesService {
   }
 
   /**
+   * Criar mensagem com anexo
+   */
+  async createWithAttachment(data: any): Promise<PosVendaMessages> {
+    try {
+      const message = await PosVendaMessages.create(data);
+      return message;
+    } catch (error) {
+      throw new Error(`Erro ao criar mensagem com anexo: ${error}`);
+    }
+  }
+
+  /**
    * Bulk create mensagens
    */
   async bulkCreate(messagesData: any[]): Promise<PosVendaMessages[]> {
@@ -568,8 +592,13 @@ class PosVendaMessagesService {
       if (!message) {
         return null;
       }
-     await sendMessage(Number(message.leadposvenda.subscriberbot), 'text',message.message_text)
-
+     if(message.message_text){ 
+     await sendMessage(Number(message.leadposvenda.subscriberbot), 'text', message.message_text)
+     } 
+     if(message.mediaurl){
+      console.log(message.mediaurl)
+      await sendMessage(Number(message.leadposvenda.subscriberbot), 'file', message.mediaurl)
+     }
 
       await message.update({ sent: true });
       return message;

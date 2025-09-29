@@ -402,6 +402,83 @@ export class MessagesController {
   }
 
   /**
+   * Upload de arquivo para anexo
+   */
+  async uploadAttachment(req: any, res: any) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
+      }
+
+      const fileInfo = {
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        path: req.file.path,
+        // URL para acessar o arquivo
+        url: `${process.env.BACKEND_URL}/files/${req.file.filename}`
+      };
+
+      res.status(200).json({
+        message: 'Arquivo enviado com sucesso',
+        file: fileInfo
+      });
+    } catch (error: any) {
+      res.status(500).json({ 
+        error: 'Erro no upload do arquivo',
+        message: error.message 
+      });
+    }
+  }
+
+  /**
+   * Criar mensagem com anexo (upload + mensagem em uma única requisição)
+   */
+  async createMessageWithUpload(req: any, res: any) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Arquivo é obrigatório para mensagens com anexo' });
+      }
+
+      // Dados da mensagem do body
+      const messageData = {
+        ...req.body,
+        mimetype: req.file.mimetype,
+        media_name: req.file.originalname,
+        mediaurl: req.file.filename,
+        media_json: JSON.stringify({
+          size: req.file.size,
+          path: req.file.path
+        })
+      };
+
+      const message = await posVendaMessagesService.createWithAttachment(messageData);
+      res.status(201).json(message);
+    } catch (error: any) {
+      res.status(400).json({ 
+        error: 'Erro ao criar mensagem com anexo',
+        message: error.message 
+      });
+    }
+  }
+
+  /**
+   * Criar mensagem com anexo (dados do arquivo já processados)
+   */
+  async createWithAttachment(req: Request, res: Response) {
+    try {
+      const message = await posVendaMessagesService.createWithAttachment(req.body);
+      res.status(201).json(message);
+    } catch (error: any) {
+      res.status(400).json({ 
+        error: 'Erro ao criar mensagem com anexo',
+        message: error.message 
+      });
+    }
+  }
+
+  /**
    * Enviar mensagem (marcar como enviada e processar)
    */
   async sendMessage(req: any, res: any) {
