@@ -53,7 +53,7 @@ async function main() {
    
 
 
-//cronJobMessages()
+cronJobMessages()
 //messagesMigration.up(sequelize.getQueryInterface())
 }
 
