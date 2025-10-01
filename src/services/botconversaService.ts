@@ -1,12 +1,14 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import PosVendaLeadsService from './posvendaLeads'
+import TaskService from './taskService'
 import {historyCreate, query, dadosPedido} from './FlowiseService'
 import {botStop} from './ClickupposVendaservice'
 import {prompt_coleta_dados} from '../utils/createhumanMessagePrompt'
 
 dotenv.config();
 const leadService = new PosVendaLeadsService()
+const taskService = new TaskService()
 
 const  bot_key = process.env.BOT_CONVERSA_TOKEN as string
 
@@ -165,17 +167,14 @@ return response.data;
 }
 
 export async function respChat(phone: string, message: string, task_id?:any ) {
+  console.log(task_id)
  try{
-const options = {
-  phone: phone,
-  includeTasks: true
-}
-
-  const lead:any = await leadService.findAll(options)
-const conversationHistory = await historyCreate(lead[0])
+  const task:any = await taskService.findById(task_id, true)
+  
+const conversationHistory = await historyCreate(task.lead)
 console.log(conversationHistory)
 
-const info_pedido = dadosPedido(lead[0])
+const info_pedido = dadosPedido(task.lead)
 console.log(info_pedido)
   const data = {
   question: message,
@@ -195,13 +194,13 @@ const respostaUser = JSON.parse(response.text)
  console.log(respostaUser)
  const status = respostaUser.status
  const summary = respostaUser.summary
-const subscriberId = Number(lead[0].subscriberbot);
+const subscriberId = Number(task.lead.subscriberbot);
   if(status === 'failure' || status === 'success' && summary && task_id != undefined){
         console.log(status)
         console.log(summary)
         console.log(task_id)
         await botStop(task_id, summary)
-        await deleteTag(subscriberId, 15296727)
+       // await deleteTag(subscriberId, 15296727)
       }
 
 function getDelayTime(messageText: string): number {

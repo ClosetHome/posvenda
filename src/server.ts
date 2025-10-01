@@ -16,7 +16,7 @@ async function main() {
    
    const req1 = {
     body: {
-      task_id:'868f3mt0t'
+      task_id:'8868f84aj3'
     },
    }
 /*
@@ -48,12 +48,12 @@ async function main() {
 /*
    await Promise.all(resArray.map(async (req) => {
     await webHook(req)
-   }))
+   }))*/
     
-   */
+   
 
 
-cronJobMessages()
+//cronJobMessages()
 //messagesMigration.up(sequelize.getQueryInterface())
 }
 
