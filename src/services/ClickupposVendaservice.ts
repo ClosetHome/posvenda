@@ -2,7 +2,7 @@ import {getTasksCustom, clickup} from './clickupServices'
 import clickupServices from './clickupServices.js';
 import utils from '../utils/utils';
 import {extrairDadosPessoais} from '../utils/dataExtractor';
-import {getSubscriber, sendMessage, sendHook, sendHookSegundaEtapa, setCustomFieldValue, shcadulesMessagesender, createSubscriber, sendMessagesWithDelay} from './botconversaService'
+import {getSubscriber, sendMessage, sendHook, sendHookSegundaEtapa, setCustomFieldValue, shcadulesMessagesender, createSubscriber, sendMessagesWithDelay, addTag, deleteTag} from './botconversaService'
 import PosVendaLeadsService from './posvendaLeads'
 import {getCustomFieldId} from '../utils/utlsBotConversa'
 import Tasks from './taskService'
@@ -167,7 +167,23 @@ export async function webHook(req: any) {
       messages.push({ modelo: '', message: media, messageBot: '' });
     }
 
+     const ownCategory = getField(customFields ?? [], '⚠️ Categoria do Ganho');
+      const categoryOpts = getSelectedArray(ownCategory);
+      const category = categoryOpts[0];
+   
+
+
+   if(category === 'RECOMPRA') {
+    const options = {
+    leadId: leadCreated.id
+    }
+      await sendMessage(leadData.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message)
+      await sendMessage(leadData.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'ENTREGA VIA TRANSPORTADORA')?.message || messages.find((message: { modelo: string; }) => message.modelo === 'CLIENTE RETIRA').message)
+      await deleteTag(leadData.subscriberbot, 15282954)
+      await addTag(leadData.subscriberbot, 15282955)
+    } else {
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
+   }
     
     return leadData;
   } catch (error) {

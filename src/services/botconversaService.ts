@@ -350,3 +350,68 @@ return response.data;
   return null
 }
 }
+
+
+export async function addTag(subscriber: number, tag:number): Promise<any> {
+  const data ={}
+  try{
+const response = await axios.post(
+  `https://backend.botconversa.com.br/api/v1/webhook/subscriber/${subscriber}/tags/${tag}/`,
+  data,
+  {
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'API-KEY': bot_key
+    }
+  }
+);
+
+
+return response.data;
+}catch(error:any){
+  console.log(error.message)
+  return null
+}
+}
+
+export async function sendMessagesWithDelayFlowise(
+subscriber: number,
+messages: Array<any | undefined>,
+type: string = 'text',
+intervalMs: number = 3000,
+phone:string
+): Promise<void> {
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+for (let i = 0; i < messages.length; i++) {
+const value = messages[i].message;
+// Skip undefined/empty messages (e.g., missing "INFORMAÇÕES DA ENTREGA")
+if (typeof value !== 'string' || value.trim().length === 0) continue;
+if(messages[i].modelo === ''){ await sendMessage(subscriber, 'file', value)
+   continue;
+  }
+try { 
+  const data = {
+  question: '',
+  overrideConfig:  {
+        sessionId: phone,
+        // ChatPromptTemplate variables should be passed via promptValues
+        promptValues: {
+            prompt: 'retorne exatamente a mensagem que vem do user, ela é parte de um grupo de mensagens automáticas padrão.',
+            info_pedido: '',
+            text: value
+        },
+  },
+}
+const response = await query(data)
+await sendMessage(subscriber, type, response.text);
+} catch (err) {
+console.error('sendMessagesWithDelay error:', err);
+}
+
+// Wait 3s before the next message (no wait after the last one)
+if (i < messages.length - 1) {
+await delay(intervalMs);
+}
+}
+}
