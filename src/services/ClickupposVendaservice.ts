@@ -181,6 +181,10 @@ export async function webHook(req: any) {
       await sendMessage(leadData.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'ENTREGA VIA TRANSPORTADORA')?.message || messages.find((message: { modelo: string; }) => message.modelo === 'CLIENTE RETIRA').message)
       await deleteTag(leadData.subscriberbot, 15282954)
       await addTag(leadData.subscriberbot, 15282955)
+      
+      clienteRetira
+      ? await clickupServices.updateTask(taskDataPosVenda.id, 'cliente retira', '', 170448045 )
+      : await clickupServices.updateTask(taskDataPosVenda.id, 'envio do closet', '', 170448045 )
     } else {
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
    }
