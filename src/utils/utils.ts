@@ -512,14 +512,13 @@ function formatPhoneNumberFlexible(input:string) {
   return customfields
    }
 
-function extractFirstName(fullName: string): string {
-  const names = fullName.split(' ');
-  if (names.length > 0) {
-    return names[0];
-  } else {
-    return ""; // or throw an error, depending on desired behavior
+  function extractFirstName(fullName: string): string {
+    if (!fullName) return "";
+    const trimmedName = fullName.trim();
+    if (!trimmedName) return "";
+    const names = trimmedName.split(/\s+/);
+    return names[0] ?? "";
   }
-}
 
 export function extractLastName(fullName: string): string {
   if (!fullName) return "";

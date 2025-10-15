@@ -3,11 +3,14 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import utils from '../utils/utils';
 import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules } from './clickupMessages'
-import {getSubscriber, sendMessage, sendHook} from './botconversaService'
+import {getSubscriber, sendMessage, sendHook, addTag} from './botconversaService'
+import TaskService from './taskService'
+import {clearFollowUpTimer} from './followupTimer'
 dotenv.config();
 
 const clickup_key = process.env.CLICKUP_TOKEN as string
 export const clickup = new Clickup(clickup_key)
+const taskService = new TaskService()
 
 interface EmailBatchResult {
   total: number;
@@ -46,7 +49,7 @@ export async function updateTask(taskId:string, status?:string, description?: st
 }
 }
 
-async function cliCkupTask(listId: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, chatEcom?: number, linkReference?:string, telefoneSdr?:string ) {
+async function cliCkupTask(listId: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string ) {
   
       try {
     // Objeto base da requisição
@@ -76,14 +79,15 @@ async function cliCkupTask(listId: number, name:string, status: string ,email?: 
        if (telefoneSdr) {
       customFields.push({
         id: '329ee3ef-c499-47fb-a66d-6a407a3222cb',
+        operator: 'ANY',
         value: telefoneSdr
       });
     }
 
-    if(chatEcom){
+    if(category){
        customFields.push({
-        id: 'e5d18511-9c48-4c01-bcba-f4ae6120e623',
-        value: chatEcom
+        id: "c15d7e46-1e1b-4e84-bafa-8a5c8a5f1fa2",
+        value: [category]
       });
     }
 
@@ -191,7 +195,7 @@ async function cliCkupTaskGet(listId: number, name?:string, status?: string ,ema
     // Adiciona telefone se fornecido
     if (telefone) {
       customFields.push({
-        id: '7ac04885-0d22-454d-abcd-a8dbc8c814b7',
+        id: "329ee3ef-c499-47fb-a66d-6a407a3222cb",
         value: telefone
       });
     }
@@ -386,5 +390,78 @@ return obj
 }
 }
 
+async function updateClickupPre(telefone: string, situacao: string, taskID: string, atendimento: string) {
+  const normalizedTaskId = String(taskID);
+  let payload: any;
+  let cachedTask: any = null;
+  let category: string | null = null;
 
-export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook}
+  try {
+    payload = {
+      taskID: normalizedTaskId,
+      situacao,
+      telefone
+    };
+
+    if (atendimento !== 'perdido') {
+      payload.atendimento = atendimento;
+    }
+
+    if (atendimento === 'ecommerce' || atendimento !== 'perdido') {
+      cachedTask = await taskService.findById(normalizedTaskId, true);
+    }
+
+    if (atendimento === 'ecommerce' && cachedTask?.lead?.subscriberbot) {
+      await addTag(cachedTask.lead.subscriberbot, 12804161);
+      category = '2bbc9f5e-997c-460c-9c5d-7c3715826a67';
+    }
+
+    if (atendimento !== 'perdido' && cachedTask?.lead?.subscriberbot) {
+      await addTag(cachedTask.lead.subscriberbot, 12805127);
+    }
+
+    console.log(payload);
+
+    await axios.post(
+      'https://webhooks.closethome.com.br/webhook/alteracaosdr',
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    const updatedTask = await taskService.update(normalizedTaskId, { status: situacao });
+    if (!updatedTask) {
+      console.warn(`Task ${normalizedTaskId} not found for status update.`);
+      return;
+    }
+
+    console.log(updatedTask.name);
+    console.log(telefone);
+    console.log(category);
+
+    if (situacao === 'ganho') {
+      await cliCkupTask(
+        901112193927,
+        updatedTask.name,
+        'nova oportunidade',
+        undefined,
+        undefined,
+        undefined,
+        category || undefined,
+        normalizedTaskId,
+        telefone
+      );
+    }
+  } catch (error: any) {
+    console.log(error.message);
+  } finally {
+    if (taskID) {
+      await clearFollowUpTimer(normalizedTaskId);
+    }
+  }
+}
+
+export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre}

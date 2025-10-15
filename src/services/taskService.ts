@@ -207,8 +207,8 @@ class TaskService {
         return null;
       }
 
-      await task.update(data);
-      return task;
+      const updatedTask = await task.update(data);
+      return updatedTask.toJSON();
     } catch (error) {
       throw new Error(`Erro ao atualizar task: ${error}`);
     }

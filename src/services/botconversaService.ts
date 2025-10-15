@@ -2,9 +2,15 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import PosVendaLeadsService from './posvendaLeads'
 import TaskService from './taskService'
-import {historyCreate, query, dadosPedido} from './FlowiseService'
+import {historyCreate, query, dadosPedido, query2} from './FlowiseService'
 import {botStop} from './ClickupposVendaservice'
-import {prompt_coleta_dados} from '../utils/createhumanMessagePrompt'
+import {getTasksCustom, clickup} from './clickupServices'
+import {prompt_coleta_dados, prompt_pre, follow_prompt} from '../utils/createhumanMessagePrompt'
+import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
+import utils from '../utils/utils';
+
+export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
+const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
 
 dotenv.config();
 const leadService = new PosVendaLeadsService()
@@ -415,3 +421,261 @@ await delay(intervalMs);
 }
 }
 }
+
+
+async function dispatchFollowUpMessage(
+  subscriberId: number,
+  type: string,
+  value: string,
+  taskId?: any,
+  fim?: any
+) {
+  if (!value) return;
+
+  await sendMessage(subscriberId, type, value);
+
+  if (!taskId) return;
+
+if(fim) {
+  await scheduleFollowUpIfInactive({
+    taskId: String(taskId),
+    subscriberId,
+    followUpMessage: fim,
+    inactivityMs: DEFAULT_INACTIVITY_MS_2
+  });
+} else {
+  await scheduleFollowUpIfInactive({
+    taskId: String(taskId),
+    subscriberId,
+    followUpMessage: FOLLOW_UP_MESSAGE
+  });
+}
+}
+
+export async function respChatPre(phone: string, message: string, task_id?:any ) {  
+  let taskData: any = null;
+  let firstName:any;
+  let lastName:any;
+  let subscriberId:any
+  let taskPre:any
+ try{
+ taskPre = await taskService.findById(task_id, true)
+if(!taskPre) {
+    taskPre = await clickup.tasks.get(task_id);
+     let phone: string | undefined =
+      taskPre?.body?.custom_fields
+        ?.find((f: any) => f?.name === '👤 Telefone Cliente')
+        ?.value;
+       console.log(taskPre.body)
+    if (!phone) return [];
+          taskData = taskPre.body;
+          firstName = utils.extractFirstName(taskPre.name);
+          lastName = utils.extractLastName(taskPre.name);
+        phone = phone.replace(/[^\d+]/g, '');
+      let contact = await getSubscriber(phone);
+    if (!contact) contact = await createSubscriber(phone, firstName, lastName);
+    if(contact.status === 200){
+      contact = await getSubscriber(phone);
+    }
+      const leadData = {
+      name: taskData ? taskData.name : taskPre.body.name,
+      phone,
+      subscriberbot: contact.id
+    };
+    const leadCreated = await leadService.create(leadData);
+    subscriberId = contact.id
+       taskData = {
+        id: taskData.id,
+        name: taskData.name,
+        listId: Number(taskData.list.id),
+        status: taskData.status.status,
+        data: taskData,
+        leadId: leadCreated.id
+      };
+     subscriberId = contact.id
+     await taskService.bulkCreate([taskData]);
+} else { 
+ subscriberId = Number(taskPre.lead.subscriberbot);
+}
+
+  const data = {
+  question: message,
+  overrideConfig:  {
+        sessionId: subscriberId,
+        systemMessage: prompt_pre,
+        vars: {
+            task_id: task_id,
+            telefone: phone
+        }
+        },
+ }
+ const response = await query(data)
+ console.log(response)
+
+const responseText = typeof response?.text === 'string' ? response.text : '';
+let isJsonText = false;
+let parsedJson: any;
+
+function getDelayTime(messageText: string): number {
+  const wordCount = messageText.trim().split(/\s+/).length;
+  const baseDelay = 1000;
+  const delayPerWord = 400;
+  const maxDelay = 5000;
+  const delayTime = Math.min(baseDelay + wordCount * delayPerWord, maxDelay);
+  return delayTime;
+}
+
+if (responseText) {
+  try {
+    parsedJson = JSON.parse(responseText);
+    isJsonText = true;
+  } catch {
+    isJsonText = false;
+  }
+}
+
+if(!isJsonText) {
+const splitMessages = responseText ? responseText.split(/(?:\n\s*\n|(?<=[.?!])\s+)/) : [];
+for (const messageText of splitMessages) {
+        const formattedMessageText = messageText.trim();
+    
+        const finalPunctuation = /[.]$/;
+        const formattedMessageTextWithoutPunctuation = formattedMessageText.replace(finalPunctuation, '');
+     
+        await dispatchFollowUpMessage(subscriberId, 'text', messageText, task_id)
+      
+        const delayTime = getDelayTime(formattedMessageTextWithoutPunctuation);
+        await new Promise((resolve) => setTimeout(resolve, delayTime));
+      }
+    } else {
+      if (parsedJson.message_personalizado) {
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_personalizado, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_medidas, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.especialista2, task_id)
+       if (task_id) await clearFollowUpTimer(String(task_id));
+        await addTag(subscriberId, 12805127)
+    } else if(parsedJson.message_1) {
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_1, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_2, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image2, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image3, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_3, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_menu, task_id)
+    }
+  }
+
+return {
+  ...response,
+  isJsonText,
+  parsedJson
+}
+
+} catch(error:any) {
+  console.log(error.message)
+  return ''
+  }
+}
+
+
+export async function respChatPrefollow1(phone: string, message: string, task_id?:any ){
+try{
+ const taskPre:any = await taskService.findById(task_id, true)
+ let subscriberId = taskPre?.lead.subscriberbot
+ const data = {
+  question: message,
+  overrideConfig:  {
+        sessionId: subscriberId,
+        systemMessage: follow_prompt,
+        vars: {
+            task_id: task_id,
+            telefone: phone
+        }
+        },
+ }
+ const response = await query2(data)
+  console.log(response)
+
+const responseText = typeof response?.text === 'string' ? response.text : '';
+let isJsonText = false;
+let parsedJson: any;
+function getDelayTime(messageText: string): number {
+  const wordCount = messageText.trim().split(/\s+/).length;
+  const baseDelay = 1000;
+  const delayPerWord = 400;
+  const maxDelay = 5000;
+
+  const delayTime = Math.min(baseDelay + wordCount * delayPerWord, maxDelay);
+  return delayTime;
+}
+
+if (responseText) {
+  try {
+    parsedJson = JSON.parse(responseText);
+    isJsonText = true;
+  } catch {
+    isJsonText = false;
+  }
+}
+if(!isJsonText) {
+const splitMessages = responseText ? responseText.split(/(?:\n\s*\n|(?<=[.?!])\s+)/) : [];
+for (const messageText of splitMessages) {
+        const formattedMessageText = messageText.trim();
+    
+        const finalPunctuation = /[.]$/;
+        const formattedMessageTextWithoutPunctuation = formattedMessageText.replace(finalPunctuation, '');
+     
+        await dispatchFollowUpMessage(subscriberId, 'text', messageText, task_id)
+      
+        const delayTime = getDelayTime(formattedMessageTextWithoutPunctuation);
+        await new Promise((resolve) => setTimeout(resolve, delayTime));
+      }
+    } else {
+      if (parsedJson.message_personalizado) {
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_personalizado, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_medidas, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.agradecimento, task_id)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.especialista2, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text',parsedJson.espero_receber, task_id)
+        await addTag(subscriberId, 12805127)
+    } else if(parsedJson.message_1) {
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_1, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_2, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image2, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image3, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_3, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_menu, task_id)
+    }
+  }
+return response
+} catch(error:any) {
+  console.log(error.message)
+  return ''
+}}

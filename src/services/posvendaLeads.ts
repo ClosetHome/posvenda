@@ -39,6 +39,7 @@ interface FindLeadPosVendaOptions {
   name?: string;
   email?: string;
   phone?: string;
+  subscriberbot?:number;
   city?: string;
   state?: string;
   includeTasks?: boolean;
@@ -78,8 +79,13 @@ class PosVendaLeadsService {
         };
       }
 
-      
+        if (options.subscriberbot) {
+        whereClause.email = {
+          [Op.iLike]: `%${options.subscriberbot}%`
+        };
+      }
 
+      
       if (options.phone) {
         whereClause.phone = {
           [Op.iLike]: `%${options.phone}%`

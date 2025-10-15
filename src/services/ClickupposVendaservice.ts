@@ -2,13 +2,14 @@ import {getTasksCustom, clickup} from './clickupServices'
 import clickupServices from './clickupServices.js';
 import utils from '../utils/utils';
 import {extrairDadosPessoais} from '../utils/dataExtractor';
-import {getSubscriber, sendMessage, sendHook, sendHookSegundaEtapa, setCustomFieldValue, shcadulesMessagesender, createSubscriber, sendMessagesWithDelay, addTag, deleteTag} from './botconversaService'
+import {getSubscriber, sendMessage, sendHook, sendHookSegundaEtapa, setCustomFieldValue, shcadulesMessagesender, createSubscriber, sendMessagesWithDelay, addTag, deleteTag, FOLLOW_UP_MESSAGE} from './botconversaService'
 import PosVendaLeadsService from './posvendaLeads'
 import {getCustomFieldId} from '../utils/utlsBotConversa'
 import Tasks from './taskService'
 import posvendaMessages from './posvendaMessages'
+import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
 
-import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages } from './clickupMessages'
+import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
 
 function delayDb(ms:any) {
@@ -43,6 +44,7 @@ function getSelectedArray(field: any): string[] {
 }
 
 export async function webHook(req: any) {
+  let leadCapture:any
   try {
     const taskPosVenda: any = await clickup.tasks.get(req.body.task_id);
 
@@ -82,14 +84,23 @@ export async function webHook(req: any) {
     if(contact.status === 200){
       contact = await getSubscriber(phone);
     }
-
-    const leadData = {
+    const options = {
+      subscriberbot: contact.id
+    }
+    
+    leadCapture = await leadService.findAll(options)
+    if(!leadCapture){
+     const leadData = {
       name: taskData ? taskData.name : taskPosVenda.body.name,
       phone,
       subscriberbot: contact.id,
       customFields
     };
-    const leadCreated = await leadService.create(leadData);
+     leadCapture = await leadService.create(leadData);
+    } else {
+      leadCapture = leadCapture[0];
+    } 
+
 
     const taskDataPosVenda = {
       id: taskPosVenda.body.id,
@@ -97,7 +108,7 @@ export async function webHook(req: any) {
       listId: Number(taskPosVenda.body.list.id),
       status: taskPosVenda.body.status.status,
       data: taskPosVenda.body,
-      leadId: leadCreated.id
+      leadId: leadCapture.id
     };
 
     // Só cria taskDataCloser se encontrou task no getTasksCustom
@@ -108,7 +119,7 @@ export async function webHook(req: any) {
         listId: Number(taskData.list.id),
         status: taskData.status.status,
         data: taskData,
-        leadId: leadCreated.id
+        leadId: leadCapture.id
       };
       await taskService.bulkCreate([taskDataPosVenda, taskDataCloser]);
     } else {
@@ -140,7 +151,7 @@ export async function webHook(req: any) {
       title: m.modelo,
       message_text: m.message,
       sent: true,
-      leadId: leadCreated.id
+      leadId: leadCapture.id
     }));
 
     await messageService.bulkCreate(messagesData);
@@ -175,12 +186,12 @@ export async function webHook(req: any) {
 
    if(category === 'RECOMPRA') {
     const options = {
-    leadId: leadCreated.id
+    leadId: leadCapture.id
     }
-      await sendMessage(leadData.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message)
-      await sendMessage(leadData.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'ENTREGA VIA TRANSPORTADORA')?.message || messages.find((message: { modelo: string; }) => message.modelo === 'CLIENTE RETIRA').message)
-      await deleteTag(leadData.subscriberbot, 15282954)
-      await addTag(leadData.subscriberbot, 15282955)
+      await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message)
+      await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'ENTREGA VIA TRANSPORTADORA')?.message || messages.find((message: { modelo: string; }) => message.modelo === 'CLIENTE RETIRA').message)
+      await deleteTag(leadCapture.subscriberbot, 15282954)
+      await addTag(leadCapture.subscriberbot, 15282955)
       
       clienteRetira
       ? await clickupServices.updateTask(taskDataPosVenda.id, 'cliente retira', '', 170448045 )
@@ -189,7 +200,7 @@ export async function webHook(req: any) {
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
    }
     
-    return leadData;
+    return leadCapture;
   } catch (error) {
     console.log(error);
     return [];
@@ -429,16 +440,12 @@ const messagesHistory = [
 }
 
 
-export async function sendMedia(task_id: string): Promise<any> {
+export async function sendMedia(subscriber: string): Promise<any> {
     try {
-      const leadToUpdate:any = await taskService.findById(task_id, true)
-       if(!leadToUpdate) return
-    
-      for(let i = 0; i < mediaMessages.length - 1; i++){
-        await sendMessage(Number(leadToUpdate.lead.subscriberbot), "file", mediaMessages[i])
-        await utils.delay(5000);
+      for(let i = 0; i <= mediaPre.length - 1; i++){
+        await sendMessage(Number(subscriber), "file", mediaPre[i])
+        await utils.delay(2000);
       }
-      
       return 'videos enviados';
     } catch (error) {
       console.error('Erro ao buscar chaves por padrão:', error);
@@ -731,4 +738,70 @@ function handleCustomFields(history_items: any, customFields: any[] = []): any[]
     customFields.push(parsed);
   }
   return customFields;
+}
+
+
+export async function followUpLost(status:string){
+try{
+  let options = {
+    status: status,
+    listId: 901108902340,
+    includeLead: true
+  }
+
+  let followUps:any
+  if(status === 'follow-up 1'){
+   followUps = await taskService.findAll(options)
+  console.log(followUps)
+  for(const leadFollow of followUps){
+    await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
+     await new Promise((resolve) => setTimeout(resolve, 3000));
+    await sendMessage(leadFollow.lead.subscriberbot, 'text', `Kemoel do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você está precisando?`)
+     await new Promise((resolve) => setTimeout(resolve, 3000));
+     await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`)
+     const options = {
+      taskId: leadFollow.id,
+      subscriberId: leadFollow.lead.subscriberbot,
+      followUpMessage: FOLLOW_UP_MESSAGE
+     }
+     await scheduleFollowUpIfInactive(options)
+  }
+  }
+  if(status === 'follow-up 2'){
+    followUps = await taskService.findAll(options)
+    for(const leadFollow of followUps){
+      await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
+         const options = {
+      taskId: leadFollow.id,
+      subscriberId: leadFollow.lead.subscriberbot,
+      followUpMessage: FOLLOW_UP_MESSAGE
+     }
+     await scheduleFollowUpIfInactive(options)
+    }
+  }
+    if(status === 'follow-up 3'){
+    followUps = await taskService.findAll(options)
+    for(const leadFollow of followUps){
+      await sendMessage(leadFollow.lead.subscriberbot, 'text', `Olá! Não estou conseguindo uma resposta sua. Estou a disposição para te ajudar, você ainda quer seguir com este atendimento?`)
+         const options = {
+      taskId: leadFollow.id,
+      subscriberId: leadFollow.lead.subscriberbot,
+      followUpMessage: FOLLOW_UP_MESSAGE
+     }
+     await scheduleFollowUpIfInactive(options)
+    }
+  }
+  if(status === 'follow-up 4'){
+    followUps = await taskService.findAll(options)
+    for(const leadFollow of followUps){
+      await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como não tivemos retorno por aqui, vamos encerrar esse atendimento por agora 😕`)
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento você quiser retomar ou tiver interesse em seguir com o projeto, é só me chamar por aqui. Estarei à disposição!`)
+    }
+  }
+  return followUps
+} catch (error) {
+  console.error('followUpLost error:', error)
+  return null
+}
 }

@@ -11,6 +11,7 @@ interface message {
 
 export const backendUrl = process.env.BACKEND_URL;
 
+export const mediaPre = [`${backendUrl}/api/files/videopre.mp4`, `${backendUrl}/api/files/foto1.jpeg`, `${backendUrl}/api/files/foto2.jpeg`, `${backendUrl}/api/files/foto3.jpeg`, `${backendUrl}/api/files/videoconhecerloja.mp4`, `${backendUrl}/api/files/followup1.mp4`]
 export const modelsFirtsContact = ['RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)', 'ENTREGA VIA TRANSPORTADORA', 'CLIENTE RETIRA', 'DADOS PARA CADASTRO', 'CUPOM ESPECIAL']
 export const modelsDirect = ['TUTORIAL MONTAGEM', 'INFORMAÇÕES DA ENTREGA', 'GARANTIA VITALÍCIA'];
 export const modelsAniversary = ['ANIVERSÁRIO - INÍCIO DO MÊS', 'ANIVERSÁRIO - NO DIA', 'ANIVERSÁRIO - FINAL DO MÊS'];
@@ -378,7 +379,6 @@ Desde já, muito obrigado! `,
 Gostaria de saber sua opinião sobre três coisas importantes para nós:
 1° Está tudo certinho com seu produto? Tem alguma sugestão de melhoria?
 2° O que mais influenciou sua decisão de escolher nosso produto e nossa empresa?
-3° Tem algo que você sente que ainda falta na sua rotina com o closet?
 Sua avaliação nos ajuda bastante!😊`,
     messageBot: `${name}, sua opinião é importante: 1) Produto ok? Alguma melhoria? 2) O que mais influenciou sua escolha? 3) Falta algo na sua rotina com o closet?`
   },
@@ -435,3 +435,9 @@ Frete grátis em compras acima de R$ 300 até o fim do mês! Me avise se quiser 
     return null
   }
 }
+
+
+export function mensagemEcommerce(name:string){ 
+return`Olá ${name}, aqui é a Lara do time da Closet Home. 
+Conseguiu acessar nossa loja on-line, posso te ajudar com alguma coisa?
+`}

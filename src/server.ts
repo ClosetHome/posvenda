@@ -1,9 +1,12 @@
 import './app.js';
 import { sequelize } from './db.js';
 import './modules/associations.js'
-import {cronJobMessages} from './services/cronJobMessages.js'
-import {verifyScheduledMessages, webHook} from './services/ClickupposVendaservice.js'
+import {cronJobMessages, cronJobMessagesFollowup1, cronJobMessagesFollowup2, cronJobMessagesFollowup3, cronJobMessagesFollowup4} from './services/cronJobMessages.js'
+import {verifyScheduledMessages, webHook, followUpLost} from './services/ClickupposVendaservice.js'
 import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
+import clickupServices from './services/clickupServices.js';
+
+
 
 
 
@@ -50,10 +53,13 @@ async function main() {
     await webHook(req)
    }))*/
     
-   
-
-
+  //clickupServices.updateClickupPre('+55 51 98349674', 'ganho', '868fz1y5f', 'ecommerce')
+//followUpLost('follow-up 3')
 cronJobMessages()
+cronJobMessagesFollowup1()
+cronJobMessagesFollowup2()
+cronJobMessagesFollowup3()
+cronJobMessagesFollowup4()
 //messagesMigration.up(sequelize.getQueryInterface())
 }
 

@@ -60,3 +60,20 @@ export function dadosPedido(lead:any){
       const customDataBotString = customDataBot.join('\n');
       return customDataBotString
 }
+
+
+export async function query2(data:any) {
+    const response = await fetch(
+        "https://projectx-teste-flow.xbfb3u.easypanel.host/api/v1/prediction/b092faff-ab87-47fa-991c-e1d70c1c5ed1",
+        {
+            headers: {
+                Authorization: "Bearer 3YvCeyxDvzBJrS6HIToBlSPiZB1jHNfSStWQMQ4yuzk",
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify(data)
+        }
+    );
+    const result = await response.json();
+    return result;
+}
