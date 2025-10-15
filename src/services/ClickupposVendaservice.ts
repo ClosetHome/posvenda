@@ -89,7 +89,7 @@ export async function webHook(req: any) {
     }
     
     leadCapture = await leadService.findAll(options)
-    if(!leadCapture){
+    if(leadCapture.length === 0){
      const leadData = {
       name: taskData ? taskData.name : taskPosVenda.body.name,
       phone,
