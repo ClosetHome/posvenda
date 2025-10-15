@@ -86,3 +86,4 @@ export async function clickupHookChatPreFollow(req: Request, res: Response) {
     if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar mensagem' });
   }
 }
+

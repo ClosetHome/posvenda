@@ -509,8 +509,7 @@ if(!taskPre) {
         }
         },
  }
- const response = await query(data)
- console.log(response)
+ const response = await query2(data)
 
 const responseText = typeof response?.text === 'string' ? response.text : '';
 let isJsonText = false;

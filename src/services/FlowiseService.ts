@@ -5,6 +5,8 @@ dotenv.config();
 
 const flowise_url = process.env.FLOWISE_URL as string
 const flowise_token = process.env.FLOWISE_TOKEN as string
+const flowise_url_pre = process.env.FLOWISE_URL_PRE as string
+
 const messageService = new posvendaMessages()
 
 
@@ -64,7 +66,7 @@ export function dadosPedido(lead:any){
 
 export async function query2(data:any) {
     const response = await fetch(
-        "https://projectx-teste-flow.xbfb3u.easypanel.host/api/v1/prediction/b092faff-ab87-47fa-991c-e1d70c1c5ed1",
+        flowise_url_pre,
         {
             headers: {
                 Authorization: "Bearer 3YvCeyxDvzBJrS6HIToBlSPiZB1jHNfSStWQMQ4yuzk",
