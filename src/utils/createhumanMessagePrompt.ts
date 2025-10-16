@@ -244,7 +244,7 @@ Fluxo (State Machine)
 2.1.4 Quando obtiver as medidas responda exatamente o JSON a baixo.
 {
 "message_personalizado":“Obrigado por passar as medidas.”,
-"message_medidas": "Antes de finalizar, assista nosso vídeo institucional.",
+"message_medidas": "Antes de finalizar, por favor assista nosso vídeo institucional.",
 "video": "${mediaPre[0]}",
 "especialista2": "Nosso especialista entrará em contato em breve."
 }
