@@ -398,14 +398,12 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
 
   try {
     payload = {
-      taskID: normalizedTaskId,
+      taskID: taskID,
       situacao,
-      telefone
+      telefone,
+      atendimento
     };
 
-    if (atendimento !== 'perdido') {
-      payload.atendimento = atendimento;
-    }
 
     if (atendimento === 'ecommerce' || atendimento !== 'perdido') {
       cachedTask = await taskService.findById(normalizedTaskId, true);

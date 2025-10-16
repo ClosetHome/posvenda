@@ -441,3 +441,5 @@ export function mensagemEcommerce(name:string){
 return`Olá ${name}, aqui é a Lara do time da Closet Home. 
 Conseguiu acessar nossa loja on-line, posso te ajudar com alguma coisa?
 `}
+
+
