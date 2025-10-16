@@ -756,7 +756,7 @@ try{
   for(const leadFollow of followUps){
     await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
      await new Promise((resolve) => setTimeout(resolve, 3000));
-    await sendMessage(leadFollow.lead.subscriberbot, 'text', `Kemoel do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você está precisando?`)
+    await sendMessage(leadFollow.lead.subscriberbot, 'text', `Joana do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você está precisando?`)
      await new Promise((resolve) => setTimeout(resolve, 3000));
      await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`)
      const options = {
