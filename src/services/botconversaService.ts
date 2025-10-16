@@ -202,9 +202,6 @@ const respostaUser = JSON.parse(response.text)
  const summary = respostaUser.summary
 const subscriberId = Number(task.lead.subscriberbot);
   if(status === 'failure' || status === 'success' && summary && task_id != undefined){
-        console.log(status)
-        console.log(summary)
-        console.log(task_id)
         await botStop(task_id, summary)
        // await deleteTag(subscriberId, 15296727)
       }
@@ -466,7 +463,7 @@ if(!taskPre) {
       taskPre?.body?.custom_fields
         ?.find((f: any) => f?.name === '👤 Telefone Cliente')
         ?.value;
-       console.log(taskPre.body)
+       
     if (!phone) return [];
           taskData = taskPre.body;
           firstName = utils.extractFirstName(taskPre.name);

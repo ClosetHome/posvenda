@@ -436,10 +436,6 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
       return;
     }
 
-    console.log(updatedTask.name);
-    console.log(telefone);
-    console.log(category);
-
     if (situacao === 'ganho') {
       await cliCkupTask(
         901112193927,
