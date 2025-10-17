@@ -398,12 +398,16 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
 
   try {
     payload = {
-      taskID: taskID,
+      taskID: normalizedTaskId,
       situacao,
-      telefone,
-      atendimento
+      telefone
     };
 
+    console.log(payload);
+
+    if (atendimento !== 'perdido') {
+      payload.atendimento = atendimento;
+    }
 
     if (atendimento === 'ecommerce' || atendimento !== 'perdido') {
       cachedTask = await taskService.findById(normalizedTaskId, true);
@@ -436,9 +440,13 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
       return;
     }
 
-    if (situacao === 'ganho') {
+    console.log(updatedTask.name);
+    console.log(telefone);
+    console.log(category);
+
+    if (situacao === 'ganho' && atendimento === 'ecommerce') {
       await cliCkupTask(
-        901112193927,
+        901108902349,
         updatedTask.name,
         'nova oportunidade',
         undefined,
