@@ -8,6 +8,7 @@ import {getTasksCustom, clickup} from './clickupServices'
 import {prompt_coleta_dados, prompt_pre, follow_prompt} from '../utils/createhumanMessagePrompt'
 import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
 import utils from '../utils/utils';
+import {pickJson} from '../utils/dataExtractor'
 
 export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
 const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
@@ -523,7 +524,7 @@ function getDelayTime(messageText: string): number {
 
 if (responseText) {
   try {
-    parsedJson = JSON.parse(responseText);
+    parsedJson = pickJson(responseText);
     isJsonText = true;
   } catch {
     isJsonText = false;

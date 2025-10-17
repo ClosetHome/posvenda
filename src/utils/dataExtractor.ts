@@ -121,3 +121,48 @@ export function formatarCEP(cep: string): string {
   const apenasNumeros = cep.replace(/\D/g, '');
   return apenasNumeros.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
+
+
+// 1) extrair o bloco ```json ... ```
+const extractJson = (text: string) => {
+  const m = text.match(/```json([\s\S]*?)```/);
+  return (m ? m[1] : text).trim();
+};
+
+// 2) normalizar aspas e escapar quebras **apenas dentro de strings**
+const escapeNewlinesInStrings = (raw: string) => {
+  let out = '', inStr = false, esc = false;
+  for (const ch of raw
+    .replace(/[\u201C\u201D]/g, '"')   // aspas duplas curvas → "
+    .replace(/[\u2018\u2019]/g, "'")   // aspas simples curvas → '
+  ) {
+    if (!inStr) {
+      if (ch === '"') { inStr = true; out += ch; }
+      else out += ch;
+    } else { // dentro da string
+      if (!esc && ch === '"') { inStr = false; out += ch; }
+      else if (!esc && ch === '\n') out += '\\n';
+      else { out += ch; }
+      esc = (!esc && ch === '\\');
+    }
+  }
+  return out;
+};
+
+// 3) parse + schema (Zod/Ajv) para garantir forma e chaves
+const safeParseJson = (text: string) => {
+  const raw = extractJson(text);
+  const cleaned = escapeNewlinesInStrings(raw);
+  return JSON.parse(cleaned);
+};
+
+
+export const pickJson = (t: string) => {
+  const m = t.match(/<JSON>([\s\S]*?)<\/JSON>/);
+  if (!m) throw new Error('JSON não encontrado');
+  return JSON.parse(
+    m[1]
+      .replace(/[\u201C\u201D]/g, '"') // aspas curvas → "
+      .replace(/\n/g, '\\n')           // proteção extra se vier quebra bruta
+  );
+};

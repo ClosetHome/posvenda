@@ -103,6 +103,10 @@ export async function scheduleFollowUpIfInactive(options: FollowUpOptions): Prom
       if (!task) return;
 
       const status = normalizeStatus(task.status);
+      if(status === 'ganho' || status === 'perdido'){ 
+        await clearFollowUpTimer(String(taskId));
+        return;
+      }
       if (status.includes('novo lead')){
         statusUpdate = 'follow-up 1'
       }
