@@ -55,12 +55,12 @@ async function main() {
     
   //clickupServices.updateClickupPre('+55 51 98349674', 'ganho', '868fz1y5f', 'ecommerce')
 //followUpLost('follow-up 3')
-/*
+
 cronJobMessages()
 cronJobMessagesFollowup1()
 cronJobMessagesFollowup2()
 cronJobMessagesFollowup3()
-cronJobMessagesFollowup4()*/
+cronJobMessagesFollowup4()
 //messagesMigration.up(sequelize.getQueryInterface())
 }
 

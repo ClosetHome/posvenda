@@ -759,36 +759,20 @@ try{
     await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você está precisando?`)
      await new Promise((resolve) => setTimeout(resolve, 3000));
      await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`)
-     const options = {
-      taskId: leadFollow.id,
-      subscriberId: leadFollow.lead.subscriberbot,
-      followUpMessage: FOLLOW_UP_MESSAGE
-     }
-     await scheduleFollowUpIfInactive(options)
+     await new Promise((resolve) => setTimeout(resolve, 60000));
   }
   }
   if(status === 'follow-up 2'){
     followUps = await taskService.findAll(options)
     for(const leadFollow of followUps){
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
-         const options = {
-      taskId: leadFollow.id,
-      subscriberId: leadFollow.lead.subscriberbot,
-      followUpMessage: FOLLOW_UP_MESSAGE
-     }
-     await scheduleFollowUpIfInactive(options)
+      await new Promise((resolve) => setTimeout(resolve, 60000));
     }
   }
     if(status === 'follow-up 3'){
     followUps = await taskService.findAll(options)
     for(const leadFollow of followUps){
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Olá! Não estou conseguindo uma resposta sua. Estou a disposição para te ajudar, você ainda quer seguir com este atendimento?`)
-         const options = {
-      taskId: leadFollow.id,
-      subscriberId: leadFollow.lead.subscriberbot,
-      followUpMessage: FOLLOW_UP_MESSAGE
-     }
-     await scheduleFollowUpIfInactive(options)
     }
   }
   if(status === 'follow-up 4'){
@@ -797,6 +781,7 @@ try{
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como não tivemos retorno por aqui, vamos encerrar esse atendimento por agora 😕`)
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento você quiser retomar ou tiver interesse em seguir com o projeto, é só me chamar por aqui. Estarei à disposição!`)
+      await new Promise((resolve) => setTimeout(resolve, 60000));
     }
   }
   return followUps

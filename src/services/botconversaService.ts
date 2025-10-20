@@ -9,9 +9,11 @@ import {prompt_coleta_dados, prompt_pre, follow_prompt} from '../utils/createhum
 import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
 import utils from '../utils/utils';
 import {pickJson} from '../utils/dataExtractor'
+import clickupFunctions from './clickupServices'
 
 export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
 const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
+const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000;
 
 dotenv.config();
 const leadService = new PosVendaLeadsService()
@@ -347,14 +349,12 @@ const response = await axios.delete(
   }
 );
 
-
 return response.data;
 }catch(error:any){
   console.log(error.message)
   return null
 }
 }
-
 
 export async function addTag(subscriber: number, tag:number): Promise<any> {
   const data ={}
@@ -370,7 +370,6 @@ const response = await axios.post(
     }
   }
 );
-
 
 return response.data;
 }catch(error:any){
@@ -425,6 +424,7 @@ async function dispatchFollowUpMessage(
   subscriberId: number,
   type: string,
   value: string,
+  inactivityMs: number,
   taskId?: any,
   fim?: any
 ) {
@@ -445,7 +445,8 @@ if(fim) {
   await scheduleFollowUpIfInactive({
     taskId: String(taskId),
     subscriberId,
-    followUpMessage: FOLLOW_UP_MESSAGE
+    followUpMessage: FOLLOW_UP_MESSAGE,
+    inactivityMs: inactivityMs
   });
 }
 }
@@ -530,47 +531,60 @@ if (responseText) {
     isJsonText = false;
   }
 }
+let inactiveTime =  DEFAULT_INACTIVITY_MS;
+
+if(taskPre.status === 'aguardando info') {
+  inactiveTime = 240 * 60 * 1000;
+}
 
 if(!isJsonText) {
 const splitMessages = responseText ? responseText.split(/(?:\n\s*\n|(?<=[.?!])\s+)/) : [];
+if(responseText.includes('preciso que você me envie as medidas do espaço disponível.')){
+  await clickupFunctions.updateTask(task_id, 'aguardando info')
+  const taskData = {
+    status:'aguardando info',
+  }
+  await taskService.update(task_id, taskData)
+  inactiveTime = 240 * 60 * 1000;
+}
 for (const messageText of splitMessages) {
         const formattedMessageText = messageText.trim();
     
         const finalPunctuation = /[.]$/;
         const formattedMessageTextWithoutPunctuation = formattedMessageText.replace(finalPunctuation, '');
      
-        await dispatchFollowUpMessage(subscriberId, 'text', messageText, task_id)
+        await dispatchFollowUpMessage(subscriberId, 'text', messageText, inactiveTime, task_id)
       
         const delayTime = getDelayTime(formattedMessageTextWithoutPunctuation);
         await new Promise((resolve) => setTimeout(resolve, delayTime));
       }
     } else {
       if (parsedJson.message_personalizado) {
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_personalizado, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_personalizado, inactiveTime, task_id)
         await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_medidas, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_medidas, inactiveTime, task_id)
         await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, inactiveTime, task_id)
         await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.especialista2, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.especialista2, inactiveTime, task_id)
        if (task_id) await clearFollowUpTimer(String(task_id));
         await addTag(subscriberId, 12805127)
     } else if(parsedJson.message_1) {
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_1, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_1, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_2, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_2, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image2, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image2, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image3, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.image3, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_3, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_3, inactiveTime, task_id)
        await new Promise((resolve) => setTimeout(resolve, 3000));
-       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_menu, task_id)
+       await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_menu, inactiveTime, task_id)
     }
   }
 

@@ -141,7 +141,7 @@ export async function scheduleFollowUpIfInactive(options: FollowUpOptions): Prom
         })
         return;
       }
-      await respChatPrefollow1(task.lead.phone, 'Crie uma mensagem de follow-up para insentivar o usuario a continuar o atendimento de onde parou. Essa mensagem não é do cliente, é instrução do sistema. Responda somente a mensagem de follow-up.', taskId)
+      await respChatPrefollow1(task.lead.phone, 'Crie uma mensagem de follow-up para insentivar o usuario a continuar o atendimento de onde parou, não pergunte sobre as próximas etapas, tente obter resposta da etapa pendente. Essa mensagem não é do cliente, é instrução do sistema. Responda somente a mensagem de follow-up.', taskId)
       const options ={
         taskId,
         subscriberId,
