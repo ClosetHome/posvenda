@@ -421,6 +421,9 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     if (atendimento !== 'perdido' && cachedTask?.lead?.subscriberbot) {
       await addTag(cachedTask.lead.subscriberbot, 12805127);
     }
+    if(atendimento === 'perdido' && cachedTask?.lead?.subscriberbot) {
+      await addTag(cachedTask.lead.subscriberbot, 12804129);
+    }
 
     console.log(payload);
 
@@ -461,7 +464,7 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     console.log(error.message);
   } finally {
     if (taskID) {
-      await addTag(cachedTask?.lead?.subscriberbot, 12804129)
+      
       await clearFollowUpTimer(normalizedTaskId);
     }
   }
