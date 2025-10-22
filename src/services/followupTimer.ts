@@ -3,7 +3,7 @@ import TaskService from './taskService';
 import { sendMessage } from './botconversaService.js';
 import clickupServices from './clickupServices';
 import {addTag} from './botconversaService'
-import {respChatPrefollow1} from './botconversaService'
+import {respChatPre} from './botconversaService'
 
 const FOLLOW_UP_CACHE_PREFIX = 'followup:lastMessage';
 const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000; // 10 minutos
@@ -132,16 +132,15 @@ export async function scheduleFollowUpIfInactive(options: FollowUpOptions): Prom
       if(followUpMessage === 'Hum... Parece que você não está disponível agora. Voltaremos a conversar em breve!') {
         await sendMessage(subscriberId, 'text', followUpMessage);
         await clearFollowUpTimer(String(taskId));
-        await addTag(subscriberId, 12804129)
         await addTag(subscriberId, 15658601)
         const task = await clickupServices.updateTask(taskId, statusUpdate, `lead para ${statusUpdate}`, undefined)
         await taskService.update(task.id, {
-          status: task.status.status,
+          status: statusUpdate,
           data: task
         })
         return;
       }
-      await respChatPrefollow1(task.lead.phone, 'Crie uma mensagem de follow-up para insentivar o usuario a continuar o atendimento de onde parou, não pergunte sobre as próximas etapas, tente obter resposta da etapa pendente. Essa mensagem não é do cliente, é instrução do sistema. Responda somente a mensagem de follow-up.', taskId)
+      await respChatPre(task.lead.phone, 'Crie uma mensagem de follow-up para insentivar o usuario a continuar o atendimento de onde parou, não pergunte sobre as próximas etapas, tente obter resposta da etapa pendente. Essa mensagem não é do cliente, é instrução do sistema. Responda somente a mensagem de follow-up.', taskId)
       const options ={
         taskId,
         subscriberId,
@@ -152,20 +151,7 @@ export async function scheduleFollowUpIfInactive(options: FollowUpOptions): Prom
      await scheduleFollowUpIfInactive(options)
      return
 
-     /*
-      if(latestEntry.attempts === 1){
-       message = 'Hum... Parece que você não está disponível agora. Vou encerrar a conversa, mas para retomar o atendimento é só chamar novamente. Até breve. 🧡'
-       await sendMessage(subscriberId, 'text', message);
-       await clearFollowUpTimer(String(taskId));
-      } else {
-      await sendMessage(subscriberId, 'text', followUpMessage);
 
-      const updatedEntry: FollowUpCacheEntry = {
-        lastInteractionAt: Date.now(),
-        attempts: latestEntry.attempts + 1
-      };
-      await writeCacheEntry(taskId, updatedEntry);
-      }*/
     } catch (error) {
       console.error(`Erro ao processar follow-up para a task ${taskId}:`, error);
     }

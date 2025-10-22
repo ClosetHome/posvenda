@@ -6,6 +6,7 @@ import usersRouter from './routes/userRouter.js';
 import LeadsRouter from './routes/leadsPovendaRoute.js';
 import messagesRouter from './routes/messagesRouter.js';
 import tasksRouter from './routes/tasksRouter.js';
+import sqlRouter from './routes/sqlRoute.js';
 import cors from 'cors';
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api', filesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/leads', LeadsRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/sql', sqlRouter);
 app.use('/api/tasks', tasksRouter);
 
 

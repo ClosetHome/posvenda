@@ -461,6 +461,7 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     console.log(error.message);
   } finally {
     if (taskID) {
+      await addTag(cachedTask?.lead?.subscriberbot, 12804129)
       await clearFollowUpTimer(normalizedTaskId);
     }
   }

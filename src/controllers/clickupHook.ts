@@ -1,6 +1,6 @@
 import { webHook, sendMedia, botStop, taskUpdatedHook} from "../services/ClickupposVendaservice";
 import clickupServices from "../services/clickupServices";
-import {respChat, respChatPre, respChatPrefollow1} from '../services/botconversaService'
+import {respChat, respChatPre} from '../services/botconversaService'
 import {Request, Response} from 'express'
 import TaskService from '../services/taskService'
 import axios from 'axios'
@@ -77,14 +77,5 @@ export async function clickupHookUpdatePre(req: Request, res: Response) {
   }
 }
 
-export async function clickupHookChatPreFollow(req: Request, res: Response) {
-  const { phone, message, task_id } = req.body ?? {};
-  try {
-    res.status(200).json({ message: 'mensagem enviada' });
-    void respChatPrefollow1(phone, message, task_id);
-  } catch (error) {
-    if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar mensagem' });
-  }
-}
 
 

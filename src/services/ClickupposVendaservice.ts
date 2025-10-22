@@ -759,6 +759,11 @@ try{
     await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você está precisando?`)
      await new Promise((resolve) => setTimeout(resolve, 3000));
      await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`)
+     const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 2', `lead para follow-up 2`, undefined)
+     await taskService.update(task.id, {
+      status: 'follow-up 2',
+      data: task
+      })
      await new Promise((resolve) => setTimeout(resolve, 60000));
   }
   }
@@ -766,6 +771,11 @@ try{
     followUps = await taskService.findAll(options)
     for(const leadFollow of followUps){
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
+    const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 3', `lead para follow-up 3`, undefined)
+     await taskService.update(task.id, {
+      status: 'follow-up 3',
+      data: task
+      })
       await new Promise((resolve) => setTimeout(resolve, 60000));
     }
   }
@@ -773,7 +783,13 @@ try{
     followUps = await taskService.findAll(options)
     for(const leadFollow of followUps){
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Olá! Não estou conseguindo uma resposta sua. Estou a disposição para te ajudar, você ainda quer seguir com este atendimento?`)
+      const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 4', `lead para follow-up 4`, undefined)
+     await taskService.update(task.id, {
+      status: 'follow-up 4',
+      data: task
+      })
     }
+     await new Promise((resolve) => setTimeout(resolve, 60000));
   }
   if(status === 'follow-up 4'){
     followUps = await taskService.findAll(options)
@@ -781,6 +797,7 @@ try{
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como não tivemos retorno por aqui, vamos encerrar esse atendimento por agora 😕`)
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento você quiser retomar ou tiver interesse em seguir com o projeto, é só me chamar por aqui. Estarei à disposição!`)
+      await clickupServices.updateClickupPre(leadFollow.lead.phone, 'perdido', leadFollow.id, 'perdido')
       await new Promise((resolve) => setTimeout(resolve, 60000));
     }
   }
