@@ -6,8 +6,11 @@ export const sqlToll = async (req: Request, res: Response) => {
   try {
     const result: any = await sequelize.query(query);
     console.log(result[0])
-    res.json(result);
+    const resultString = result[0].map((item: any) => JSON.stringify(item.page_content)).join('\n\n');
+    console.log(resultString)
+    res.json(resultString);
   } catch (error) {
+    console.log(error)
     res.status(500).send(error);
   }
 };
