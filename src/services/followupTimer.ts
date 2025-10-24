@@ -6,6 +6,7 @@ import {addTag} from './botconversaService'
 import {respChatPre} from './botconversaService'
 
 const FOLLOW_UP_CACHE_PREFIX = 'followup:lastMessage';
+const FOLLOW_UP_LOST_STATUS_PREFIX = 'followup:lostStatus';
 const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000; // 10 minutos
 const DEFAULT_INACTIVITY_MS_2 = 120 * 60 * 1000;
 
@@ -19,7 +20,7 @@ export interface FollowUpOptions {
   inactivityMs?: number;
 }
 
-interface FollowUpCacheEntry {
+export interface FollowUpCacheEntry {
   lastInteractionAt: number;
   attempts: number;
 }
@@ -36,7 +37,46 @@ function buildCacheKey(taskId: string): string {
   return `${FOLLOW_UP_CACHE_PREFIX}:${taskId}`;
 }
 
-async function readCacheEntry(taskId: string): Promise<FollowUpCacheEntry | null> {
+function buildLostStatusKey(taskId: string): string {
+  return `${FOLLOW_UP_LOST_STATUS_PREFIX}:${taskId}`;
+}
+
+async function readLostStatusMap(taskId: string): Promise<Record<string, string>> {
+  const raw = await redis.get(buildLostStatusKey(taskId));
+  if (!raw) return {};
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error('invalid follow-up lost cache payload');
+    }
+    return parsed as Record<string, string>;
+  } catch {
+    await redis.del(buildLostStatusKey(taskId));
+    return {};
+  }
+}
+
+async function writeLostStatusMap(taskId: string, payload: Record<string, string>): Promise<void> {
+  await redis.set(buildLostStatusKey(taskId), JSON.stringify(payload));
+}
+
+export async function getLostFollowUpStatusDate(taskId: string, status: string): Promise<string | null> {
+  const map = await readLostStatusMap(taskId);
+  return map[status] || null;
+}
+
+export async function setLostFollowUpStatusDate(taskId: string, status: string, dateKey: string): Promise<void> {
+  const map = await readLostStatusMap(taskId);
+  map[status] = dateKey;
+  await writeLostStatusMap(taskId, map);
+}
+
+export async function clearLostFollowUpCache(taskId: string): Promise<void> {
+  await redis.del(buildLostStatusKey(taskId));
+}
+
+export async function readCacheEntry(taskId: string): Promise<FollowUpCacheEntry | null> {
   const raw = await redis.get(buildCacheKey(taskId));
   if (!raw) return null;
 
@@ -52,7 +92,7 @@ async function readCacheEntry(taskId: string): Promise<FollowUpCacheEntry | null
   }
 }
 
-async function writeCacheEntry(taskId: string, entry: FollowUpCacheEntry): Promise<void> {
+export async function writeCacheEntry(taskId: string, entry: FollowUpCacheEntry): Promise<void> {
   await redis.set(buildCacheKey(taskId), JSON.stringify(entry));
 }
 

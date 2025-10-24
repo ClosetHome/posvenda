@@ -7,10 +7,14 @@ import PosVendaLeadsService from './posvendaLeads'
 import {getCustomFieldId} from '../utils/utlsBotConversa'
 import Tasks from './taskService'
 import posvendaMessages from './posvendaMessages'
-import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
+import {getLostFollowUpStatusDate, setLostFollowUpStatusDate, clearLostFollowUpCache} from './followupTimer'
+import { redis } from '../db.js';
+
 
 import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
+
+
 
 function delayDb(ms:any) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -749,131 +753,88 @@ export async function followUpLost(status:string){
       includeLead: true
     };
 
-    const now = new Date();
-    const todayKey = now.toISOString().split('T')[0];
-
-    const formatDateKey = (date: Date) => date.toISOString().split('T')[0];
-    const getNextBusinessDayKey = (date: Date) => {
-      const next = new Date(date);
-      do {
-        next.setDate(next.getDate() + 1);
-      } while (next.getDay() === 0 || next.getDay() === 6);
-      return formatDateKey(next);
-    };
-
-    const shouldProcessLead = (leadFollow: any) => {
-      const followUpMeta = leadFollow?.data?.followUpMeta || {};
-      const statusMeta = followUpMeta[status] || {};
-
-      if (statusMeta.processedOn === todayKey) {
-        return false;
-      }
-
-      if (statusMeta.nextAvailableOn && statusMeta.nextAvailableOn > todayKey) {
-        return false;
-      }
-
-      return true;
-    };
-
-    const markLeadProcessed = async (leadFollow: any, nextStatus?: string, taskData?: any) => {
-      const existingData = leadFollow?.data || {};
-      const existingMeta = existingData.followUpMeta || {};
-      const updatedMeta: any = {
-        ...existingMeta,
-        [status]: {
-          ...(existingMeta[status] || {}),
-          processedOn: todayKey,
-          processedAt: now.toISOString()
-        }
-      };
-
-      if (nextStatus) {
-        const candidateDate = getNextBusinessDayKey(now);
-        const nextStatusMeta = existingMeta[nextStatus] || {};
-        updatedMeta[nextStatus] = {
-          ...nextStatusMeta,
-          nextAvailableOn: nextStatusMeta.nextAvailableOn && nextStatusMeta.nextAvailableOn > candidateDate
-            ? nextStatusMeta.nextAvailableOn
-            : candidateDate
-        };
-      }
-
-      const updatedData = {
-        ...(taskData || existingData),
-        followUpMeta: updatedMeta
-      };
-
-      const updatePayload: any = {
-        data: updatedData
-      };
-
-      if (nextStatus) {
-        updatePayload.status = nextStatus;
-      }
-
-      try {
-        await taskService.update(leadFollow.id, updatePayload);
-      } catch (err) {
-        console.error(`Erro ao atualizar metadados do follow-up para a task ${leadFollow.id}:`, err);
-      }
-    };
-
     const followUps:any = await taskService.findAll(options);
-    const leadsToProcess = followUps.filter(shouldProcessLead);
+    const todayKey = new Date().toISOString().split('T')[0];
+    const processedLeads: any[] = [];
 
-    if (!leadsToProcess.length) {
-      return [];
-    }
+    for (const leadFollow of followUps) {
+      const lastProcessed = await getLostFollowUpStatusDate(leadFollow.id, status);
+      if (lastProcessed === todayKey) {
+        continue;
+      }
 
-    if(status === 'follow-up 1'){
-      console.log(leadsToProcess)
-      for(const leadFollow of leadsToProcess){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
+      if (!leadFollow?.lead?.subscriberbot) {
+        continue;
+      }
+
+      if(status === 'follow-up 1'){
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que voce achou dos nossos closets, fazem sentido para o que voce esta precisando?`)
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que voce achou dos nossos closets, fazem sentido para o que voce esta precisando?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`)
+        await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`);
 
-        const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 2', `lead para follow-up 2`, undefined)
-        await markLeadProcessed(leadFollow, 'follow-up 2', task)
+        const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 2', `lead para follow-up 2`, undefined);
+        if (task?.id) {
+          await taskService.update(task.id, {
+            status: 'follow-up 2',
+            data: task
+          });
+        }
 
+        await setLostFollowUpStatusDate(leadFollow.id, status, todayKey);
+        processedLeads.push(leadFollow);
         await new Promise((resolve) => setTimeout(resolve, 60000));
+        continue;
       }
-    }
 
-    if(status === 'follow-up 2'){
-      for(const leadFollow of leadsToProcess){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`)
-        const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 3', `lead para follow-up 3`, undefined)
-        await markLeadProcessed(leadFollow, 'follow-up 3', task)
+      if(status === 'follow-up 2'){
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`);
+        const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 3', `lead para follow-up 3`, undefined);
+        if (task?.id) {
+          await taskService.update(task.id, {
+            status: 'follow-up 3',
+            data: task
+          });
+        }
+
+        await setLostFollowUpStatusDate(leadFollow.id, status, todayKey);
+        processedLeads.push(leadFollow);
         await new Promise((resolve) => setTimeout(resolve, 60000));
+        continue;
       }
-    }
 
-    if(status === 'follow-up 3'){
-      for(const leadFollow of leadsToProcess){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Ola! Nao estou conseguindo uma resposta sua. Estou a disposicao para te ajudar, voce ainda quer seguir com este atendimento?`)
-        const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 4', `lead para follow-up 4`, undefined)
-        await markLeadProcessed(leadFollow, 'follow-up 4', task)
+      if(status === 'follow-up 3'){
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Ola! Nao estou conseguindo uma resposta sua. Estou a disposicao para te ajudar, voce ainda quer seguir com este atendimento?`);
+        const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 4', `lead para follow-up 4`, undefined);
+        if (task?.id) {
+          await taskService.update(task.id, {
+            status: 'follow-up 4',
+            data: task
+          });
+        }
+
+        await setLostFollowUpStatusDate(leadFollow.id, status, todayKey);
+        processedLeads.push(leadFollow);
+        await new Promise((resolve) => setTimeout(resolve, 60000));
+        continue;
       }
-      await new Promise((resolve) => setTimeout(resolve, 60000));
-    }
 
-    if(status === 'follow-up 4'){
-      for(const leadFollow of leadsToProcess){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como nao tivemos retorno por aqui, vamos encerrar esse atendimento por agora :(`)
+      if(status === 'follow-up 4'){
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como nao tivemos retorno por aqui, vamos encerrar esse atendimento por agora :(`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento voce quiser retomar ou tiver interesse em seguir com o projeto, e so me chamar por aqui. Estarei a disposicao!`)
-        await clickupServices.updateClickupPre(leadFollow.lead.phone, 'perdido', leadFollow.id, 'perdido')
-        await markLeadProcessed(leadFollow)
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento voce quiser retomar ou tiver interesse em seguir com o projeto, e so me chamar por aqui. Estarei a disposicao!`);
+        await clickupServices.updateClickupPre(leadFollow.lead.phone, 'perdido', leadFollow.id, 'perdido');
+        await clearLostFollowUpCache(leadFollow.id);
+        processedLeads.push(leadFollow);
         await new Promise((resolve) => setTimeout(resolve, 60000));
+        continue;
       }
     }
 
-    return leadsToProcess;
+    return processedLeads;
   } catch (error) {
-    console.error('followUpLost error:', error)
-    return null
+    console.error('followUpLost error:', error);
+    return null;
   }
 }
