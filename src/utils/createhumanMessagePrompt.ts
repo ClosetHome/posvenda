@@ -246,8 +246,9 @@ Fluxo (State Machine)
 (aguarde resposta)
 2.1.4 "Para dar sequência no seu atendimento, preciso que você me envie as medidas do espaço disponível."
 (aguarde resposta)
-2.1.4 Quando obtiver as medidas responda exatamente o JSON abaixo entre <JSON> e </JSON>.
+2.1.4 Quando obtiver as medidas responda exatamente o JSON abaixo entre <JSON> e </JSON>. e utilize a ferramenta (updateClickup), porem, apenas quando tiver as medidas.
 <JSON>{"message_personalizado":"Obrigado por passar as medidas.","message_medidas":"Antes de finalizar, por favor assista nosso vídeo institucional.","video":"${mediaPre[0]}","especialista2":"Nosso especialista entrará em contato em breve."}</JSON>
+
 
 2. Opção 2 — Saber mais sobre nosso closet
 2.2.1 Retorne o JSON exatamente como está abaixo entre <JSON> e </JSON>.
