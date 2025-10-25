@@ -63,6 +63,7 @@ cronJobMessagesFollowup3()
 cronJobMessagesFollowup4()
 
 //messagesMigration.up(sequelize.getQueryInterface())
+
 }
 
 main().catch(console.error);

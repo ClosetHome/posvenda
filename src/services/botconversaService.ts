@@ -5,7 +5,7 @@ import TaskService from './taskService'
 import {historyCreate, query, dadosPedido, query2} from './FlowiseService'
 import {botStop} from './ClickupposVendaservice'
 import {clickup} from './clickupServices'
-import {prompt_pre} from '../utils/createhumanMessagePrompt'
+import {prompt_pre, prompt_pre_2} from '../utils/createhumanMessagePrompt'
 import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
 import utils from '../utils/utils';
 import {pickJson} from '../utils/dataExtractor'
@@ -13,7 +13,7 @@ import clickupFunctions from './clickupServices'
 
 export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
 const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
-const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000;
+const DEFAULT_INACTIVITY_MS = 1 * 60 * 1000;
 
 dotenv.config();
 const leadService = new PosVendaLeadsService()

@@ -395,6 +395,38 @@ class TaskService {
   }
 
   /**
+   * Buscar tasks por status com tempo de atualiza��o maior que 8 horas
+   */
+  async findStaleByStatus(status: string, includeLead: boolean = false): Promise<Tasks[]> {
+    try {
+      const include = [];
+
+      if (includeLead) {
+        include.push({
+          model: LeadsPosVenda,
+          as: 'lead'
+        });
+      }
+
+      const eightHoursAgo = new Date(Date.now() - 11 * 60 * 60 * 1000);
+
+      const tasks = await Tasks.findAll({
+        where: {
+          status,
+          updatedAt: {
+            [Op.lte]: eightHoursAgo
+          }
+        },
+        include,
+        order: [['updatedAt', 'ASC']]
+      });
+
+      return tasks;
+    } catch (error) {
+      throw new Error(`Erro ao buscar tasks por status e tempo de atualiza��o: ${error}`);
+    }
+  }
+  /**
    * Contar tasks por status
    */
   async countByStatus(): Promise<any> {

@@ -753,27 +753,16 @@ export async function followUpLost(status:string){
       includeLead: true
     };
 
-    const followUps:any = await taskService.findAll(options);
-    const todayKey = new Date().toISOString().split('T')[0];
-    const processedLeads: any[] = [];
+    const followUps:any = await taskService.findStaleByStatus(status, true);
+
 
     for (const leadFollow of followUps) {
-      const lastProcessed = await getLostFollowUpStatusDate(leadFollow.id, status);
-      if (lastProcessed === todayKey) {
-        continue;
-      }
-
-      if (!leadFollow?.lead?.subscriberbot) {
-        continue;
-      }
-
       if(status === 'follow-up 1'){
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que voce achou dos nossos closets, fazem sentido para o que voce esta precisando?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`);
-
         const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 2', `lead para follow-up 2`, undefined);
         if (task?.id) {
           await taskService.update(task.id, {
@@ -781,9 +770,6 @@ export async function followUpLost(status:string){
             data: task
           });
         }
-
-        await setLostFollowUpStatusDate(leadFollow.id, status, todayKey);
-        processedLeads.push(leadFollow);
         await new Promise((resolve) => setTimeout(resolve, 60000));
         continue;
       }
@@ -797,15 +783,12 @@ export async function followUpLost(status:string){
             data: task
           });
         }
-
-        await setLostFollowUpStatusDate(leadFollow.id, status, todayKey);
-        processedLeads.push(leadFollow);
         await new Promise((resolve) => setTimeout(resolve, 60000));
         continue;
       }
 
       if(status === 'follow-up 3'){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Ola! Nao estou conseguindo uma resposta sua. Estou a disposicao para te ajudar, voce ainda quer seguir com este atendimento?`);
+       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Ola! Nao estou conseguindo uma resposta sua. Estou a disposicao para te ajudar, voce ainda quer seguir com este atendimento?`);
         const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 4', `lead para follow-up 4`, undefined);
         if (task?.id) {
           await taskService.update(task.id, {
@@ -813,26 +796,22 @@ export async function followUpLost(status:string){
             data: task
           });
         }
-
-        await setLostFollowUpStatusDate(leadFollow.id, status, todayKey);
-        processedLeads.push(leadFollow);
         await new Promise((resolve) => setTimeout(resolve, 60000));
         continue;
       }
 
       if(status === 'follow-up 4'){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como nao tivemos retorno por aqui, vamos encerrar esse atendimento por agora :(`);
+     //   await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como nao tivemos retorno por aqui, vamos encerrar esse atendimento por agora :(`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento voce quiser retomar ou tiver interesse em seguir com o projeto, e so me chamar por aqui. Estarei a disposicao!`);
         await clickupServices.updateClickupPre(leadFollow.lead.phone, 'perdido', leadFollow.id, 'perdido');
-        await clearLostFollowUpCache(leadFollow.id);
-        processedLeads.push(leadFollow);
+ 
         await new Promise((resolve) => setTimeout(resolve, 60000));
         continue;
       }
     }
 
-    return processedLeads;
+    return null;
   } catch (error) {
     console.error('followUpLost error:', error);
     return null;
