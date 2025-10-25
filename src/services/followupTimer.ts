@@ -11,7 +11,7 @@ const followupMessagesService = new PosVendaMessagesService()
 
 const FOLLOW_UP_CACHE_PREFIX = 'followup:lastMessage';
 const FOLLOW_UP_LOST_STATUS_PREFIX = 'followup:lostStatus';
-const DEFAULT_INACTIVITY_MS = 1 * 60 * 1000; // 10 minutos
+const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000; // 10 minutos
 const DEFAULT_INACTIVITY_MS_2 = 120 * 60 * 1000;
 
 const taskService = new TaskService();

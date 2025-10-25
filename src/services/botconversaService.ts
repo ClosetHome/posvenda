@@ -13,7 +13,7 @@ import clickupFunctions from './clickupServices'
 
 export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
 const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
-const DEFAULT_INACTIVITY_MS = 1 * 60 * 1000;
+const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000;
 
 dotenv.config();
 const leadService = new PosVendaLeadsService()
