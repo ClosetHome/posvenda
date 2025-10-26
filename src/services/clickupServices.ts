@@ -406,7 +406,7 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     console.log(payload);
 
     if (atendimento !== 'perdido') {
-      payload.atendimento = atendimento;
+      payload.atendimento = 'personalizado'
     }
 
     if (atendimento === 'ecommerce' || atendimento !== 'perdido') {
