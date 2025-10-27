@@ -5,9 +5,7 @@ import {cronJobMessages, cronJobMessagesFollowup1, cronJobMessagesFollowup2, cro
 import {verifyScheduledMessages, webHook, followUpLost} from './services/ClickupposVendaservice.js'
 import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
 import clickupServices from './services/clickupServices.js';
-
-
-
+import { updateTaskCustomField } from './services/clickupServices.js';
 
 
 
@@ -61,6 +59,7 @@ cronJobMessagesFollowup1()
 cronJobMessagesFollowup2()
 cronJobMessagesFollowup3()
 cronJobMessagesFollowup4()
+
 
 //messagesMigration.up(sequelize.getQueryInterface())
 

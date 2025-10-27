@@ -31,11 +31,11 @@ type ClickUpHookBody = { task_id?: string; history_items?: ClickUpHistoryItem[] 
 
 // Função para converter data DD/MM/YYYY para Date no fuso horário de São Paulo
 
-function getField(fields: any[], name: string) {
+export function getField(fields: any[], name: string) {
   return fields?.find(f => f.fieldName === name);
 }
 
-function getSelectedArray(field: any): string[] {
+export function getSelectedArray(field: any): string[] {
   const sel = field?.selectedOptions;
   if (!sel) return [];
   // suporta [{name|label}] ou ["Branco"]

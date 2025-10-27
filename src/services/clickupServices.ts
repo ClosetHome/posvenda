@@ -6,6 +6,7 @@ import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday
 import {getSubscriber, sendMessage, sendHook, addTag} from './botconversaService'
 import TaskService from './taskService'
 import {clearFollowUpTimer} from './followupTimer'
+import {getField, getSelectedArray} from './ClickupposVendaservice'
 dotenv.config();
 
 const clickup_key = process.env.CLICKUP_TOKEN as string
@@ -26,7 +27,7 @@ interface EmailBatchResult {
   }>;
 }
 
-export async function updateTask(taskId:string, status?:string, description?: string, assingeTo?:number) {
+export async function updateTask(taskId:string, status?:string, description?: string, assingeTo?:number, ecommerce?:string) {
   
   let taskData: any = {};
   let customFields: any[] = [];
@@ -41,6 +42,16 @@ export async function updateTask(taskId:string, status?:string, description?: st
     if(assingeTo){
       taskData.assignees = { add: [assingeTo] };
     }
+    if(ecommerce){
+       customFields.push({
+        id: "c15d7e46-1e1b-4e84-bafa-8a5c8a5f1fa2",
+        value: [ecommerce]
+      });
+    }
+
+     if (customFields.length > 0) {
+      taskData.custom_fields = customFields;
+    }
     try{
     const response:any = await clickup.tasks.update(taskId, taskData);
   return response.body
@@ -48,6 +59,20 @@ export async function updateTask(taskId:string, status?:string, description?: st
     console.log(error);
 }
 }
+
+export async function updateTaskCustomField(taskId:string, field_id:string, label_id?:any) {
+  
+
+  const data = {value:[label_id]}
+
+    try{
+    const response:any = await clickup.tasks.addCustomFieldValue(taskId, field_id, data);
+  return response.body
+} catch(error){
+    console.log(error);
+}
+}
+
 
 async function cliCkupTask(listId: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string ) {
   
@@ -412,6 +437,10 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     if (atendimento === 'ecommerce' || atendimento !== 'perdido') {
       cachedTask = await taskService.findById(normalizedTaskId, true);
     }
+       let phone: string | undefined =
+      cachedTask?.data?.custom_fields
+        ?.find((f: any) => f?.name === '👤 Telefone Cliente')
+        ?.value;
 
     if (atendimento === 'ecommerce' && cachedTask?.lead?.subscriberbot) {
       await addTag(cachedTask.lead.subscriberbot, 12804161);
@@ -436,6 +465,8 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
         }
       }
     );
+   
+
 
     const updatedTask = await taskService.update(normalizedTaskId, { status: situacao });
     if (!updatedTask) {
@@ -446,19 +477,10 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     console.log(updatedTask.name);
     console.log(telefone);
     console.log(category);
-
-    if (situacao === 'ganho' && atendimento === 'ecommerce') {
-      await cliCkupTask(
-        901108902349,
-        updatedTask.name,
-        'nova oportunidade',
-        undefined,
-        undefined,
-        undefined,
-        category || undefined,
-        normalizedTaskId,
-        telefone
-      );
+       await new Promise((resolve) => setTimeout(resolve, 10000));
+    if (situacao === 'ganho' && atendimento === 'ecommerce' && category) {
+    const taskCloser = await getTasksCustom(901108902349, phone);
+    await updateTaskCustomField(taskCloser[0].id, 'c15d7e46-1e1b-4e84-bafa-8a5c8a5f1fa2', category );
     }
   } catch (error: any) {
     console.log(error.message);
