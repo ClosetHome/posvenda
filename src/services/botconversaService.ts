@@ -566,6 +566,11 @@ for (const messageText of splitMessages) {
        await dispatchFollowUpMessage(subscriberId, 'file', parsedJson.video, inactiveTime, task_id)
         await new Promise((resolve) => setTimeout(resolve, 3000));
        await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.especialista2, inactiveTime, task_id)
+       await new Promise((resolve) => setTimeout(resolve, 15000));
+       const task:any = await taskService.findById(task_id, true)
+       if(task && task.status !== 'ganho'){
+        await clickupFunctions.updateClickupPre(phone, 'ganho', task_id, 'personalizado')
+       }
        if (task_id) await clearFollowUpTimer(String(task_id));
         await addTag(subscriberId, 12805127)
     } else if(parsedJson.message_1) {

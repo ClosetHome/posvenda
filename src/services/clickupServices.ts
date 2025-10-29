@@ -486,7 +486,6 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
     console.log(error.message);
   } finally {
     if (taskID) {
-      
       await clearFollowUpTimer(normalizedTaskId);
     }
   }
