@@ -17,6 +17,7 @@ export const modelsDirect = ['TUTORIAL MONTAGEM', 'INFORMAÇÕES DA ENTREGA', 'G
 export const modelsAniversary = ['ANIVERSÁRIO - INÍCIO DO MÊS', 'ANIVERSÁRIO - NO DIA', 'ANIVERSÁRIO - FINAL DO MÊS'];
 export const modelsSchadules = [
   'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ',
+  'TUTORIAL MONTAGEM 2',
   'FOLLOW-UP 02 - BUSCOU O CLOSET', 
   'FOLLOW-UP 02 - RECEBEU O CLOSET',
   'FOLLOW-UP 03 - MONTAGEM',
@@ -72,7 +73,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
  }
  if(!deliverDate) return messageData
  const dates = calculateTriggerDates(deliverDate)
- if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
+ if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ' || message.modelo === 'TUTORIAL MONTAGEM 2'){
       messageData = {
         title: message.modelo,
         message_text: message.message,
@@ -327,6 +328,12 @@ Depois é só confirmar a sequência de letras que o sistema pedir, e prontinho!
     message: `${name}, tenho uma ótima notícia, a entrega do seu closet está programada para amanhã. 😁
 Não conseguimos prever o horário de entrega, por isso peço que certifique se terá alguém em casa para receber o seu closet!`,
     messageBot: `Entrega prevista para amanhã, ${name}. Garanta alguém no local para receber.`
+  },
+    {
+    modelo: 'TUTORIAL MONTAGEM 2',
+    message: `Para facilitar a montagem do seu closet, vou te enviar um link dos tutoriais de montagem.
+Link: https://www.youtube.com/playlist?list=PLj51EHGGXOSy2I8Am81Db9mHaBTxu1PLI`,
+    messageBot: `Enviarei um vídeo com o passo a passo da montagem. Os gabaritos acompanham os módulos.`
   },
   {
     modelo: 'FOLLOW-UP 02 - RECEBEU O CLOSET',
