@@ -6,11 +6,13 @@ import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday
 import {getSubscriber, sendMessage, sendHook, addTag} from './botconversaService'
 import TaskService from './taskService'
 import {clearFollowUpTimer} from './followupTimer'
-import {getField, getSelectedArray} from './ClickupposVendaservice'
+import {redis2} from '../db'
+
 dotenv.config();
 
 const clickup_key = process.env.CLICKUP_TOKEN as string
 export const clickup = new Clickup(clickup_key)
+
 const taskService = new TaskService()
 
 interface EmailBatchResult {
@@ -74,7 +76,7 @@ export async function updateTaskCustomField(taskId:string, field_id:string, labe
 }
 
 
-async function cliCkupTask(listId: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string ) {
+async function cliCkupTask(list_id: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string ) {
   
       try {
     // Objeto base da requisição
@@ -132,7 +134,7 @@ async function cliCkupTask(listId: number, name:string, status: string ,email?: 
     // Só adiciona description se fornecida
    
 
-    const response: any = await clickup.lists.createTask(listId, taskData);
+    const response: any = await clickup.lists.createTask(list_id, taskData);
     return response.body
   } catch (error) {
     console.error('Erro ao criar tarefa:', error);
@@ -491,4 +493,43 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
   }
 }
 
-export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre}
+
+ export async function getTasksPosDisp() {
+ 
+    let leads: any = []
+    
+    let page = 0
+    let stop = false
+    
+    while (!stop) {
+        const options = {
+            method: 'GET',
+            url: `https://api.clickup.com/api/v2/list/901108902430/task?page=${page}&reverse=false&statuses=conseguiu%20montar&statuses=pesquis%20de%20satisfa%C3%A7%C3%A3o&statuses=lembrete&statuses=dica%20de%20organiza%C3%A7%C3%A3o&statuses=ofertas%20para%20clientes&statuses=stand%20by&include_closed=true`,
+            headers: {
+                accept: 'application/json',
+                Authorization: clickup_key
+            }
+        };
+        
+        try {
+            const response = await axios.request(options);
+            console.log(response.data.tasks)
+            leads.push(...response.data.tasks)
+
+            stop = response.data.last_page
+            page++
+        } catch (error) {
+            console.log(error);
+            break; // Adicione break para sair do loop em caso de erro
+        }
+    }
+    for(const lead of leads){
+      await redis2.set(`blacknovember:${lead.id}`, JSON.stringify(lead))
+    }
+    return leads
+}
+
+
+
+
+export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre, getTasksPosDisp}

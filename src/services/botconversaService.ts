@@ -33,14 +33,12 @@ const response = await axios.get(
     }
   }
 );
-
 return response.data;
 } catch(error:any){
   console.log(error.message)
   return null
 }
 }
-
 
 export async function createSubscriber(phone: string, firtName:string, lastName:string) {
   try{
@@ -49,7 +47,6 @@ export async function createSubscriber(phone: string, firtName:string, lastName:
     first_name: firtName ?? "",
     last_name: lastName ?? "none"
   }
-
 const response = await axios.post(
   `https://backend.botconversa.com.br/api/v1/webhook/subscriber/`,
   data,
@@ -61,7 +58,6 @@ const response = await axios.post(
     }
   }
 );
-
 return response.data;
 } catch(error:any){
   console.log(error.message)

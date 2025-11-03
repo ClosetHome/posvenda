@@ -73,7 +73,16 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
  }
  if(!deliverDate) return messageData
  const dates = calculateTriggerDates(deliverDate)
- if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ' || message.modelo === 'TUTORIAL MONTAGEM 2'){
+ if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
+      messageData = {
+        title: message.modelo,
+        message_text: message.message,
+        sent: false,
+        schadule: utils.parseDate(dates.oneDayBefore),
+        leadId: leadCustom.id
+    }
+    }
+    if(message.modelo === 'TUTORIAL MONTAGEM 2'){
       messageData = {
         title: message.modelo,
         message_text: message.message,

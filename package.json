@@ -8,6 +8,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@api/clickup": "file:.api/apis/clickup",
     "@damotech/clickup": "^3.2.1",
     "@types/multer": "^2.0.0",
     "axios": "^1.10.0",
