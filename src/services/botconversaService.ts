@@ -172,15 +172,15 @@ return response.data;
 }
 
 export async function respChat(phone: string, message: string, task_id?:any ) {
-  console.log(task_id)
+ // console.log(task_id)
  try{
   const task:any = await taskService.findById(task_id, true)
   
 const conversationHistory = await historyCreate(task.lead)
-console.log(conversationHistory)
+//console.log(conversationHistory)
 
 const info_pedido = dadosPedido(task.lead)
-console.log(info_pedido)
+//console.log(info_pedido)
   const data = {
   question: message,
   overrideConfig:  {
@@ -196,7 +196,7 @@ console.log(info_pedido)
   const response = await query(data)
  
 const respostaUser = JSON.parse(response.text)
- console.log(respostaUser)
+ //console.log(respostaUser)
  const status = respostaUser.status
  const summary = respostaUser.summary
 const subscriberId = Number(task.lead.subscriberbot);
@@ -218,7 +218,7 @@ function getDelayTime(messageText: string): number {
 
 
  const splitMessages = respostaUser.message.split(/(?:\n\s*\n|(?<=[.?!])\s+)/);
- console.log(splitMessages.length)
+ //console.log(splitMessages.length)
 for (const messageText of splitMessages) {
         const formattedMessageText = messageText.trim();
     

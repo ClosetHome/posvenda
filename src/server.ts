@@ -7,8 +7,6 @@ import messagesMigration from './migrations/20250926-add-attachment-fields-to-po
 import clickupServices from './services/clickupServices.js';
 
 
-
-
 async function main() {
     console.log('🎯 Sistema de Email Marketing ClosetHome iniciado!');
     console.log('📊 Dashboard disponível em: http://localhost:3000');
