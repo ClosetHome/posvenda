@@ -26,7 +26,7 @@ export const modelsSchadules = [
   'ÚLTIMO AVISO DO CUPOM',
   'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'
 ];
- export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`, `${backendUrl}/api/files/cupomaniversario.jpg`]
+ export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`, `${backendUrl}/api/files/cupomaniversario.jpg`, `${backendUrl}/api/files/organizacao.mp4`]
 
 export function treatMessageType(modelo:string){
  if(modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
@@ -73,7 +73,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
  }
  if(!deliverDate) return messageData
  const dates = calculateTriggerDates(deliverDate)
- if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
+  if(message.modelo === 'TUTORIAL MONTAGEM 2'){
       messageData = {
         title: message.modelo,
         message_text: message.message,
@@ -82,7 +82,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
         leadId: leadCustom.id
     }
     }
-    if(message.modelo === 'TUTORIAL MONTAGEM 2'){
+ if(message.modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
       messageData = {
         title: message.modelo,
         message_text: message.message,
@@ -401,7 +401,6 @@ Sua avaliação nos ajuda bastante!😊`,
   {
     modelo: 'LEMBRETE DO CUPOM - 2 MESES',
     message: `Oi, ${name}! Passando aqui para compartilhar algumas inspirações incríveis de clientes que já montaram seus closets e deixaram tudo super organizado. Dá uma olhada! 👀
-🔗 [Link com fotos ou depoimentos de clientes]
 Seu cupom de 15% continua ativo até ${ninetyTwoDaysAfter}! Me chama se quiser ajuda para usar. 😉`,
     messageBot: `Seu cupom de 15% vale até ${ninetyTwoDaysAfter}. Inspirações: [link]. Precisa de ajuda para usar?`
   },

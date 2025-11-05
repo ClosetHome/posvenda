@@ -1,6 +1,7 @@
 import LeadsPosVenda from '../modules/leadsPosVenda.js';
 import Tasks from '../modules/clickupTasks.js';
 import PosVendaMessages from '../modules/posvendaMessages.js';
+import TaskService from '../services/taskService.js';
 import { Op } from 'sequelize';
 
 interface CreateLeadPosVendaData {
@@ -45,6 +46,8 @@ interface FindLeadPosVendaOptions {
   includeTasks?: boolean;
   includeMessages?: boolean;
 }
+
+const taskService = new TaskService()
 
 class PosVendaLeadsService {
   /**
@@ -153,7 +156,7 @@ class PosVendaLeadsService {
       }
 
       const lead = await LeadsPosVenda.findByPk(id, { include });
-      return lead;
+      return lead?.toJSON() || null;
     } catch (error) {
       throw new Error(`Erro ao buscar lead pós-venda por ID: ${error}`);
     }
@@ -463,6 +466,20 @@ class PosVendaLeadsService {
       return leads;
     } catch (error) {
       throw new Error(`Erro ao buscar leads com todas as relações: ${error}`);
+    }
+  }
+
+  async updateLeadName(taskId: string, newName: string): Promise<any> {
+    try {
+      const task:any = await taskService.findById(taskId, true);
+      console.log(task)
+      if (!task) return;
+      const lead = await this.findById(task.lead.id, true);
+      if (!lead) return;
+      await this.update(lead.id, { name: newName });
+      return lead;
+    } catch (error) {
+      throw new Error(`Erro ao atualizar nome do lead: ${error}`);
     }
   }
 }

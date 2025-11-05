@@ -373,12 +373,15 @@ const messagesHistory = [
       if(message.title === 'FOLLOW-UP 02 - RECEBEU O CLOSET' || message.title === 'FOLLOW-UP 02 - BUSCOU O CLOSET'){
         await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[6])
       }
+      if(message.title === 'LEMBRETE DO CUPOM - 2 MESES'){
+        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[8])
+      }
         if(message.title === 'ANIVERSÁRIO - INÍCIO DO MÊS'){
             if (!status) return;
         const phoneField = getField(message.leadposvenda?.customFields ?? [], '👤 Telefone Cliente');
         const phoneOpts = getSelectedArray(phoneField);
         const taskCreated = await clickupServices.cliCkupTask(901111606565 ,message.leadposvenda.name, status, undefined, phoneOpts[0])
-        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[7])
+        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[8])
 
          const taskDataPosVenda = {
       id: taskCreated.id,

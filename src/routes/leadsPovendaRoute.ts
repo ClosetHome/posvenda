@@ -45,4 +45,7 @@ router.put('/:id', posVendaLeadsController.update);
 // Deletar lead por ID
 router.delete('/:id', posVendaLeadsController.delete);
 
+// Atualizar nome do lead por task ID
+router.post('/updatename/bytask', posVendaLeadsController.updateLeadNameByTaskId);
+
 export default router;

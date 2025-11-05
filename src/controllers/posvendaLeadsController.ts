@@ -278,6 +278,22 @@ export class PosVendaLeadsController {
       });
     }
   }
+
+  async updateLeadNameByTaskId(req: Request, res: Response): Promise<any> {
+     try {
+    const { taskID, newName } = req.body;
+    console.log(taskID, newName)
+   
+    const lead = await posVendaLeadsService.updateLeadName(taskID, newName);
+    if (!lead) return;
+    res.json(lead);
+    } catch (error: any) {
+      res.status(500).json({ 
+        error: 'Erro ao atualizar nome do lead',
+        message: error.message 
+      });
+    }
+  }
 }
 
 export default new PosVendaLeadsController();
