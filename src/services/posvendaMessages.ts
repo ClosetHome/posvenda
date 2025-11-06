@@ -274,7 +274,8 @@ class PosVendaMessagesService {
       order: [['schadule', 'ASC']],
     });
 
-    return messages.map(m => m.toJSON());
+   const serialized = messages.map(m => m.toJSON());
+   return serialized.filter(msg => msg?.message?.title !== 'Primeira mensagem black');
   } catch (error) {
     throw new Error(`Erro ao buscar mensagens agendadas para hoje: ${error}`);
   }
@@ -606,6 +607,28 @@ class PosVendaMessagesService {
       throw new Error(`Erro ao marcar mensagem como enviada: ${error}`);
     }
   }
+async findByTitleBlack(title:string){
+  try{
+ const messages = await PosVendaMessages.findAll({
+    where: {
+      title,
+      sent: false,
+      schadule: { [Op.ne]: null },
+    },
+    include: [
+      {
+        model: LeadsPosVenda,
+        as: 'leadposvenda',
+        attributes: ['id', 'name', 'phone', 'email', 'subscriberbot']
+      }
+    ],
+    order: [['schadule', 'ASC']],
+   });
+   return messages.map(message => message.toJSON());
+} catch (error) {
+  throw new Error(`Erro ao buscar mensagens por título: ${error}`);
+}
+}
 }
 
 export default PosVendaMessagesService;

@@ -68,6 +68,144 @@ export function calculateTriggerDates(inputDate: string): TriggerDates {
   };
 }
 
+export interface MessageToSchedule {
+  title: string;
+  message_text: string;
+  sent?: boolean;
+  leadId: number | string;
+}
+
+export type ScheduledMessage<T extends MessageToSchedule> = Omit<T, 'schadule'> & {
+  schadule: Date;
+};
+
+/**
+ * Agenda as mensagens para dois dias depois da data atual, aplicando intervalo de 1 min entre elas.
+ */
+export function scheduleMessages<T extends MessageToSchedule>(
+  messages: T[],
+  baseDate: Date = new Date()
+): ScheduledMessage<T>[] {
+  const timeZone = 'America/Sao_Paulo';
+  const todayParts = getDatePartsInTimeZone(baseDate, timeZone);
+  const nextDayParts = addDays(todayParts, 1);
+
+  const todayOffset = getTimeZoneOffsetMinutes(todayParts, timeZone);
+  const nextDayOffset = getTimeZoneOffsetMinutes(nextDayParts, timeZone);
+
+  const startToday = buildDateInTimeZone(
+    { ...todayParts, hour: 13, minute: 0, second: 0 },
+    todayOffset
+  );
+  const endToday = buildDateInTimeZone(
+    { ...todayParts, hour: 18, minute: 0, second: 0 },
+    todayOffset
+  );
+  const startNextDay = buildDateInTimeZone(
+    { ...nextDayParts, hour: 8, minute: 0, second: 0 },
+    nextDayOffset
+  );
+  const endNextDay = buildDateInTimeZone(
+    { ...nextDayParts, hour: 18, minute: 0, second: 0 },
+    nextDayOffset
+  );
+
+  const intervalMs = 3 * 60_000; // 3 minutes
+
+  const scheduled: ScheduledMessage<T>[] = [];
+  let current = startToday;
+  let currentWindowEnd = endToday;
+
+  for (const message of messages) {
+    if (current > currentWindowEnd) {
+      if (currentWindowEnd === endToday) {
+        current = startNextDay;
+        currentWindowEnd = endNextDay;
+      } else {
+        break;
+      }
+    }
+
+    if (current > currentWindowEnd) break;
+
+    scheduled.push({ ...message, schadule: new Date(current) });
+    current = new Date(current.getTime() + intervalMs);
+  }
+
+  return scheduled;
+}
+
+type DateParts = {
+  year: number;
+  month: number;
+  day: number;
+  hour?: number;
+  minute?: number;
+  second?: number;
+};
+
+function getDatePartsInTimeZone(date: Date, timeZone: string): DateParts {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  const parts = formatter.formatToParts(date);
+  const year = Number(parts.find(part => part.type === 'year')?.value ?? '0');
+  const month = Number(parts.find(part => part.type === 'month')?.value ?? '1');
+  const day = Number(parts.find(part => part.type === 'day')?.value ?? '1');
+  return { year, month, day };
+}
+
+function getTimeZoneOffsetMinutes(dateParts: DateParts, timeZone: string): number {
+  const referenceUtc = Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day, 12, 0, 0, 0);
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hour12: false,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short'
+  });
+  const formattedParts = formatter.formatToParts(new Date(referenceUtc));
+  const timeZoneName = formattedParts.find(part => part.type === 'timeZoneName')?.value ?? 'GMT';
+  const match = timeZoneName.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);
+
+  if (!match) return 0;
+
+  const sign = match[1].startsWith('-') ? -1 : 1;
+  const hours = Math.abs(parseInt(match[1], 10));
+  const minutes = match[2] ? parseInt(match[2], 10) : 0;
+  return sign * (hours * 60 + minutes);
+}
+
+function buildDateInTimeZone(dateParts: Required<DateParts>, offsetMinutes: number): Date {
+  const utcMillis = Date.UTC(
+    dateParts.year,
+    dateParts.month - 1,
+    dateParts.day,
+    dateParts.hour,
+    dateParts.minute,
+    dateParts.second ?? 0,
+    0
+  );
+  return new Date(utcMillis - offsetMinutes * 60_000);
+}
+
+function addDays(dateParts: DateParts, days: number): DateParts {
+  const base = new Date(Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day));
+  base.setUTCDate(base.getUTCDate() + days);
+  return {
+    year: base.getUTCFullYear(),
+    month: base.getUTCMonth() + 1,
+    day: base.getUTCDate()
+  };
+}
+
 // Exemplo de uso:
 // const result = calculateTriggerDates('2025-07-31');
 // console.log(result);

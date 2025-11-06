@@ -26,7 +26,7 @@ export const modelsSchadules = [
   'ÚLTIMO AVISO DO CUPOM',
   'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'
 ];
- export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`, `${backendUrl}/api/files/cupomaniversario.jpg`, `${backendUrl}/api/files/organizacao.mp4`]
+ export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`, `${backendUrl}/api/files/cupomaniversario.jpg`, `${backendUrl}/api/files/organizacao.mp4`, `${backendUrl}/api/files/blacknovemberimage.jpg`]
 
 export function treatMessageType(modelo:string){
  if(modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){
@@ -456,5 +456,27 @@ export function mensagemEcommerce(name:string){
 return`Olá ${name}, aqui é a Lara do time da Closet Home. 
 Conseguiu acessar nossa loja on-line, posso te ajudar com alguma coisa?
 `}
+
+
+export function blacknovemberMessages(name:string, index:number){
+const mensagens = [{
+modelo: 'Primeira mensagem black',
+message:`Oi ${name}! Tudo bem por aí?
+Passando rapidinho pra te contar que liberamos a Black Novembro da Closet Home 🎉
+E como você já é nosso cliente, tem acesso VIP às ofertas.
+👉 Prateleiras, cabideiros e gavetas pra ampliar seu closet
+👉 Organizadores internos pra deixar as roupas íntimas no lugar certo
+👉 Cabides padronizados pra um visual mais elegante
+E o melhor:
+🎟️ 15% OFF com o cupom BLACKVIP15
+🚚 Frete grátis acima de R$500 com o cupom ZEROFRETE
+Tá tudo lá no site:
+🛒 www.closethome.com.br
+Se quiser ajuda pra escolher, tô por aqui 😉
+`
+}]
+return mensagens[index]
+}
+
 
 

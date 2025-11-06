@@ -1,8 +1,8 @@
 import './app.js';
 import { sequelize } from './db.js';
 import './modules/associations.js'
-import {cronJobMessages, cronJobMessagesFollowup1, cronJobMessagesFollowup2, cronJobMessagesFollowup3, cronJobMessagesFollowup4} from './services/cronJobMessages.js'
-import {verifyScheduledMessages, webHook, followUpLost} from './services/ClickupposVendaservice.js'
+import {cronJobMessages, cronJobMessagesFollowup1, cronJobMessagesFollowup2, cronJobMessagesFollowup3, cronJobMessagesFollowup4, scheduleMessagesByTitle} from './services/cronJobMessages.js'
+import {verifyScheduledMessages, webHook, followUpLost, schaduleBlack} from './services/ClickupposVendaservice.js'
 import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
 import clickupServices from './services/clickupServices.js';
 
@@ -61,7 +61,8 @@ cronJobMessagesFollowup4()
 //clickupServices.getTasksPosDisp()
 
 //messagesMigration.up(sequelize.getQueryInterface())
-
+//schaduleBlack()
+scheduleMessagesByTitle('Primeira mensagem black');
 }
 
 main().catch(console.error);

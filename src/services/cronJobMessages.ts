@@ -1,7 +1,11 @@
-import cron from 'node-cron';
+import cron, { ScheduledTask } from 'node-cron';
 import {verifyScheduledMessages, followUpLost} from './ClickupposVendaservice'
+import {blackNovember} from './botconversaService'
+import PosVendaMessages from './posvendaMessages';
+import { DateTime } from 'luxon';
 
 
+const posvendaMessages = new PosVendaMessages();
 
 export async function cronJobMessages(){
 
@@ -119,3 +123,48 @@ export async function cronJobMessages(){
 
     console.log('📅 Cron job configurada para executar diariamente às 09:00 (America/Sao_Paulo)');
   }
+
+export  async function scheduleMessagesByTitle(title: string): Promise<void> {
+ const scheduledJobs = new Map<number, ScheduledTask>(); 
+  const timezone = 'America/Sao_Paulo';
+  const messages = await posvendaMessages.findByTitleBlack(title);
+
+  const now = DateTime.now().setZone(timezone);
+   messages.forEach(message => {
+    if (!message.schadule) return;
+
+    const runAt = DateTime.fromJSDate(message.schadule, { zone: timezone });
+    if (!runAt.isValid || runAt <= now) return;
+
+    const cronExp = `${runAt.second} ${runAt.minute} ${runAt.hour} ${runAt.day} ${runAt.month} *`;
+
+    const existing = scheduledJobs.get(message.id);
+    if (existing) existing.stop();
+
+    console.log(
+  `[Scheduler] Mensagem agendada`,
+  {
+    id: message.id,
+    title: message.title,
+    lead: message.leadposvenda?.id,
+    execucao: runAt.toISO(),
+    cron: cronExp,
+  }
+);
+
+    const task = cron.schedule(
+      cronExp,
+      async () => {
+        try {
+          await blackNovember(message.leadposvenda.subscriberbot, message);
+        } finally {
+          task.stop();
+          scheduledJobs.delete(message.id);
+        }
+      },
+      { timezone }
+    );
+
+    scheduledJobs.set(message.id, task);
+  });
+}

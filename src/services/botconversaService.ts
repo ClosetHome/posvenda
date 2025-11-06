@@ -10,6 +10,7 @@ import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
 import utils from '../utils/utils';
 import {pickJson} from '../utils/dataExtractor'
 import clickupFunctions from './clickupServices'
+import { mediaMessages } from './clickupMessages';
 
 export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
 const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
@@ -600,3 +601,12 @@ return {
   }
 }
 
+export async function blackNovember(subscriber:number, message:any){
+try{
+  await sendMessage(subscriber, 'text', message.message_text)
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  await sendMessage(subscriber, 'file', mediaMessages[9])
+} catch(error:any) {
+  console.log(error.message)
+}
+}

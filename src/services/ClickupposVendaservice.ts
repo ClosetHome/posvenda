@@ -8,10 +8,11 @@ import {getCustomFieldId} from '../utils/utlsBotConversa'
 import Tasks from './taskService'
 import posvendaMessages from './posvendaMessages'
 import {getLostFollowUpStatusDate, setLostFollowUpStatusDate, clearLostFollowUpCache} from './followupTimer'
-import { redis } from '../db.js';
+import {redis2} from '../db'
+import {scheduleMessages, MessageToSchedule} from '../utils/dateCalculator'
 
 
-import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre } from './clickupMessages'
+import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
 
 
@@ -820,3 +821,86 @@ export async function followUpLost(status:string){
     return null;
   }
 }
+
+
+export async function schaduleBlack(){
+  let leadCapture: any 
+   let customFields: any[] = [];
+    let taskData: any = null;
+    let firstName: string = '';
+    let lastName: string = '';
+    let messages:any[] = []
+ try{
+  const keys = await redis2.keys('blacknovember:*');
+  console.log(keys)
+  for (const key of keys) {
+   const value = await redis2.get(key);
+   if(value === null) continue;
+    const data = JSON.parse(value);
+  taskData = await taskService.findById(data.id, true);
+  if(!taskData){
+     let phone: string | undefined =
+   data.custom_fields
+        ?.find((f: any) => f?.name === '👤 Telefone Cliente')
+        ?.value;
+    if(!phone) continue;
+     phone = phone.replace(/[^\d+]/g, '');
+     console.log(phone)
+      customFields = utils.extractCustomFields(data.custom_fields);
+      if (!customFields?.length) continue;
+        firstName = utils.extractFirstName(data.name);
+      lastName = utils.extractLastName(data.name);
+      let contact = await getSubscriber(phone);
+    if (!contact) contact = await createSubscriber(phone, firstName, lastName);
+    if(contact.status === 200){
+      contact = await getSubscriber(phone);
+    }
+
+    const options = {
+      subscriberbot: contact.id
+    }
+
+    leadCapture = await leadService.findAll(options)
+    if(leadCapture.length === 0){
+     const leadData = {
+      name: data.name,
+      phone,
+      subscriberbot: contact.id,
+      customFields
+    };
+     leadCapture = await leadService.create(leadData);
+    } else {
+      leadCapture = leadCapture[0];
+    } 
+     const taskDataPosVenda = {
+      id: data.id,
+      name: data.name,
+      listId: Number(data.list.id),
+      status: data.status.status,
+      data: data,
+      leadId: leadCapture.id
+    };
+     await taskService.bulkCreate([taskDataPosVenda]);
+  }   else {
+    leadCapture = taskData.lead
+  }
+  const messageData = {
+    title: blacknovemberMessages(leadCapture.name, 0).modelo,
+    message_text: blacknovemberMessages(leadCapture.name, 0).message,
+    sent: false,
+    leadId: leadCapture.id
+  }
+   messages.push(messageData);
+  }
+  if (messages.length > 0) {
+  const allMessages = scheduleMessages(messages);
+  await messageService.bulkCreate(allMessages);
+}
+return
+ }
+ catch(error){
+  console.error('schaduleBlack error:', error);
+ }
+}
+
+  
