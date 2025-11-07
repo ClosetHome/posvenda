@@ -62,7 +62,7 @@ cronJobMessagesFollowup4()
 
 //messagesMigration.up(sequelize.getQueryInterface())
 //schaduleBlack()
-scheduleMessagesByTitle('Primeira mensagem black');
+
 }
 
 main().catch(console.error);
