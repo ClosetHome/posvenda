@@ -61,6 +61,22 @@ export function treatMessageType(modelo:string){
  }
 }
 
+function getClienteRetiraFlag(leadCustom?: any): { clienteRetira: boolean } {
+  const field = leadCustom?.customFields?.find(
+    (customField: { fieldName?: string }) => customField?.fieldName === '⚠️ Cliente Retira'
+  );
+  const options = field?.selectedOptions;
+  const normalized = Array.isArray(options)
+    ? options
+    : options
+    ? [options]
+    : [];
+  const value = normalized
+    .map((opt: any) => (typeof opt === 'string' ? opt : opt?.name ?? opt?.label))
+    .find(Boolean);
+  return { clienteRetira: value === 'Sim' };
+}
+
 export function treatMessageDate(message:message, deliverDate?:string, leadCustom?:any){
  let messageData = null
  if(modelsDirect.includes(message.modelo)){
@@ -73,6 +89,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
  }
  if(!deliverDate) return messageData
  const dates = calculateTriggerDates(deliverDate)
+ const { clienteRetira } = getClienteRetiraFlag(leadCustom)
   if(message.modelo === 'TUTORIAL MONTAGEM 2'){
       messageData = {
         title: message.modelo,
@@ -91,7 +108,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
         leadId: leadCustom.id
     }
     }
-    if(message.modelo === 'FOLLOW-UP 02 - BUSCOU O CLOSET' && leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Sim"){
+    if(message.modelo === 'FOLLOW-UP 02 - BUSCOU O CLOSET' && clienteRetira){
       messageData = {
         title: message.modelo,
         message_text: message.message,
@@ -100,7 +117,7 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
         leadId: leadCustom.id
   } 
 }
-   if(message.modelo === 'FOLLOW-UP 02 - RECEBEU O CLOSET'  && leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Não"){
+  if(message.modelo === 'FOLLOW-UP 02 - RECEBEU O CLOSET'  && !clienteRetira){
       messageData = {
         title: message.modelo,
         message_text: message.message,
