@@ -57,7 +57,6 @@ cronJobMessagesFollowup1()
 cronJobMessagesFollowup2()
 cronJobMessagesFollowup3()
 cronJobMessagesFollowup4()
-
 //clickupServices.getTasksPosDisp()
 
 //messagesMigration.up(sequelize.getQueryInterface())

@@ -274,8 +274,18 @@ class PosVendaMessagesService {
       order: [['schadule', 'ASC']],
     });
 
-   const serialized = messages.map(m => m.toJSON());
-   return serialized.filter(msg => msg?.message?.title !== 'Primeira mensagem black');
+const blockedTitles = new Set([
+  'Primeira mensagem black',
+  'Segunda mensagem black',
+  'Terceira mensagem black',
+  'Quarta mensagem black',
+]);
+    const serialized = messages.map((m) => m.toJSON());
+ return serialized.filter(
+  (msg) =>
+    !blockedTitles.has(msg?.message?.title) &&
+    !blockedTitles.has(msg?.title),
+);
   } catch (error) {
     throw new Error(`Erro ao buscar mensagens agendadas para hoje: ${error}`);
   }

@@ -459,7 +459,8 @@ Conseguiu acessar nossa loja on-line, posso te ajudar com alguma coisa?
 
 
 export function blacknovemberMessages(name:string, index:number){
-const mensagens = [{
+const mensagens = [
+  {
 modelo: 'Primeira mensagem black',
 message:`Oi ${name}! Tudo bem por aí?
 Passando rapidinho pra te contar que liberamos a Black Novembro da Closet Home 🎉
@@ -477,10 +478,9 @@ Se quiser ajuda pra escolher, tô por aqui 😉
 },
 {
 modelo: 'Segunda mensagem black',
-message:`Oi ${name}! Tudo bem por aí?
+message:`Oi ${name}!
 Conseguiu dar uma olhada no site?
 As ofertas do Black Novembro estão ativas, com até 15% OFF e frete grátis a partir de R$500!
-
 Utilize seu cupom exclusivo. 
 🎟️ BLACKVIP15
 🚚 ZEROFRETE
@@ -491,38 +491,28 @@ Se tiver dúvida ou quiser dica de combinação de módulos, só me chamar aqui!
 {
 modelo: 'Terceira mensagem black',
 message:`Oi ${name}! 
-Nossa Black também tá valendo pra outros ambientes da casa, além do closet:
-✨ Quarto infantil
-🪑 Escritório
-🧺 Lavanderia
-🛋️ Sala de estar
+Nossa Black também vale pra outros ambientes da casa:
+✨ Quarto infantil 
+🪑 Escritório 
+🧺 Lavanderia 
+🛋️ Sala de estar 
 🔧 Garagem
-Dá pra organizar tudo com estilo e ainda garantir:
-🎟️ 15% OFF com o cupom BLACKVIP15
-🚚 Frete grátis acima de R$500 com o cupom ZEROFRETE
-Tá tudo aqui:
-🛒 www.closethome.com.br
-Qualquer coisa, tô por aqui pra te ajudar ✨
+🎟️ 15% OFF – BLACKVIP15
+🚚 Frete grátis acima de R$500 – ZEROFRETE
+🛒 www.closethome.com.br/categoria-produto/organizadores/
+Se precisar de algo, é só chamar 😉
 `
 },
 {
 modelo: 'Quarta mensagem black',
 message:`Oi ${name}! 
-Últimos dias pra aproveitar nossa Black Novembro 👀
-Ainda dá tempo de garantir:
-✔ Prateleiras
-✔ Cabideiros
-✔ Gavetas
-✔ Organizadores internos
-✔ Cabides padronizados
-E ainda levar com:
+Últimos dias da nossa Black! Ainda dá tempo de melhorar a organização e ampliar seu closet. 
 🎟️ 15% OFF – BLACKVIP15
 🚚 Frete grátis acima de R$500 – ZEROFRETE
-🛒 Corre lá: www.closethome.com.br
-Se quiser montar um kit personalizado, me chama aqui! 😉
+🛒 www.closethome.com.br/categoria-produto/organizadores/
+Se quiser ajuda pra montar o kit, é só me chamar! 😉
 `
 }
-
 ]
 return mensagens[index]
 }

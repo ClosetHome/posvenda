@@ -11,6 +11,7 @@ import utils from '../utils/utils';
 import {pickJson} from '../utils/dataExtractor'
 import clickupFunctions from './clickupServices'
 import { mediaMessages } from './clickupMessages';
+import  PosVendaMessagesService  from './posvendaMessages';
 
 export let FOLLOW_UP_MESSAGE = 'Vamos dar sequencia? por favor responda e pergunta solicitada';
 const DEFAULT_INACTIVITY_MS_2 = 1440 * 60 * 1000;
@@ -19,6 +20,7 @@ const DEFAULT_INACTIVITY_MS = 10 * 60 * 1000;
 dotenv.config();
 const leadService = new PosVendaLeadsService()
 const taskService = new TaskService()
+const posVendaMessagesService = new PosVendaMessagesService()
 
 const  bot_key = process.env.BOT_CONVERSA_TOKEN as string
 
@@ -605,7 +607,8 @@ export async function blackNovember(subscriber:number, message:any){
 try{
   await sendMessage(subscriber, 'text', message.message_text)
   await new Promise((resolve) => setTimeout(resolve, 3000));
-  await sendMessage(subscriber, 'file', mediaMessages[9])
+ // await sendMessage(subscriber, 'file', mediaMessages[9])
+  await posVendaMessagesService.update(message.id, { sent: true })
 } catch(error:any) {
   console.log(error.message)
 }

@@ -255,12 +255,14 @@ export async function webHook(req: any) {
       const prazoField = getField(leadCustom?.customFields ?? [], '⚠️ Prazo de Entrega');
       const prazoOpts = getSelectedArray(prazoField);
       dataEntrega = prazoOpts[0];
+      const retiraField = getField(leadCustom?.customFields ?? [], '⚠️ Cliente Retira');
+      const retiraOpts = getSelectedArray(retiraField);
+      const clienteRetira = retiraOpts.includes('Sim');
       if (!dataEntrega) {
         await clickupServices.updateTask(task_id, undefined, description, 170448045 )
       } else {
-     leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Sim"
-       ? await clickupServices.updateTask(task_id, 'cliente retira', description, 170448045 )
-       : await clickupServices.updateTask(task_id, 'envio do closet', description, 170448045 )
+        const newStatus = clienteRetira ? 'cliente retira' : 'envio do closet';
+        await clickupServices.updateTask(task_id, newStatus, description, 170448045 )
       }
 
       // Agendadas dependem do prazo
@@ -274,9 +276,6 @@ export async function webHook(req: any) {
       let messagesPosDirect:any = messagesReturn(firsName, modelsDirect, dataEntrega);
 
       // Cliente Retira (filtra mensagem de entrega)
-      const retiraField = getField(leadCustom?.customFields ?? [], '⚠️ Cliente Retira');
-      const retiraOpts = getSelectedArray(retiraField);
-      const clienteRetira = retiraOpts.includes('Sim');
       if (clienteRetira || !dataEntrega) {
         messagesPosDirect = messagesPosDirect.filter((m: { modelo: string; }) => m.modelo !== 'INFORMAÇÕES DA ENTREGA');
       }
@@ -621,9 +620,8 @@ await sendMessage(subscriberId, 'file', toSend[0])
         const retiraOpts  = getSelectedArray(leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira"));
         const clienteRetira = retiraOpts.includes('Sim');
 
-           leadCustom.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira").selectedOptions[0]?.name === "Sim"
-       ? await clickupServices.updateTask(body.task_id, 'cliente retira', undefined, 170448045 )
-       : await clickupServices.updateTask(body.task_id, 'envio do closet', undefined, 170448045 )
+        const updatedStatus = clienteRetira ? 'cliente retira' : 'envio do closet';
+        await clickupServices.updateTask(body.task_id, updatedStatus, undefined, 170448045 )
            let allMessages: any[] = []
 
 
@@ -883,10 +881,11 @@ export async function schaduleBlack(){
      await taskService.bulkCreate([taskDataPosVenda]);
   }   else {
     leadCapture = taskData.lead
+    firstName = utils.extractFirstName(leadCapture.name);
   }
   const messageData = {
-    title: blacknovemberMessages(leadCapture.name, 0).modelo,
-    message_text: blacknovemberMessages(leadCapture.name, 0).message,
+    title: blacknovemberMessages(firstName, 3).modelo,
+    message_text: blacknovemberMessages(firstName, 3).message,
     sent: false,
     leadId: leadCapture.id
   }

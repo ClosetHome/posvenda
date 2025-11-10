@@ -87,49 +87,41 @@ export function scheduleMessages<T extends MessageToSchedule>(
   baseDate: Date = new Date()
 ): ScheduledMessage<T>[] {
   const timeZone = 'America/Sao_Paulo';
-  const todayParts = getDatePartsInTimeZone(baseDate, timeZone);
-  const nextDayParts = addDays(todayParts, 1);
+  const baseParts = getDatePartsInTimeZone(baseDate, timeZone);
+  let targetYear = baseParts.year;
+  if (baseParts.month > 11 || (baseParts.month === 11 && baseParts.day > 13)) {
+    targetYear += 1;
+  }
 
-  const todayOffset = getTimeZoneOffsetMinutes(todayParts, timeZone);
-  const nextDayOffset = getTimeZoneOffsetMinutes(nextDayParts, timeZone);
+  const intervalMs = 4 * 60_000; // 4 minutes
+  const scheduleDays = [
+    { day: 24, month: 11 },
+    { day: 25, month: 11 }
+  ];
 
-  const startToday = buildDateInTimeZone(
-    { ...todayParts, hour: 13, minute: 0, second: 0 },
-    todayOffset
-  );
-  const endToday = buildDateInTimeZone(
-    { ...todayParts, hour: 18, minute: 0, second: 0 },
-    todayOffset
-  );
-  const startNextDay = buildDateInTimeZone(
-    { ...nextDayParts, hour: 8, minute: 0, second: 0 },
-    nextDayOffset
-  );
-  const endNextDay = buildDateInTimeZone(
-    { ...nextDayParts, hour: 18, minute: 0, second: 0 },
-    nextDayOffset
-  );
-
-  const intervalMs = 3 * 60_000; // 3 minutes
+  const windows = scheduleDays.map(({ day, month }) => {
+    const dateParts = { year: targetYear, month, day };
+    const offset = getTimeZoneOffsetMinutes(dateParts, timeZone);
+    return {
+      start: buildDateInTimeZone({ ...dateParts, hour: 8, minute: 0, second: 0 }, offset),
+      end: buildDateInTimeZone({ ...dateParts, hour: 18, minute: 0, second: 0 }, offset)
+    };
+  });
 
   const scheduled: ScheduledMessage<T>[] = [];
-  let current = startToday;
-  let currentWindowEnd = endToday;
+  let messageIndex = 0;
 
-  for (const message of messages) {
-    if (current > currentWindowEnd) {
-      if (currentWindowEnd === endToday) {
-        current = startNextDay;
-        currentWindowEnd = endNextDay;
-      } else {
-        break;
-      }
+  for (const window of windows) {
+    let current = new Date(window.start);
+    while (current <= window.end && messageIndex < messages.length) {
+      scheduled.push({
+        ...messages[messageIndex],
+        schadule: new Date(current)
+      });
+      messageIndex += 1;
+      current = new Date(current.getTime() + intervalMs);
     }
-
-    if (current > currentWindowEnd) break;
-
-    scheduled.push({ ...message, schadule: new Date(current) });
-    current = new Date(current.getTime() + intervalMs);
+    if (messageIndex >= messages.length) break;
   }
 
   return scheduled;
@@ -194,16 +186,6 @@ function buildDateInTimeZone(dateParts: Required<DateParts>, offsetMinutes: numb
     0
   );
   return new Date(utcMillis - offsetMinutes * 60_000);
-}
-
-function addDays(dateParts: DateParts, days: number): DateParts {
-  const base = new Date(Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day));
-  base.setUTCDate(base.getUTCDate() + days);
-  return {
-    year: base.getUTCFullYear(),
-    month: base.getUTCMonth() + 1,
-    day: base.getUTCDate()
-  };
 }
 
 // Exemplo de uso:
