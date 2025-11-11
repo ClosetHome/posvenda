@@ -12,6 +12,7 @@ import {redis2} from '../db'
 import {scheduleMessages, MessageToSchedule} from '../utils/dateCalculator'
 
 
+
 import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
 
@@ -902,4 +903,52 @@ return
  }
 }
 
+export async function createCupom(telephone: string, name: string){
+  let taskData: any = null;
+  let firstName:any;
+  let lastName:any;
+  let subscriberId:any
+  
+  try{
+   const task = await clickupServices.cliCkupCreateTaskCupom(901108902340, name, "encaminhado closer", telephone)
+ console.log(task)
+      let phone: string | undefined =
+         task?.custom_fields
+           ?.find((f: any) => f?.name === '👤 Telefone Cliente')
+           ?.value;
+          
+       if (!phone) return [];
+             taskData = task;
+             firstName = utils.extractFirstName(task.name);
+             lastName = utils.extractLastName(task.name);
+           phone = phone.replace(/[^\d+]/g, '');
+         let contact = await getSubscriber(phone);
+       if (!contact) contact = await createSubscriber(phone, firstName, lastName);
+       if(contact.status === 200){
+         contact = await getSubscriber(phone);
+       }
+         const leadData = {
+         name: taskData ? taskData.name : task.name,
+         phone,
+         subscriberbot: contact.id
+       };
+       const leadCreated = await leadService.create(leadData);
+       subscriberId = contact.id
+          taskData = {
+           id: taskData.id,
+           name: taskData.name,
+           listId: Number(taskData.list.id),
+           status: taskData.status.status,
+           data: taskData,
+           leadId: leadCreated.id
+         };
+        subscriberId = contact.id
+        await taskService.bulkCreate([taskData]);
+
+        await clickupServices.cliCkupTask(901108902349, taskData.name, "nova oportunidade", undefined, telephone, undefined, undefined, taskData.id, telephone, "f4b71a87-0090-4dc2-a0dc-08babbdc28c8", 158517376)
+        return taskData;
+  } catch (error) {
+    console.log(error)
+  }
+}
   

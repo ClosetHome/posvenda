@@ -8,6 +8,8 @@ import TaskService from './taskService'
 import {clearFollowUpTimer} from './followupTimer'
 import {redis2} from '../db'
 
+
+
 dotenv.config();
 
 const clickup_key = process.env.CLICKUP_TOKEN as string
@@ -76,7 +78,7 @@ export async function updateTaskCustomField(taskId:string, field_id:string, labe
 }
 
 
-async function cliCkupTask(list_id: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string ) {
+async function cliCkupTask(list_id: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string, category2?:string, assingeTo?:number ) {
   
       try {
     // Objeto base da requisição
@@ -87,6 +89,10 @@ async function cliCkupTask(list_id: number, name:string, status: string ,email?:
 
     // Array para custom_fields (só adiciona se houver pelo menos um campo)
     const customFields: any[] = [];
+
+      if(assingeTo){
+      taskData.assignees = [assingeTo]
+    }
 
     // Adiciona email se fornecido
     if (email) {
@@ -117,6 +123,12 @@ async function cliCkupTask(list_id: number, name:string, status: string ,email?:
         value: [category]
       });
     }
+  if(category2){
+     customFields.push({
+     id: 'e5d18511-9c48-4c01-bcba-f4ae6120e623',
+     value: category2
+    })
+  }
 
     if(linkReference){
       taskData.links_to = linkReference
@@ -530,6 +542,49 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
 }
 
 
+async function cliCkupCreateTaskCupom(list_id: number, name:string, status: string ,telefoneSdr?:string ) {
+  
+      try {
+    // Objeto base da requisição
+    const taskData: any = {
+      name: name,
+      status: status
+    };
+
+    // Array para custom_fields (só adiciona se houver pelo menos um campo)
+    const customFields: any[] = [];
+
+    // Adiciona email se fornecido
+       if (telefoneSdr) {
+      customFields.push({
+        id: '329ee3ef-c499-47fb-a66d-6a407a3222cb',
+        value: telefoneSdr
+      });
+    }
+
+    customFields.push({
+     id: 'e5d18511-9c48-4c01-bcba-f4ae6120e623',
+     value: "f4b71a87-0090-4dc2-a0dc-08babbdc28c8"
+    })
 
 
-export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre, getTasksPosDisp}
+    // Só adiciona custom_fields se houver campos
+    if (customFields.length > 0) {
+      taskData.custom_fields = customFields;
+    }
+
+    // Só adiciona description se fornecida
+   
+
+    const response: any = await clickup.lists.createTask(list_id, taskData);
+    return response.body
+  } catch (error) {
+    console.error('Erro ao criar tarefa:', error);
+  }
+}
+
+
+
+
+
+export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre, getTasksPosDisp, cliCkupCreateTaskCupom}

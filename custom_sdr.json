@@ -1,0 +1,180 @@
+{
+  "fields": [
+    {
+      "id": "294fe29d-11af-41a8-9dad-5dce8bf68e4d",
+      "name": "👤 Email Cliente",
+      "type": "short_text",
+      "type_config": {},
+      "date_created": "1737206408714",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "329ee3ef-c499-47fb-a66d-6a407a3222cb",
+      "name": "👤 Telefone Cliente",
+      "type": "phone",
+      "type_config": {},
+      "date_created": "1737206374885",
+      "hide_from_guests": false,
+      "required": true
+    },
+    {
+      "id": "3f0d9001-f6c4-461a-acfb-d7b691102d64",
+      "name": "🤖 Pipeline - Perdido",
+      "type": "tasks",
+      "type_config": {
+        "fields": []
+      },
+      "date_created": "1739119185172",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "6718437d-d4d9-47a0-8295-92553a56f8fc",
+      "name": "🤖 Pipeline - Closer",
+      "type": "tasks",
+      "type_config": {
+        "fields": []
+      },
+      "date_created": "1739119178567",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "7ac04885-0d22-454d-abcd-a8dbc8c814b7",
+      "name": "Numero",
+      "type": "phone",
+      "type_config": {},
+      "date_created": "1750161374043",
+      "hide_from_guests": false,
+      "required": true
+    },
+    {
+      "id": "7b2ee04e-4ea5-4dc7-b177-2998f0a0278c",
+      "name": "🤖 Pipeline - Pós Venda",
+      "type": "tasks",
+      "type_config": {
+        "fields": []
+      },
+      "date_created": "1739119195806",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "9843f898-50a6-49b3-b407-35339179b83f",
+      "name": "‼️ lead_id (NUNCA, JAMAIS ALTERAR ESSE VALOR OU EXCLUIR ESSE CAMPO 😥🔫)",
+      "type": "short_text",
+      "type_config": {},
+      "date_created": "1757797889193",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "bc9d8f85-de02-4c61-b1a2-8345bef1964e",
+      "name": "⚠️ Stage",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "37ab3361-dba3-4ee5-a238-0001e88e2ba7",
+            "name": "Confirmação",
+            "color": null,
+            "orderindex": 0
+          },
+          {
+            "id": "f1476162-f62d-4b4d-90be-d2c71ba7fc80",
+            "name": "Em Andamento",
+            "color": "#f9d900",
+            "orderindex": 1
+          },
+          {
+            "id": "1ba5c765-c501-4c23-adf0-91fc3a0b5a27",
+            "name": "Ganho",
+            "color": "#2ecd6f",
+            "orderindex": 2
+          },
+          {
+            "id": "52c86cef-9fb2-4ab8-847b-6cefc914ddbc",
+            "name": "Congelado",
+            "color": "#02BCD4",
+            "orderindex": 3
+          },
+          {
+            "id": "bc03e2e7-984e-46e8-be25-a38c7133fbd0",
+            "name": "Perdido",
+            "color": "#e50000",
+            "orderindex": 4
+          }
+        ]
+      },
+      "date_created": "1737207003964",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "cd14bca4-16be-4ca1-82ee-7ed5969387f3",
+      "name": "🏃‍♂️‍➡️ Prospecção",
+      "type": "labels",
+      "type_config": {
+        "sorting": "manual",
+        "options": [
+          {
+            "id": "7d23db69-4d75-40aa-9ded-a08ce3f1a806",
+            "label": "Lead do pré-atendimento",
+            "color": "#1bbc9c",
+            "orderindex": 0
+          },
+          {
+            "id": "fd7df258-1e66-4728-9a83-05e664685ceb",
+            "label": "Oportunidade perdida",
+            "color": "#f9d900",
+            "orderindex": 1
+          }
+        ]
+      },
+      "date_created": "1743679992942",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "e5d18511-9c48-4c01-bcba-f4ae6120e623",
+      "name": "Recuperar Lead",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "6c714f65-b07c-4087-8dfc-b4b97af466d5",
+            "name": "Recuperar",
+            "color": "#04A9F4",
+            "orderindex": 0
+          },
+          {
+            "id": "7f28584a-87d3-4352-a247-57345e5fc1cc",
+            "name": "Recuperado",
+            "color": "#FF4081",
+            "orderindex": 1
+          },
+          {
+            "id": "09f8f8d8-3c4c-431b-bcd0-dd62cb20ddad",
+            "name": "Chat Ecom",
+            "color": "#ff7800",
+            "orderindex": 2
+          },
+          {
+            "id": "f4b71a87-0090-4dc2-a0dc-08babbdc28c8",
+            "name": "Cupom desconto",
+            "color": "#e50000",
+            "orderindex": 3
+          }
+        ]
+      },
+      "date_created": "1747673974028",
+      "hide_from_guests": false,
+      "required": false
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { webHook, sendMedia, botStop, taskUpdatedHook} from "../services/ClickupposVendaservice";
+import { webHook, sendMedia, botStop, taskUpdatedHook, createCupom} from "../services/ClickupposVendaservice";
 import clickupServices from "../services/clickupServices";
 import {respChat, respChatPre} from '../services/botconversaService'
 import {Request, Response} from 'express'
@@ -72,6 +72,17 @@ export async function clickupHookUpdatePre(req: Request, res: Response) {
      res.status(200).json({ message: 'atualizado' });
  void clickupServices.updateClickupPre(telefone, situacao, taskID, atendimento)
 
+  } catch (error) {
+    if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar mensagem' });
+  }
+}
+
+export async function clickupHookCreateCupom(req: Request, res: Response) {
+  const { telefone, nome } = req.body ?? {};
+  console.log(telefone, nome)
+  try {
+    res.status(200).json({ message: 'cupom criado' });
+    void createCupom(telefone, nome);
   } catch (error) {
     if (!res.headersSent) res.status(500).json({ message: 'Erro ao enviar mensagem' });
   }
