@@ -83,9 +83,7 @@ class PosVendaLeadsService {
       }
 
         if (options.subscriberbot) {
-        whereClause.email = {
-          [Op.iLike]: `%${options.subscriberbot}%`
-        };
+        whereClause.subscriberbot = options.subscriberbot;
       }
 
       
@@ -129,7 +127,7 @@ class PosVendaLeadsService {
         order: [['createdAt', 'DESC']]
       });
 
-      return leads;
+      return leads.map(lead => lead.toJSON());
     } catch (error) {
       throw new Error(`Erro ao buscar leads pós-venda: ${error}`);
     }

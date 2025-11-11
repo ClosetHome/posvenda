@@ -907,7 +907,7 @@ export async function createCupom(telephone: string, name: string){
   let taskData: any = null;
   let firstName:any;
   let lastName:any;
-  let subscriberId:any
+  let lead:any
   
   try{
    const task = await clickupServices.cliCkupCreateTaskCupom(901108902340, name, "encaminhado closer", telephone)
@@ -927,22 +927,30 @@ export async function createCupom(telephone: string, name: string){
        if(contact.status === 200){
          contact = await getSubscriber(phone);
        }
-         const leadData = {
+       const options = {
+        subscriberbot: contact.id
+       }
+        lead = await leadService.findAll(options);
+       if(lead.length > 0){
+         lead = lead[0];
+         console.log(lead)
+       } else {
+        const leadData = {
          name: taskData ? taskData.name : task.name,
          phone,
          subscriberbot: contact.id
        };
-       const leadCreated = await leadService.create(leadData);
-       subscriberId = contact.id
+          lead = await leadService.create(leadData);
+       }
           taskData = {
            id: taskData.id,
            name: taskData.name,
            listId: Number(taskData.list.id),
            status: taskData.status.status,
            data: taskData,
-           leadId: leadCreated.id
+           leadId: lead.id
          };
-        subscriberId = contact.id
+
         await taskService.bulkCreate([taskData]);
 
         await clickupServices.cliCkupTask(901108902349, taskData.name, "nova oportunidade", undefined, telephone, undefined, undefined, taskData.id, telephone, "f4b71a87-0090-4dc2-a0dc-08babbdc28c8", 158517376)
