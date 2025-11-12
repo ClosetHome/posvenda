@@ -5,6 +5,7 @@ import {cronJobMessages, cronJobMessagesFollowup1, cronJobMessagesFollowup2, cro
 import {verifyScheduledMessages, webHook, followUpLost, schaduleBlack} from './services/ClickupposVendaservice.js'
 import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
 import clickupServices from './services/clickupServices.js';
+import { sendMessage } from './services/botconversaService.js';
 
 
 async function main() {
