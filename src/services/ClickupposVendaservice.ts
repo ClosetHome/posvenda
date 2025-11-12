@@ -808,7 +808,7 @@ export async function followUpLost(status:string){
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento você quiser retomar ou tiver interesse em seguir com o projeto, e so me chamar por aqui. Estarei a disposição!`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Vou te enviar o link da nossa loja online caso queira conferir nossos produtos`);
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Vou te enviar o link da nossa loja online caso queira conferir nossos produtos.`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Loja online: https://closethome.com.br/categoria-produto/closet-modulares/`);
         await clickupServices.updateClickupPre(leadFollow.lead.phone, 'perdido', leadFollow.id, 'perdido');
