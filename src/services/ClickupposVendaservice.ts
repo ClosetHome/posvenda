@@ -763,7 +763,7 @@ export async function followUpLost(status:string){
       if(status === 'follow-up 1'){
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que voce achou dos nossos closets, fazem sentido para o que voce esta precisando?`);
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você esta precisando?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'file', `${mediaPre[5]}`);
         const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 2', `lead para follow-up 2`, undefined);
@@ -791,7 +791,7 @@ export async function followUpLost(status:string){
       }
 
       if(status === 'follow-up 3'){
-       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Ola! Nao estou conseguindo uma resposta sua. Estou a disposicao para te ajudar, voce ainda quer seguir com este atendimento?`);
+       await sendMessage(leadFollow.lead.subscriberbot, 'text', `Olá! Nao estou conseguindo uma resposta sua. Estou a disposição para te ajudar, você ainda quer seguir com este atendimento?`);
         const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 4', `lead para follow-up 4`, undefined);
         if (task?.id) {
           await taskService.update(task.id, {
@@ -806,7 +806,7 @@ export async function followUpLost(status:string){
       if(status === 'follow-up 4'){
      //   await sendMessage(leadFollow.lead.subscriberbot, 'text', `Oi ${leadFollow.lead.name}, tudo bem? Como nao tivemos retorno por aqui, vamos encerrar esse atendimento por agora :(`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento voce quiser retomar ou tiver interesse em seguir com o projeto, e so me chamar por aqui. Estarei a disposicao!`);
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Se em algum momento você quiser retomar ou tiver interesse em seguir com o projeto, e so me chamar por aqui. Estarei a disposição!`);
         await clickupServices.updateClickupPre(leadFollow.lead.phone, 'perdido', leadFollow.id, 'perdido');
  
         await new Promise((resolve) => setTimeout(resolve, 60000));
@@ -953,7 +953,7 @@ export async function createCupom(telephone: string, name: string){
 
         await taskService.bulkCreate([taskData]);
 
-        await clickupServices.cliCkupTask(901108902349, taskData.name, "nova oportunidade", undefined, telephone, undefined, undefined, taskData.id, telephone, "f4b71a87-0090-4dc2-a0dc-08babbdc28c8", 158517376)
+        await clickupServices.cliCkupTask(901108902349, taskData.name, "nova oportunidade", undefined, telephone, undefined, undefined, taskData.id, telephone, "f4b71a87-0090-4dc2-a0dc-08babbdc28c8", 158517376, "f1476162-f62d-4b4d-90be-d2c71ba7fc80")
         return taskData;
   } catch (error) {
     console.log(error)

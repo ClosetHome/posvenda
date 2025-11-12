@@ -78,7 +78,7 @@ export async function updateTaskCustomField(taskId:string, field_id:string, labe
 }
 
 
-async function cliCkupTask(list_id: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string, category2?:string, assingeTo?:number ) {
+async function cliCkupTask(list_id: number, name:string, status: string ,email?: string, telefone?: string, descricao?: string, category?:string, linkReference?:string, telefoneSdr?:string, category2?:string, assingeTo?:number, stage?:string ) {
   
       try {
     // Objeto base da requisição
@@ -127,6 +127,12 @@ async function cliCkupTask(list_id: number, name:string, status: string ,email?:
      customFields.push({
      id: 'e5d18511-9c48-4c01-bcba-f4ae6120e623',
      value: category2
+    })
+  }
+  if(stage){
+     customFields.push({
+     id: 'bc9d8f85-de02-4c61-b1a2-8345bef1964e',
+     value: stage
     })
   }
 
