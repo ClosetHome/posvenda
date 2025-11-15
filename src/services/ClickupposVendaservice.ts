@@ -335,7 +335,7 @@ export async function webHook(req: any) {
 
 export async function verifyScheduledMessages() {
   try {
-    const messagesToSend: any[] = await messageService.findScheduledForToday(true);
+    const messagesToSend: any[] = await messageService.findScheduledForToday(true, true);
     console.log(messagesToSend)
     // Processa todas as mensagens em paralelo
     await Promise.all(messagesToSend.map(async (message) => {
@@ -761,7 +761,11 @@ export async function followUpLost(status:string){
 
     for (const leadFollow of followUps) {
       if(status === 'follow-up 1'){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`);
+          let message = `Bom dia, tudo bem?`
+        if(leadFollow.lead.nameconfirm){
+          message = `Bom dia ${leadFollow.lead.name}, tudo bem?`
+        }
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', message);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         await sendMessage(leadFollow.lead.subscriberbot, 'text', `Lara do Time da Closet Home aqui. O que você achou dos nossos closets, fazem sentido para o que você esta precisando?`);
         await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -778,7 +782,12 @@ export async function followUpLost(status:string){
       }
 
       if(status === 'follow-up 2'){
-        await sendMessage(leadFollow.lead.subscriberbot, 'text', `Bom dia ${leadFollow.lead.name}, tudo bem?`);
+
+        let message = `Bom dia, tudo bem?`
+        if(leadFollow.lead.nameconfirm){
+          message = `Bom dia ${leadFollow.lead.name}, tudo bem?`
+        }
+        await sendMessage(leadFollow.lead.subscriberbot, 'text', message);
         const task = await clickupServices.updateTask(leadFollow.id, 'follow-up 3', `lead para follow-up 3`, undefined);
         if (task?.id) {
           await taskService.update(task.id, {

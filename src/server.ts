@@ -6,7 +6,8 @@ import {verifyScheduledMessages, webHook, followUpLost, schaduleBlack} from './s
 import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
 import clickupServices from './services/clickupServices.js';
 import { sendMessage } from './services/botconversaService.js';
-
+import createUsersTable  from './migrations/add_colunm_active_leads.js';
+import  messageService  from './services/posvendaMessages.js';
 
 async function main() {
     console.log('🎯 Sistema de Email Marketing ClosetHome iniciado!');
@@ -61,8 +62,9 @@ cronJobMessagesFollowup4()
 
 //clickupServices.getTasksPosDisp()
 
-//messagesMigration.up(sequelize.getQueryInterface())
+//createUsersTable.up(sequelize.getQueryInterface())
 //schaduleBlack()
+
 
 }
 

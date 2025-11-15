@@ -248,25 +248,28 @@ class PosVendaMessagesService {
   /**
    * Buscar mensagens agendadas para hoje
    */
- async findScheduledForToday(includeLead: boolean = false): Promise<PosVendaMessages[]> {
-  try {
-    const tz = 'America/Sao_Paulo';
+  async findScheduledForToday(includeLead: boolean = false, leadActive?: boolean): Promise<PosVendaMessages[]> {
+    try {
+      const tz = 'America/Sao_Paulo';
 
-    // Limites do dia *em São Paulo*, convertidos para UTC (Date) para comparar no banco
+      // Limites do dia *em São Paulo*, convertidos para UTC (Date) para comparar no banco
   const startOfDay = DateTime.utc().startOf('day').toJSDate(); // 2025-09-24T00:00:00.000Z
   const endOfDay   = DateTime.utc().endOf('day').toJSDate();
      console.log(startOfDay, endOfDay)
-    const include: any[] = [];
-    if (includeLead) {
-      include.push({
-        model: LeadsPosVenda,
-        as: 'leadposvenda',
-        include: [{ model: Tasks, as: 'tasks' }],
-      });
-    }
+      const include: any[] = [];
+      if (includeLead || typeof leadActive === 'boolean') {
+        include.push({
+          model: LeadsPosVenda,
+          as: 'leadposvenda',
+          attributes: includeLead ? undefined : [],
+          include: includeLead ? [{ model: Tasks, as: 'tasks' }] : undefined,
+          where: typeof leadActive === 'boolean' ? { active: leadActive } : undefined,
+          required: typeof leadActive === 'boolean',
+        });
+      }
 
-    const messages = await PosVendaMessages.findAll({
-      where: {
+      const messages = await PosVendaMessages.findAll({
+        where: {
         schadule: { [Op.between]: [startOfDay, endOfDay] },
         sent: false,
       },

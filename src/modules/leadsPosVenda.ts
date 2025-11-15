@@ -17,6 +17,8 @@ class LeadsPosVenda extends Model {
   public phone!: string;
   public subscriberbot?:number;
   public customFields?: object
+  public active?: boolean;
+  public nameconfirm?: boolean;
 }
 
 LeadsPosVenda.init({
@@ -82,6 +84,16 @@ LeadsPosVenda.init({
     type: DataTypes.JSON,
     allowNull: true
   },
+  active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: true                                                                                                                                                                                    
+  },
+  nameconfirm: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false
+  }
 }, {
   sequelize,
   schema: 'public',

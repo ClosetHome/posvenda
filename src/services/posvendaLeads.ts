@@ -32,6 +32,8 @@ interface UpdateLeadPosVendaData {
   birthday?: Date | null;
   phone?: string;
   customFields?: any;
+  active?: boolean;
+  nameconfirm?: boolean;
 }
 
 interface FindLeadPosVendaOptions {
@@ -45,6 +47,8 @@ interface FindLeadPosVendaOptions {
   state?: string;
   includeTasks?: boolean;
   includeMessages?: boolean;
+  active?: boolean;
+  nameconfirm?: boolean;
 }
 
 const taskService = new TaskService()
@@ -474,7 +478,7 @@ class PosVendaLeadsService {
       if (!task) return;
       const lead = await this.findById(task.lead.id, true);
       if (!lead) return;
-      await this.update(lead.id, { name: newName });
+      await this.update(lead.id, { name: newName, nameconfirm: true });
       return lead;
     } catch (error) {
       throw new Error(`Erro ao atualizar nome do lead: ${error}`);
