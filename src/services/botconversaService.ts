@@ -545,6 +545,15 @@ if(responseText.includes('preciso que você me envie as medidas do espaço dispo
   await taskService.update(task_id, taskData)
   inactiveTime = 240 * 60 * 1000;
 }
+
+if(responseText.includes('Loja online: https://closethome.com.br/categoria-produto/closet-modulares/')){
+    const task:any = await taskService.findById(task_id, true)
+   if(task && task.status !== 'ganho'){
+        await clickupFunctions.updateClickupPre(phone, 'ganho', task_id, 'ecommerce')
+       }
+       if (task_id) await clearFollowUpTimer(String(task_id));
+        await addTag(subscriberId, 12805127)
+}
 for (const messageText of splitMessages) {
         const formattedMessageText = messageText.trim();
     

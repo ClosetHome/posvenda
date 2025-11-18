@@ -65,7 +65,7 @@ cronJobMessagesFollowup4()
 //createUsersTable.up(sequelize.getQueryInterface())
 //schaduleBlack()
 
-
+scheduleMessagesByTitle('Terceira mensagem black')
 }
 
 main().catch(console.error);
