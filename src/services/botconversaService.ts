@@ -5,7 +5,7 @@ import TaskService from './taskService'
 import {historyCreate, query, dadosPedido, query2} from './FlowiseService'
 import {botStop} from './ClickupposVendaservice'
 import {clickup} from './clickupServices'
-import {prompt_pre, prompt_pre_2} from '../utils/createhumanMessagePrompt'
+import {prompt_pre} from '../utils/createhumanMessagePrompt'
 import {scheduleFollowUpIfInactive, clearFollowUpTimer} from './followupTimer'
 import utils from '../utils/utils';
 import {pickJson} from '../utils/dataExtractor'
@@ -590,6 +590,7 @@ for (const messageText of splitMessages) {
        await dispatchFollowUpMessage(subscriberId, 'text', parsedJson.message_menu, inactiveTime, task_id)
     }
   }
+    
 
 return {
   ...response,
