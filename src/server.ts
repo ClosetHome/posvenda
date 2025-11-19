@@ -8,6 +8,7 @@ import clickupServices from './services/clickupServices.js';
 import { sendMessage } from './services/botconversaService.js';
 import createUsersTable  from './migrations/add_colunm_active_leads.js';
 import  messageService  from './services/posvendaMessages.js';
+import {respChat} from './services/botconversaService.js';
 
 async function main() {
     console.log('🎯 Sistema de Email Marketing ClosetHome iniciado!');
@@ -17,7 +18,7 @@ async function main() {
    
    const req1 = {
     body: {
-      task_id:'8868f84aj3'
+      task_id:'868gcwcq0'
     },
    }
 /*
@@ -49,8 +50,8 @@ async function main() {
 /*
    await Promise.all(resArray.map(async (req) => {
     await webHook(req)
-   }))*/
-    
+   }))
+    */
   //clickupServices.updateClickupPre('+55 51 98349674', 'ganho', '868fz1y5f', 'ecommerce')
 //followUpLost('follow-up 3')
 
@@ -65,7 +66,8 @@ cronJobMessagesFollowup4()
 //createUsersTable.up(sequelize.getQueryInterface())
 //schaduleBlack()
 
-scheduleMessagesByTitle('Terceira mensagem black')
+//scheduleMessagesByTitle('Terceira mensagem black')
+
 }
 
 main().catch(console.error);

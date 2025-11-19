@@ -95,16 +95,18 @@ export async function webHook(req: any) {
     }
     
     leadCapture = await leadService.findAll(options)
-    if(leadCapture.length === 0){
+    console.log(leadCapture)
+   if(leadCapture.length === 0){
      const leadData = {
       name: taskData ? taskData.name : taskPosVenda.body.name,
       phone,
       subscriberbot: contact.id,
       customFields
     };
-     leadCapture = await leadService.create(leadData);
+    console.log(leadData)
+    leadCapture = await leadService.create(leadData);
     } else {
-      leadCapture = leadCapture[0];
+      leadCapture = await leadService.update(leadCapture[0].id, {customFields: customFields})
     } 
 
 
@@ -118,6 +120,7 @@ export async function webHook(req: any) {
     };
 
     // Só cria taskDataCloser se encontrou task no getTasksCustom
+     
     if (taskData) {
       const taskDataCloser = {
         id: taskData.id,
@@ -127,9 +130,9 @@ export async function webHook(req: any) {
         data: taskData,
         leadId: leadCapture.id
       };
-      await taskService.bulkCreate([taskDataPosVenda, taskDataCloser]);
+     await taskService.bulkCreate([taskDataPosVenda, taskDataCloser]);
     } else {
-      await taskService.bulkCreate([taskDataPosVenda]);
+    await taskService.bulkCreate([taskDataPosVenda]);
     }
 
     // Prazo de entrega (opcional)
@@ -145,7 +148,7 @@ export async function webHook(req: any) {
    } else {
     messages = messagesReturn(firstName, modelsFirtsContact, dataEntrega);
     const retiraField = getField(customFields, '⚠️ Cliente Retira');
-    const retiraOpts  = getSelectedArray(retiraField);
+    const retiraOpts  = getSelectedArray(retiraField);  
     clienteRetira = retiraOpts.includes('Sim');
 
     messages = clienteRetira
@@ -160,7 +163,9 @@ export async function webHook(req: any) {
       leadId: leadCapture.id
     }));
 
-    await messageService.bulkCreate(messagesData);
+   
+
+   await messageService.bulkCreate(messagesData);
 
     // Texto para bot (seguro)
     const customDataBot = customFields.map((f: any) => {
@@ -191,9 +196,7 @@ export async function webHook(req: any) {
 
 
    if(category === 'RECOMPRA') {
-    const options = {
-    leadId: leadCapture.id
-    }
+  
       await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message)
       await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'ENTREGA VIA TRANSPORTADORA')?.message || messages.find((message: { modelo: string; }) => message.modelo === 'CLIENTE RETIRA').message)
       await deleteTag(leadCapture.subscriberbot, 15282954)
