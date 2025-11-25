@@ -617,7 +617,7 @@ export async function blackNovember(subscriber:number, message:any){
 try{
   await sendMessage(subscriber, 'text', message.message_text)
   await new Promise((resolve) => setTimeout(resolve, 3000));
- // await sendMessage(subscriber, 'file', mediaMessages[9])
+  await sendMessage(subscriber, 'file', mediaMessages[10])
   await posVendaMessagesService.update(message.id, { sent: true })
 } catch(error:any) {
   console.log(error.message)
