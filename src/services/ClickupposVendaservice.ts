@@ -262,6 +262,10 @@ export async function webHook(req: any) {
       const retiraField = getField(leadCustom?.customFields ?? [], '⚠️ Cliente Retira');
       const retiraOpts = getSelectedArray(retiraField);
       const clienteRetira = retiraOpts.includes('Sim');
+
+      const ecommerceField = getField(leadCustom?.customFields ?? [], "⚠️ Categoria do Ganho");
+      const ecommerceOpts = getSelectedArray(ecommerceField);
+      const clienteEcommerce = ecommerceOpts.includes('E-commerce');
       if (!dataEntrega) {
         await clickupServices.updateTask(task_id, undefined, description, 170448045 )
       } else {
@@ -291,6 +295,12 @@ export async function webHook(req: any) {
       }
 
       // Monta mensagens agendadas (se houver data)
+       if (clienteEcommerce) {
+        messagesSchadule = messagesSchadule.filter((m: { modelo: string; }) => m.modelo !== 'AVALIAÇÃO GOOGLE');
+      } else {
+        messagesSchadule = messagesSchadule.filter((m: { modelo: string; }) => m.modelo !== 'AVALIAÇÃO SITE');
+      }
+
       if (dataEntrega) {
         for (const message of messagesSchadule ?? []) {
           messageData = treatMessageDate(message, dataEntrega, leadCustom);

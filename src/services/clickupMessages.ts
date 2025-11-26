@@ -21,6 +21,8 @@ export const modelsSchadules = [
   'FOLLOW-UP 02 - BUSCOU O CLOSET', 
   'FOLLOW-UP 02 - RECEBEU O CLOSET',
   'FOLLOW-UP 03 - MONTAGEM',
+  'AVALIAÇÃO GOOGLE',
+  'AVALIAÇÃO SITE',
   'PESQUISA DE SATISFAÇÃO 30 DIAS',
   'LEMBRETE DO CUPOM - 2 MESES',
   'ÚLTIMO AVISO DO CUPOM',
@@ -135,6 +137,24 @@ export function treatMessageDate(message:message, deliverDate?:string, leadCusto
         leadId: leadCustom.id
     }
     }
+     if(message.modelo === 'AVALIAÇÃO GOOGLE'){
+          messageData = {
+        title: message.modelo,
+        message_text: message.message,
+        sent: false,
+        schadule: utils.parseDate(dates.elevenDaysAfter),
+        leadId: leadCustom.id
+    }
+  }
+  if(message.modelo === 'AVALIAÇÃO SITE'){
+          messageData = {
+        title: message.modelo,
+        message_text: message.message,
+        sent: false,
+        schadule: utils.parseDate(dates.elevenDaysAfter),
+        leadId: leadCustom.id
+    }
+  }
       if(message.modelo === 'PESQUISA DE SATISFAÇÃO 30 DIAS'){
          messageData = {
         title: message.modelo,
@@ -409,7 +429,7 @@ Desde já, muito obrigado! `,
   {
     modelo: 'PESQUISA DE SATISFAÇÃO 30 DIAS',
     message: `Oii, ${name}, Bom dia!
-Gostaria de saber sua opinião sobre três coisas importantes para nós:
+Gostaria de saber sua opinião sobre duas coisas importantes para nós:
 1° Está tudo certinho com seu produto? Tem alguma sugestão de melhoria?
 2° O que mais influenciou sua decisão de escolher nosso produto e nossa empresa?
 Sua avaliação nos ajuda bastante!😊`,

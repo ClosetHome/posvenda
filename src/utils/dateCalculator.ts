@@ -2,6 +2,7 @@ export interface TriggerDates {
   oneDayBefore: string;
   twoDaysAfter: string;
   tenDaysAfter: string;
+  elevenDaysAfter: string;
   thirtyDaysAfter: string;
   sixtyDaysAfter: string;
   eightyEightDaysAfter:string;
@@ -41,6 +42,9 @@ export function calculateTriggerDates(inputDate: string): TriggerDates {
   const tenDaysAfter = new Date(date);
   tenDaysAfter.setDate(date.getDate() + 10);
 
+  const elevenDaysAfter = new Date(date);
+  elevenDaysAfter.setDate(date.getDate() + 11);
+
   const thirtyDaysAfter = new Date(date);
   thirtyDaysAfter.setDate(date.getDate() + 30);
 
@@ -60,6 +64,7 @@ export function calculateTriggerDates(inputDate: string): TriggerDates {
     oneDayBefore: formatDate(oneDayBefore),
     twoDaysAfter: formatDate(twoDaysAfter),
     tenDaysAfter: formatDate(tenDaysAfter),
+    elevenDaysAfter: formatDate(elevenDaysAfter),
     thirtyDaysAfter: formatDate(thirtyDaysAfter),
     sixtyDaysAfter: formatDate(sixtyDaysAfter),
     eightyEightDaysAfter: formatDate(eightyEightDaysAfter),
