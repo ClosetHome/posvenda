@@ -66,8 +66,27 @@ export async function updateTask(taskId:string, status?:string, description?: st
 
 export async function updateTaskCustomField(taskId:string, field_id:string, label_id?:any) {
   
-
+   
   const data = {value:[label_id]}
+  
+
+    try{
+    const response:any = await clickup.tasks.addCustomFieldValue(taskId, field_id, data);
+  return response.body
+} catch(error){
+    console.log(error);
+}
+}
+
+export async function updateTaskCustomField2(taskId:string, field_id:string, label_id?:any, option?:boolean) {
+  
+   
+  let data:any = {value:label_id}
+
+  if(option){
+    data ={value_options: {time: true}, value:label_id}
+  }
+ 
 
     try{
     const response:any = await clickup.tasks.addCustomFieldValue(taskId, field_id, data);
@@ -335,22 +354,30 @@ async function cliCkupTaskGet(listId: number, name?:string, status?: string ,ema
 }
 
 export async function getTasksCustom(listId:number ,phone?:string) {
+  let response:any
     try {
         if (!phone) {
             console.log('⚠️ Telefone não fornecido para busca');
             return [];
         }
-
-        const response: any = await clickup.lists.getTasks(listId, {
-            custom_fields: `[{"field_id":"329ee3ef-c499-47fb-a66d-6a407a3222cb","operator":"=","value":"${phone}"}]`,
+         const { e164, display } = utils.formatPhoneDual(phone);
+         response = await clickup.lists.getTasks(listId, {
+            custom_fields: `[{"field_id":"329ee3ef-c499-47fb-a66d-6a407a3222cb","operator":"=","value":"${display}"}]`,
             include_closed: 'true'
         });
+        if(response.body?.tasks.length === 0) {
+             response = await clickup.lists.getTasks(listId, {
+            custom_fields: `[{"field_id":"329ee3ef-c499-47fb-a66d-6a407a3222cb","operator":"=","value":"${e164}"}]`,
+            include_closed: 'true'
+        });
+        };
 
         // Verificar se há tasks válidas
         const tasks = response.body?.tasks || [];
         console.log(`📞 Busca por telefone ${phone}: ${tasks.length} task(s) encontrada(s)`);
         
         // Retornar apenas tasks válidas (não undefined)
+       // console.log(JSON.stringify(tasks, null, 2))
         return tasks.filter((task: any) => task && task.id);
         
     } catch (error) {

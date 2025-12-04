@@ -8,32 +8,32 @@ function messagesReturn (name:string, index: number) {
 const mensagens = [
     {modelo:'modelo 1', assunto: 'Sofrendo com mofo, prazos, e retrabalho em projetos?', message: `Boa tarde ${name}, tudo bem?
  
-Muitos arquitetos parceiros têm nos procurado em busca de uma solução prática para evitar mofo, atrasos e dores de cabeça com marcenaria.
+Muitos arquitetos parceiros tǦm nos procurado em busca de uma solu��ǜo prǭtica para evitar mofo, atrasos e dores de cabe��a com marcenaria.
  
-Por isso, desenvolvemos closets modulares com tecnologia contra umidade, montagem limpa (sem obra), visual moderno, prático e com garantia vitalícia.
+Por isso, desenvolvemos closets modulares com tecnologia contra umidade, montagem limpa (sem obra), visual moderno, prǭtico e com garantia vital��cia.
  
-Você prefere que eu te mostre mais detalhes da solução ou é melhor eu falar com alguém da sua equipe que cuida dessa parte?
+VocǦ prefere que eu te mostre mais detalhes da solu��ǜo ou Ǹ melhor eu falar com alguǸm da sua equipe que cuida dessa parte?
  
-Att, Kemoel – Closet Home`},
-  {modelo:'modelo 2',assunto: 'Closet sem mofo e montagem limpa, já viu essa solução?', message: `Boa tarde equipe ${name}, tudo bem?
+Att, Kemoel �?" Closet Home`},
+  {modelo:'modelo 2',assunto: 'Closet sem mofo e montagem limpa, jǭ viu essa solu��ǜo?', message: `Boa tarde equipe ${name}, tudo bem?
  
 Alguns arquitetos parceiros tem enfrentado mofo, umidade, atrasos e montagem complicada em projetos de closet.
  
-Por isso, criamos uma solução pronta: closets modulares com ventilação contra umidade, montagem limpa, visual moderno e garantia vitalícia.
+Por isso, criamos uma solu��ǜo pronta: closets modulares com ventila��ǜo contra umidade, montagem limpa, visual moderno e garantia vital��cia.
  
-Você é quem avalia esse tipo de solução nos projetos, ou posso encaminhar para alguém da sua equipe que cuida dessa parte?
+VocǦ Ǹ quem avalia esse tipo de solu��ǜo nos projetos, ou posso encaminhar para alguǸm da sua equipe que cuida dessa parte?
  
-Att, Kemoel – Closet Home`},
-   {modelo:'modelo 3', assunto: 'Alternativa moderna e prática à marcenaria tradicional', message: `Boa tarde, ${name}, tudo bem?
+Att, Kemoel �?" Closet Home`},
+   {modelo:'modelo 3', assunto: 'Alternativa moderna e prǭtica �� marcenaria tradicional', message: `Boa tarde, ${name}, tudo bem?
  
-Tenho conversado com vários arquitetos que estão em busca de soluções mais ágeis, seguras e funcionais para substituir a marcenaria principalmente por conta de mofo, imprevistos na montagem e atrasos de entrega.
+Tenho conversado com vǭrios arquitetos que estǜo em busca de solu����es mais ǭgeis, seguras e funcionais para substituir a marcenaria principalmente por conta de mofo, imprevistos na montagem e atrasos de entrega.
  
-Nós temos uma solução modular pronta, closets com ventilação inteligente, estética moderna, montagem rápida (sem obra!) e garantia vitalícia contra defeitos.
+N��s temos uma solu��ǜo modular pronta, closets com ventila��ǜo inteligente, estǸtica moderna, montagem rǭpida (sem obra!) e garantia vital��cia contra defeitos.
  
-Você que cuidar dessa parte nos projetos, ou seria melhor eu falar com alguém do seu time?
+VocǦ que cuidar dessa parte nos projetos, ou seria melhor eu falar com alguǸm do seu time?
  
-Fico à disposição,
- Kemoel – Closet Home`}
+Fico �� disposi��ǜo,
+ Kemoel �?" Closet Home`}
 ]
 return mensagens[index]
 }
@@ -44,20 +44,20 @@ const mensagens = [
  
 Perguntando rapidinho para saber se conseguiu ver meu e-mail anterior.
  
-Fico à disposição se quiser entender melhor a solução da Closet Home`},
+Fico �� disposi��ǜo se quiser entender melhor a solu��ǜo da Closet Home`},
   {modelo:'follow-up 2',assunto: 'Encaminhei certo?', message: `Boa tarde equipe ${name}, tudo bem?
  
-Como não tive retorno, imagino que não seja o momento — tudo certo!
+Como nǜo tive retorno, imagino que nǜo seja o momento �?" tudo certo!
  
-Se em algum projeto futuro precisar de uma alternativa prática ao sob medida, fico à disposição :)
+Se em algum projeto futuro precisar de uma alternativa prǭtica ao sob medida, fico �� disposi��ǜo :)
  
-Forte abraço,
+Forte abra��o,
  
 Kemoel`},
-   {modelo:'follow-up 3', assunto: 'Closet moderno, sem marcenaria e com entrega rápida', message: `Boa tarde equipe ${name}, tudo bem?
+   {modelo:'follow-up 3', assunto: 'Closet moderno, sem marcenaria e com entrega rǭpida', message: `Boa tarde equipe ${name}, tudo bem?
  
-Entendo que a rotina pode estar corrida! Só reforçando: conseguimos entregar closets com visual premium e moderno em até 10 dias, sem obra ou marcenaria.
- Acha interessante marcar uma conversa rápida?   `}
+Entendo que a rotina pode estar corrida! S�� refor��ando: conseguimos entregar closets com visual premium e moderno em atǸ 10 dias, sem obra ou marcenaria.
+ Acha interessante marcar uma conversa rǭpida?   `}
 ]
 return mensagens[index]
 }
@@ -70,11 +70,11 @@ function extractCompanyInfo(text: string): CompanyInfo {
     estado: ''
   };
 
-  // Normalizar quebras de linha e espaços
+  // Normalizar quebras de linha e espa��os
   const normalizedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   
-  // Extrair sócios/proprietários
-  const sociosMatch = normalizedText.match(/sócios\/proprietarios?:\s*([^\n]+)/i);
+  // Extrair s��cios/proprietǭrios
+  const sociosMatch = normalizedText.match(/s��cios\/proprietarios?:\s*([^\n]+)/i);
   if (sociosMatch) {
     result.socios = sociosMatch[1].trim();
   }
@@ -164,9 +164,9 @@ function isOlderThanTwoDays(timestamp: string | number, dias:number): boolean {
       const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
       
       if (diffInSeconds < 60) return 'agora mesmo';
-      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutos atrás`;
-      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} horas atrás`;
-      if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} dias atrás`;
+      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutos atr��s`;
+      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} horas atr��s`;
+      if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} dias atr��s`;
       
       return new Intl.DateTimeFormat(locale, {
         timeZone,
@@ -239,7 +239,7 @@ function validateLeadData(leadData: LeadData): ValidationResult {
   const missingFields: string[] = [];
   const warnings: string[] = [];
 
-  // Campos obrigatórios
+  // Campos obrigat��rios
   if (!leadData.chatId) {
     missingFields.push('chatId');
   }
@@ -272,12 +272,12 @@ function validateLeadData(leadData: LeadData): ValidationResult {
   };
 }
 
-// Função para validar e processar apenas leads válidos
+// Fun��ǜo para validar e processar apenas leads vǭlidos
 function shouldProcessLead(leadData: LeadData, options: { skipInvalid: boolean } = { skipInvalid: true }): boolean {
   const validation = validateLeadData(leadData);
   
   if (!validation.isValid) {
-    console.warn(`Lead ${leadData.chatId || 'unknown'} possui campos obrigatórios faltando:`, validation.missingFields);
+    console.warn(`Lead ${leadData.chatId || 'unknown'} possui campos obrigat��rios faltando:`, validation.missingFields);
     
     if (options.skipInvalid) {
       return false;
@@ -302,15 +302,15 @@ function formatChatMessage(data:any) {
 }
 
 function extractPhoneFromString(text?: string): string {
-  // Normalizar quebras de linha e espaços
+  // Normalizar quebras de linha e espa��os
   if(!text) return ''
   const normalizedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   
-  // Buscar por padrão "Telefone : " seguido de números
+  // Buscar por padrǜo "Telefone : " seguido de nǧmeros
   const phoneMatch = normalizedText.match(/telefone\s*:\s*([^\n]+)/i);
   
   if (phoneMatch) {
-    // Limpar o telefone extraído (remover espaços extras)
+    // Limpar o telefone extra��do (remover espa��os extras)
     return `+${phoneMatch[1].trim()}`;
   }
   
@@ -360,7 +360,7 @@ function formatEcomS(data: any): LeadData {
     messagesString += `Enviado por: ${sender}
     Mensagem:${message}\n`;
     
-    // Adiciona quebra de linha se não for a última mensagem
+    // Adiciona quebra de linha se nǜo for a ǧltima mensagem
     if (index < data.length - 1) {
       messagesString += '\n';
     }
@@ -380,7 +380,7 @@ const toTitleCaseWithPrepositions = (text: string): string => {
     .map((word, index) => {
       if (word.length === 0) return word;
       
-      // Primeira palavra sempre maiúscula, preposições ficam minúsculas (exceto se for a primeira)
+      // Primeira palavra sempre maiǧscula, preposi����es ficam minǧsculas (exceto se for a primeira)
       if (index > 0 && prepositions.includes(word)) {
         return word;
       }
@@ -391,7 +391,7 @@ const toTitleCaseWithPrepositions = (text: string): string => {
 };
 
 const isHtmlMessage = (message: string): boolean => {
-  // Verifica se contém tags HTML comuns
+  // Verifica se contǸm tags HTML comuns
   const htmlTags = /<\/?(?:html|body|div|p|br|img|table|tr|td|th|thead|tbody|span|strong|b|i|em|a|ul|ol|li|h[1-6])\b[^>]*>/i;
   return htmlTags.test(message);
 };
@@ -402,45 +402,45 @@ const addTrackingPixelToHtml = (htmlContent: string, trackingPixel: string): str
     return htmlContent.replace('</body>', `${trackingPixel}</body>`);
   }
   
-  // Se não encontrar </body>, tenta adicionar antes de </html>
+  // Se nǜo encontrar </body>, tenta adicionar antes de </html>
   if (htmlContent.includes('</html>')) {
     return htmlContent.replace('</html>', `${trackingPixel}</html>`);
   }
   
-  // Se não encontrar nenhuma das tags, adiciona no final
+  // Se nǜo encontrar nenhuma das tags, adiciona no final
   return htmlContent + trackingPixel;
 };
 
 
 function formatBrazilianPhoneNumber(phoneNumber: string) {
-    // Remove todos os caracteres não numéricos, exceto o +
+    // Remove todos os caracteres nǜo numǸricos, exceto o +
     let cleaned = phoneNumber.replace(/[^\d+]/g, '');
     
-    // Verifica se começa com +55 (código do Brasil)
+    // Verifica se come��a com +55 (c��digo do Brasil)
     if (!cleaned.startsWith('+55')) {
-        throw new Error('Número deve começar com +55');
+        throw new Error('Nǧmero deve come��ar com +55');
     }
     
-    // Remove o +55 para trabalhar só com os dígitos
+    // Remove o +55 para trabalhar s�� com os d��gitos
     let digits = cleaned.substring(3);
     
-    // Verifica o comprimento e aplica a formatação adequada
+    // Verifica o comprimento e aplica a formata��ǜo adequada
     if (digits.length === 11) {
-        // Celular: XX 9XXXX-XXXX (11 dígitos após +55)
+        // Celular: XX 9XXXX-XXXX (11 d��gitos ap��s +55)
         const areaCode = digits.substring(0, 2);
         const firstPart = digits.substring(2, 7);
         const lastPart = digits.substring(7, 11);
         return `+55 ${areaCode} ${firstPart} ${lastPart}`;
     } 
     else if (digits.length === 10) {
-        // Telefone fixo: XX XXXX-XXXX (10 dígitos após +55)
+        // Telefone fixo: XX XXXX-XXXX (10 d��gitos ap��s +55)
         const areaCode = digits.substring(0, 2);
         const firstPart = digits.substring(2, 6);
         const lastPart = digits.substring(6, 10);
         return `+55 ${areaCode} ${firstPart} ${lastPart}`;
     }
     else {
-        throw new Error(`Número com ${digits.length} dígitos não é válido. Deve ter 10 (fixo) ou 11 (celular) dígitos após +55`);
+        throw new Error(`Nǧmero com ${digits.length} d��gitos nǜo Ǹ vǭlido. Deve ter 10 (fixo) ou 11 (celular) d��gitos ap��s +55`);
     }
 }
 
@@ -449,14 +449,41 @@ function formatPhoneNumberFlexible(input:string) {
         return formatBrazilianPhoneNumber(input);
     } catch (error:any) {
         console.error(`Erro ao formatar ${input}: ${error.message}`);
-        return input; // Retorna o número original se não conseguir formatar
+        return input; // Retorna o nǧmero original se nǜo conseguir formatar
     }
+}
+
+function formatPhoneDual(input: string, countryCode = '+55') {
+  const digits = (input || '').replace(/\D+/g, '');
+  if (!digits) return { e164: '', display: '' };
+
+  let national = digits;
+  if (national.startsWith('55') && national.length > 11) {
+    national = national.slice(2);
+  }
+
+  if (national.length === 10) {
+    // Completa celular sem nono digito
+    national = `${national.slice(0, 2)}9${national.slice(2)}`;
+  }
+
+  const ddd = national.slice(0, 2);
+  const subscriber = national.slice(2);
+  const isMobile = subscriber.length === 9;
+
+  const firstPart = isMobile ? subscriber.slice(0, 5) : subscriber.slice(0, 4);
+  const secondPart = isMobile ? subscriber.slice(5) : subscriber.slice(4);
+
+  return {
+    e164: `${countryCode}${ddd}${subscriber}`,
+    display: `${countryCode} ${ddd} ${firstPart} ${secondPart}`
+  };
 }
 
  function parseDate(dateString: string): Date {
     const [day, month, year] = dateString.split('/').map(Number);
-    // Cria a data no fuso horário de São Paulo (UTC-3)
-    const date = new Date(year, month - 1, day); // month é 0-indexed
+    // Cria a data no fuso horǭrio de Sǜo Paulo (UTC-3)
+    const date = new Date(year, month - 1, day); // month Ǹ 0-indexed
     return date;
   }
 
@@ -482,13 +509,13 @@ function formatPhoneNumberFlexible(input:string) {
 
       return custom
   }
-  // Para campos do tipo "labels" (value é array de IDs)
+  // Para campos do tipo "labels" (value Ǹ array de IDs)
   if (customField.type === "labels" && Array.isArray(customField.value)) {
     selectedOptions = customField.type_config.options.filter((option) =>
       customField.value.includes(option.id)
     );
   }
-  // Para campos do tipo "drop_down" (value é índice numérico)
+  // Para campos do tipo "drop_down" (value Ǹ ��ndice numǸrico)
   else if (customField.type === "drop_down" && typeof customField.value === "number") {
     const selectedOption = customField.type_config.options[customField.value];
     if (selectedOption) {
@@ -534,5 +561,20 @@ export function extractLastName(fullName: string): string {
   return out.join(" ");
 }
 
-export default {extractCompanyInfo, isOlderThanTwoDays, formatTimestampToSaoPaulo, convertTimestampToDate, replaceTagsLead, cleanTelefone, formatEcomS,formatMessagesToString, shouldProcessLead, toTitleCaseWithPrepositions, isHtmlMessage, addTrackingPixelToHtml, formatPhoneNumberFlexible, convertTimestampToDateEmalis, parseDate, delay, extractPhoneFromString, extractCustomFields, extractFirstName, extractLastName}
+export function last8DigitsPhone(input: string): string {
+  const digits = (input || '').replace(/\D+/g, '');
+  if (!digits) return '';
+  return digits.slice(-8);
+}
+
+export function timestampPlusDays(days: number = 10): number {
+  const now = Date.now();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return now + days * msPerDay;
+}
+
+export default {timestampPlusDays, extractCompanyInfo, isOlderThanTwoDays, formatTimestampToSaoPaulo, convertTimestampToDate, replaceTagsLead, cleanTelefone, formatEcomS,formatMessagesToString, shouldProcessLead, toTitleCaseWithPrepositions, isHtmlMessage, addTrackingPixelToHtml, formatPhoneNumberFlexible, convertTimestampToDateEmalis, parseDate, delay, extractPhoneFromString, extractCustomFields, extractFirstName, extractLastName, formatPhoneDual, last8DigitsPhone}
+
+
+
 

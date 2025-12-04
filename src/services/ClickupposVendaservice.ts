@@ -15,6 +15,7 @@ import {scheduleMessages, MessageToSchedule} from '../utils/dateCalculator'
 
 import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
+import { writeFile } from 'fs/promises';
 
 
 
@@ -139,6 +140,12 @@ export async function webHook(req: any) {
     const prazoField = getField(customFields, '⚠️ Prazo de Entrega');
     const prazoOpts  = getSelectedArray(prazoField);
     const dataEntrega:any = prazoOpts[0] ?? 0;
+
+      const ownCategory = getField(customFields ?? [], '⚠️ Categoria do Ganho');
+      const categoryOpts = getSelectedArray(ownCategory);
+      const category = categoryOpts[0];
+
+
     let modelsFirst = modelsFirtsContact
     let messages:any
     let clienteRetira:any = 'off'
@@ -156,14 +163,33 @@ export async function webHook(req: any) {
       : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
 
+   if(category === 'E-commerce') {
+    messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
+    const options1 = {
+    leadId: leadCapture.id,
+    title: 'MENSAGEM 1 ECOMMERCE',
+    sent: true,
+    }
+     const options2 = {
+    leadId: leadCapture.id,
+    title: 'MENSAGEM 2 ECOMMERCE',
+    sent: true,
+    }
+    const message1 = await messageService.findAll(options1)
+    const message2 = await messageService.findAll(options2)
+    const formatMessagesDados = {
+      modelo: 'DADOS PARA CADASTRO',
+      message: `${message1[0].message_text}\n${message2[0].message_text}`,
+      messageBot: `${message1[0].message_text}\n${message2[0].message_text}`,
+    } 
+    messages.push(formatMessagesDados);
+  }
     const messagesData = messages.map((m: any) => ({
       title: m.modelo,
       message_text: m.message,
       sent: true,
       leadId: leadCapture.id
     }));
-
-   
 
    await messageService.bulkCreate(messagesData);
 
@@ -174,7 +200,7 @@ export async function webHook(req: any) {
     });
     const customDataBotString = customDataBot.join('\n');
 
-    const messagesHistory = messages
+    const messagesHistory = messages  
       .map((m: any) => `role: assistant,\ncontent: ${m.messageBot ?? ''}`)
       .join('\n');
 
@@ -189,14 +215,7 @@ export async function webHook(req: any) {
       messages.push({ modelo: '', message: media, messageBot: '' });
     }
 
-     const ownCategory = getField(customFields ?? [], '⚠️ Categoria do Ganho');
-      const categoryOpts = getSelectedArray(ownCategory);
-      const category = categoryOpts[0];
-   
-
-
    if(category === 'RECOMPRA') {
-  
       await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message)
       await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'ENTREGA VIA TRANSPORTADORA')?.message || messages.find((message: { modelo: string; }) => message.modelo === 'CLIENTE RETIRA').message)
       await deleteTag(leadCapture.subscriberbot, 15282954)
@@ -208,6 +227,8 @@ export async function webHook(req: any) {
     } else {
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
    }
+   
+    
     
     return leadCapture;
   } catch (error) {
@@ -987,3 +1008,28 @@ export async function createCupom(telephone: string, name: string){
   }
 }
   
+export async function extractData() {
+  const options = {
+    city: null
+  }
+  const leads:any = await leadService.findAll(options)
+  const leadsArray:any[] = []
+  for(const lead of leads){
+    const valorField = getField(lead?.customFields ?? [], "💰 Valor do Negócio ");
+    const retiraOpts = getSelectedArray(valorField);
+    const obj = {
+      id: lead.id,
+      leadName: lead.name,
+      valor: retiraOpts,
+      cidade: lead.city,
+      estado: lead.state,
+      nascimento: lead.birthdate ?? lead.birthday ?? null,
+    }
+    leadsArray.push(obj)
+    console.log(retiraOpts)
+  }
+
+  const outputPath = './leads-posvenda.json';
+  await writeFile(outputPath, JSON.stringify(leadsArray, null, 2), 'utf-8');
+  console.log(`Arquivo salvo em ${outputPath} com ${leadsArray.length} registros.`);
+}

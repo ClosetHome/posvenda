@@ -43,7 +43,7 @@ interface FindLeadPosVendaOptions {
   email?: string;
   phone?: string;
   subscriberbot?:number;
-  city?: string;
+  city?: string | null;
   state?: string;
   includeTasks?: boolean;
   includeMessages?: boolean;
@@ -97,10 +97,12 @@ class PosVendaLeadsService {
         };
       }
 
-      if (options.city) {
-        whereClause.city = {
-          [Op.iLike]: `%${options.city}%`
-        };
+      if ('city' in options) {
+        if (options.city === null) {
+          whereClause.city = { [Op.not]: null };
+        } else if (options.city) {
+          whereClause.city = { [Op.iLike]: `%${options.city}%` };
+        }
       }
 
       if (options.state) {

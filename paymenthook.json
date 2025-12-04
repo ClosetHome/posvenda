@@ -1,0 +1,214 @@
+ Context: {
+    "id": 135492021828,
+    "date_created": "2025-11-27T16:00:07.492-04:00",
+    "date_last_updated": "2025-11-27T16:00:10.842-04:00",
+    "operation_type": "regular_payment",
+    "issuer_id": "25",
+    "payment_method_id": "visa",
+    "payment_type_id": "credit_card",
+    "status": "rejected",
+    "status_detail": "cc_rejected_insufficient_amount",
+    "currency_id": "BRL",
+    "description": "Calceiro Elite 60 ou 80cm - Organização e Estilo - 80cm, Preto x 1, Closet Aberto Modulado para Casal 305cm (Eminence 47) x 1",
+    "live_mode": true,
+    "sponsor_id": 208686191,
+    "taxes_amount": 0,
+    "shipping_amount": 0,
+    "collector_id": 2425062054,
+    "payer": {
+        "id": "1584634791"
+    },
+    "metadata": {
+        "settings": {
+            "wallet_button": "yes",
+            "commission_checkbox": "no",
+            "currency_conversion": "yes",
+            "binary_mode": "no",
+            "gateway_discount_checkbox": "no",
+            "enabled": "yes"
+        },
+        "checkout_type": "credit_card",
+        "seller_website": "https:\/\/closethome.com.br",
+        "php_version": "8.3.28",
+        "billing_address": {
+            "city_name": "Santa Maria",
+            "state_name": "RS",
+            "country_name": "BR",
+            "zip_code": "97020480",
+            "street_name": "Travessa Leo Muller"
+        },
+        "module_version": "8.5.6",
+        "cpp_extra": {
+            "platform_version": "10.2.2",
+            "module_version": "8.5.6"
+        },
+        "blocks_payment": "no",
+        "sponsor_id": "208686191",
+        "platform": "bo2hnr2ic4p001kbgpt0",
+        "original_notification_url": "https:\/\/closethome.com.br\/wc-api\/WC_WooMercadoPago_Custom_Gateway\/?source_news=webhooks",
+        "platform_version": "10.2.2",
+        "auto_update": false,
+        "flow_id": "3eba176d-991f-4e4f-8a1b-2d905ded8947",
+        "site_id": "mlb",
+        "theme": {
+            "theme_name": "Woodmart Child",
+            "theme_version": "1.0.0"
+        },
+        "checkout": "custom",
+        "user": {
+            "user_email": "felipeomsvet@yahoo.com.br",
+            "registered_user": "yes",
+            "user_registration_date": "2025-11-27T20:00:04.000+00:00"
+        }
+    },
+    "additional_info": {
+        "ip_address": "177.234.152.98",
+        "nsu_processadora": "11172511271659310474",
+        "items": [
+            {
+                "quantity": "1",
+                "picture_url": "https:\/\/closethome.com.br\/wp-content\/uploads\/2025\/04\/acessorios-teste-4.webp",
+                "category_id": "others",
+                "id": "16684",
+                "title": "Calceiro Elite 60 ou 80cm - Organização e Estilo - 80cm, Preto x 1",
+                "unit_price": "419"
+            },
+            {
+                "quantity": "1",
+                "picture_url": "https:\/\/closethome.com.br\/wp-content\/uploads\/2025\/05\/47_PT_FRENTE_CARDAMONO.jpg",
+                "category_id": "others",
+                "description": "img-srchttpsclosethome.com_.brwp-contentuploads20250547_PT_FRENTE_CARD...",
+                "id": "17134",
+                "title": "Closet Aberto Modulado para Casal 305cm (Eminence 47) x 1",
+                "unit_price": "2620"
+            }
+        ],
+        "payer": {
+            "address": {
+                "zip_code": "97020-480",
+                "street_name": "Travessa Leo Muller"
+            },
+            "registration_date": "2025-11-27 20:00:04",
+            "phone": {
+                "number": "(55) 99945-4045"
+            },
+            "last_name": "Souza",
+            "first_name": "Felipe"
+        },
+        "shipments": {
+            "receiver_address": {
+                "zip_code": "97020-480",
+                "street_name": "Travessa Leo Muller",
+                "apartment": "Noal"
+            }
+        },
+        "tracking_id": "platform:v1-whitelabel,so:ALL,type:N\/A,security:none"
+    },
+    "external_reference": "CHL-21232",
+    "transaction_amount": 3039,
+    "transaction_amount_refunded": 0,
+    "coupon_amount": 0,
+    "differential_pricing_id": "23583179",
+    "transaction_details": {
+        "payment_method_reference_id": "877569195",
+        "net_received_amount": 0,
+        "total_paid_amount": 3039,
+        "overpaid_amount": 0,
+        "installment_amount": 303.9
+    },
+    "captured": true,
+    "binary_mode": false,
+    "statement_descriptor": "MP*CLOSETHOME",
+    "installments": 10,
+    "card": {
+        "first_six_digits": "406669",
+        "last_four_digits": "0639",
+        "bin": "40666999",
+        "expiration_month": 1,
+        "expiration_year": 2031,
+        "date_created": "2025-11-27T16:00:07.000-04:00",
+        "date_last_updated": "2025-11-27T16:00:07.000-04:00",
+        "country": "BRA",
+        "tags": [
+            "credit"
+        ],
+        "cardholder": {
+            "name": "Felipe Mascarenhas",
+            "identification": {
+                "number": "00440956005",
+                "type": "CPF"
+            }
+        }
+    },
+    "notification_url": "http:\/\/internal.mercadopago.com\/v1\/bifrost\/payment-notification\/webhook\/production?source_news=webhooks&notify_all=false&p=bo2hnr2ic4p001kbgpt0",
+    "processing_mode": "aggregator",
+    "acquirer": "rede",
+    "point_of_interaction": {
+        "type": "UNSPECIFIED",
+        "business_info": {
+            "unit": "online_payments",
+            "sub_unit": "woocommerce",
+            "branch": "Merchant Services"
+        },
+        "location": {
+            "state_id": "NN",
+            "source": "payer"
+        }
+    },
+    "build_version": "3.130.1-hotfix-27",
+    "charges_details": [
+        {
+            "id": "135492021828-001",
+            "name": "mercadopago_fee",
+            "type": "fee",
+            "accounts": {
+                "from": "collector",
+                "to": "mp"
+            },
+            "client_id": 0,
+            "date_created": "2025-11-27T16:00:07.494-04:00",
+            "last_updated": "2025-11-27T16:00:07.494-04:00",
+            "amounts": {
+                "original": 136.45,
+                "refunded": 0
+            },
+            "metadata": {
+                "source": "rule-engine",
+                "source_detail": "processing_fee_charge"
+            }
+        },
+        {
+            "id": "135492021828-002",
+            "name": "financing_fee",
+            "type": "fee",
+            "accounts": {
+                "from": "collector",
+                "to": "mp"
+            },
+            "client_id": 0,
+            "date_created": "2025-11-27T16:00:07.494-04:00",
+            "last_updated": "2025-11-27T16:00:07.494-04:00",
+            "amounts": {
+                "original": 453.72,
+                "refunded": 0
+            },
+            "metadata": {
+                "source": "rule-engine",
+                "source_detail": "financing_fee_collector_charge"
+            }
+        }
+    ],
+    "money_release_status": "pending",
+    "payment_method": {
+        "id": "visa",
+        "type": "credit_card",
+        "issuer_id": "25",
+        "data": {
+            "retried_by": "rejection",
+            "routing_data": {
+                "merchant_account_id": "79583172"
+            }
+        }
+    },
+    "platform_id": "bo2hnr2ic4p001kbgpt0"
+}
