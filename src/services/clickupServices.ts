@@ -360,7 +360,9 @@ export async function getTasksCustom(listId:number ,phone?:string) {
             console.log('⚠️ Telefone não fornecido para busca');
             return [];
         }
+
          const { e164, display } = utils.formatPhoneDual(phone);
+         console.log(e164, display)
          response = await clickup.lists.getTasks(listId, {
             custom_fields: `[{"field_id":"329ee3ef-c499-47fb-a66d-6a407a3222cb","operator":"=","value":"${display}"}]`,
             include_closed: 'true'
@@ -368,6 +370,12 @@ export async function getTasksCustom(listId:number ,phone?:string) {
         if(response.body?.tasks.length === 0) {
              response = await clickup.lists.getTasks(listId, {
             custom_fields: `[{"field_id":"329ee3ef-c499-47fb-a66d-6a407a3222cb","operator":"=","value":"${e164}"}]`,
+            include_closed: 'true'
+        });
+        };
+         if(response.body?.tasks.length === 0) {
+             response = await clickup.lists.getTasks(listId, {
+            custom_fields: `[{"field_id":"329ee3ef-c499-47fb-a66d-6a407a3222cb","operator":"=","value":"${phone}"}]`,
             include_closed: 'true'
         });
         };
