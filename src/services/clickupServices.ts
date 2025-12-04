@@ -475,7 +475,7 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
       telefone
     };
 
-    console.log(payload);
+//    console.log(payload);
 
     if (atendimento !== 'perdido') {
       payload.atendimento = 'personalizado'
@@ -501,7 +501,7 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
       await addTag(cachedTask.lead.subscriberbot, 12804129);
     }
 
-    console.log(payload);
+  //  console.log(payload);
 
     await axios.post(
       'https://webhooks.closethome.com.br/webhook/alteracaosdr',
@@ -521,9 +521,9 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
       return;
     }
 
-    console.log(updatedTask.name);
-    console.log(telefone);
-    console.log(category);
+   // console.log(updatedTask.name);
+   // console.log(telefone);
+   // console.log(category);
        await new Promise((resolve) => setTimeout(resolve, 10000));
     if (situacao === 'ganho' && atendimento === 'ecommerce' && category) {
     const taskCloser = await getTasksCustom(901108902349, phone);
@@ -558,7 +558,7 @@ async function updateClickupPre(telefone: string, situacao: string, taskID: stri
         
         try {
             const response = await axios.request(options);
-            console.log(response.data.tasks)
+          //  console.log(response.data.tasks)
             leads.push(...response.data.tasks)
 
             stop = response.data.last_page

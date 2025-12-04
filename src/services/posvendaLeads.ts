@@ -476,7 +476,7 @@ class PosVendaLeadsService {
   async updateLeadName(taskId: string, newName: string): Promise<any> {
     try {
       const task:any = await taskService.findById(taskId, true);
-      console.log(task)
+     // console.log(task)
       if (!task) return;
       const lead = await this.findById(task.lead.id, true);
       if (!lead) return;

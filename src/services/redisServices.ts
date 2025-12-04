@@ -164,7 +164,7 @@ export class RedisService {
     try {
       const obj:any = await redisBot.get(`botconversa:${phone}`);
       let lead 
-      console.log(phone)
+     // console.log(phone)
       const parsed = JSON.parse(obj)
        if(parsed.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Cliente Retira")){
        lead = await clickupServices.updateTask(parsed.id, 'cliente retira', description, undefined )

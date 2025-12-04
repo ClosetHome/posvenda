@@ -55,7 +55,7 @@ export async function historyCreate(lead:any){
     }
 
 export function dadosPedido(lead:any){
-    console.log(lead)
+   // console.log(lead)
      const customDataBot = lead.customFields.map((f: any) => {
         const vals = getSelectedArray(f).join(', ');
         return `${f.fieldName}: ${vals}`;

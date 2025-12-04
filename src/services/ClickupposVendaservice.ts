@@ -96,7 +96,7 @@ export async function webHook(req: any) {
     }
     
     leadCapture = await leadService.findAll(options)
-    console.log(leadCapture)
+   // console.log(leadCapture)
    if(leadCapture.length === 0){
      const leadData = {
       name: taskData ? taskData.name : taskPosVenda.body.name,
@@ -104,7 +104,7 @@ export async function webHook(req: any) {
       subscriberbot: contact.id,
       customFields
     };
-    console.log(leadData)
+   // console.log(leadData)
     leadCapture = await leadService.create(leadData);
     } else {
       leadCapture = await leadService.update(leadCapture[0].id, {customFields: customFields})
@@ -370,7 +370,7 @@ export async function webHook(req: any) {
 export async function verifyScheduledMessages() {
   try {
     const messagesToSend: any[] = await messageService.findScheduledForToday(true, true);
-    console.log(messagesToSend)
+    //console.log(messagesToSend)
     // Processa todas as mensagens em paralelo
     await Promise.all(messagesToSend.map(async (message) => {
       // Busca histórico de mensagens enviadas
@@ -508,7 +508,7 @@ export async function botStop(task_id: string, summary:string): Promise<any> {
         task_id: ${task_id},
         summary: ${summary}
        `
-        console.log(leadToHelpData)
+      //  console.log(leadToHelpData)
         await sendMessage(795504790, "text", leadToHelpData)
        
       return 'notificado';
@@ -879,7 +879,7 @@ export async function schaduleBlack(){
     let messages:any[] = []
  try{
   const keys = await redis2.keys('blacknovember:*');
-  console.log(keys)
+ // console.log(keys)
   for (const key of keys) {
    const value = await redis2.get(key);
    if(value === null) continue;
@@ -959,7 +959,7 @@ export async function createCupom(telephone: string, name: string){
   
   try{
    const task = await clickupServices.cliCkupCreateTaskCupom(901108902340, name, "encaminhado closer", telephone)
- console.log(task)
+// console.log(task)
       let phone: string | undefined =
          task?.custom_fields
            ?.find((f: any) => f?.name === '👤 Telefone Cliente')
@@ -981,7 +981,7 @@ export async function createCupom(telephone: string, name: string){
         lead = await leadService.findAll(options);
        if(lead.length > 0){
          lead = lead[0];
-         console.log(lead)
+       //  console.log(lead)
        } else {
         const leadData = {
          name: taskData ? taskData.name : task.name,
@@ -1026,7 +1026,7 @@ export async function extractData() {
       nascimento: lead.birthdate ?? lead.birthday ?? null,
     }
     leadsArray.push(obj)
-    console.log(retiraOpts)
+    // console.log(retiraOpts)
   }
 
   const outputPath = './leads-posvenda.json';
