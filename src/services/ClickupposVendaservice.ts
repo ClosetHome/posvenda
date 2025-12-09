@@ -357,7 +357,7 @@ export async function webHook(req: any) {
         })
         .join('\n');
 
-     // await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
+      await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
 
       // Retorna o lead atualizado para o caller
       return leadCustom;
