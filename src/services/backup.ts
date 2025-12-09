@@ -163,7 +163,7 @@ export async function webHook(req: any) {
       : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
 
-   /*if(category === 'E-commerce') {
+   if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
     leadId: leadCapture.id,
@@ -183,7 +183,7 @@ export async function webHook(req: any) {
       messageBot: `${message1[0].message_text}\n${message2[0].message_text}`,
     } 
     messages.push(formatMessagesDados);
-  }*/
+  }
     const messagesData = messages.map((m: any) => ({
       title: m.modelo,
       message_text: m.message,
@@ -357,7 +357,7 @@ export async function webHook(req: any) {
         })
         .join('\n');
 
-     // await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
+      await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
 
       // Retorna o lead atualizado para o caller
       return leadCustom;

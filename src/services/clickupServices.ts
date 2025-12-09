@@ -624,8 +624,17 @@ async function cliCkupCreateTaskCupom(list_id: number, name:string, status: stri
   }
 }
 
+export async function createTaskClickup(data:any){
+try{
+  const response = await clickup.lists.createTask(data.list_id, data.taskData);
+  return response.body
+} catch (error) {
+  console.error('Erro ao criar tarefa:', error);
+}
+}
 
 
 
 
-export default {getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre, getTasksPosDisp, cliCkupCreateTaskCupom}
+
+export default {createTaskClickup ,getTasks, getTasksCreate, cliCkupTask, updateTask, cliCkupTaskGet, getTasksCustom, webHook, updateClickupPre, getTasksPosDisp, cliCkupCreateTaskCupom}

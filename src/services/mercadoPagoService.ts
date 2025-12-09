@@ -3,7 +3,8 @@ import { extractBilling } from '../utils/extractWocommerce';
 import {getSubscriber, sendMessage} from '../services/botconversaService'
 import utils from '../utils/utils'
 import PosVendaLeadsService from './posvendaLeads';
-import {getTasksCustom, updateTaskCustomField2, updateTaskCustomField, updateTask} from '../services/clickupServices'
+import {getTasksCustom, updateTaskCustomField2, updateTaskCustomField, updateTask, createTaskClickup} from '../services/clickupServices'
+import clickup from '../services/clickupServices'
 import TaskService from './taskService';
 import PosVendaMessagesService from './posvendaMessages';
 
@@ -11,38 +12,98 @@ const leadService = new PosVendaLeadsService()
 const taskService = new TaskService()
 const posVendaMessagesService = new PosVendaMessagesService()
 export async function ProccessOrder(data: any) {
-  let cor
+  let cor;
+  let taskSdr: any[] = [];
+  let taskCloser: any[] = [];
   try {
-    if (data.status !== 'processed' && data.status !== 'processing') return;
+    if (data.status !== 'processing') return;
     const { billingAddress, normalizedPhone } = extractBilling(data);
     if (!normalizedPhone) return;
-
     const last8 = utils.last8DigitsPhone(normalizedPhone);
     const options = { phone: last8, includeTasks: true };
 
     const lead: any[] = await leadService.findAll(options);
-    if (!lead?.length) return;
+    const leadData = Array.isArray(lead) && lead.length > 0 ? lead[0] : null;
+    if (!leadData) return;
 
-    const subscriber = lead[0].subscriberbot;
-    let task = lead[0].tasks?.find((t: any) => t.listId === 901108902349);
+    const leadTasks = leadData.tasks || [];
+    const leadTaskSdr = leadTasks.filter((t: any) => t.listId === 901108902340);
+    const leadTaskCloser = leadTasks.filter((t: any) => t.listId === 901108902349);
 
-    if (!task) {
-      const tasks = await getTasksCustom(901108902349, normalizedPhone);
-      task = tasks?.[0];
+    if (leadTaskSdr.length) taskSdr = leadTaskSdr;
+    if (leadTaskCloser.length) taskCloser = leadTaskCloser;
+
+    if (!taskSdr.length) {
+      taskSdr = await getTasksCustom(901108902340, normalizedPhone);
     }
-    if (!task) return;
+
+    if (!taskSdr.length) {
+      const customFields = [
+        {
+          id: '329ee3ef-c499-47fb-a66d-6a407a3222cb',
+          value: normalizedPhone
+        }
+      ];
+      const payload = {
+        list_id: 901108902340,
+        taskData: {
+          name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+          status: 'encaminhado closer',
+          customFields
+        }
+      };
+      const createdSdr = await createTaskClickup(payload);
+      if (createdSdr) {
+        taskSdr = [createdSdr];
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+        taskCloser = await getTasksCustom(901108902349, normalizedPhone);
+      }
+    }
+
+    if (!taskCloser.length && taskSdr.length) {
+      await clickup.updateClickupPre(normalizedPhone, 'encaminhado closer', taskSdr[0].id, 'ecommerce');
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      taskCloser = await getTasksCustom(901108902349, normalizedPhone);
+    }
+
+    if (!taskCloser.length) {
+      const customFields = [
+        {
+          id: '329ee3ef-c499-47fb-a66d-6a407a3222cb',
+          value: normalizedPhone
+        }
+      ];
+      const payload = {
+        list_id: 901108902349,
+        taskData: {
+          name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+          status: 'encaminhado closer',
+          customFields
+        }
+      };
+      const createdCloser = await createTaskClickup(payload);
+      if (createdCloser) {
+        taskCloser = [createdCloser];
+      }
+    }
+
+    if (!taskCloser.length) return;
 
     const daqui10dias = utils.timestampPlusDays();
-    
-    cor = data.line_items.sku.include('BR')?'a39d1e36-7b54-4238-acfb-9e41dfc285fe':'f89ca60b-5a59-4f26-8fdf-17a8a4b54a2d';
+    const skuList = Array.isArray(data.line_items)
+      ? data.line_items.map((item: any) => item?.sku || '').filter(Boolean)
+      : [data?.line_items?.sku || ''];
+    const hasBrSku = skuList.join('|').includes('BR');
 
-    await updateTaskCustomField(task.id, 'c15d7e46-1e1b-4e84-bafa-8a5c8a5f1fa2', '2bbc9f5e-997c-460c-9c5d-7c3715826a67');
-    await updateTaskCustomField2(task.id, 'c7e757be-20aa-47b6-b3e7-7c6e466ffc5e', '34130af9-a24f-4295-973f-76b74c4b9851');
-    await updateTaskCustomField2(task.id, '35718d99-a871-42e6-9afc-92153c9d6647', cor);
-    await updateTaskCustomField2(task.id, '592bfb7c-bae8-4ed2-a38d-c3ee3895a7a2', data.total);
-    await updateTaskCustomField2(task.id, 'de23f8da-1e59-438f-b48f-fa861538e2c2', daqui10dias, true);
+    cor = hasBrSku ? 'a39d1e36-7b54-4238-acfb-9e41dfc285fe' : 'f89ca60b-5a59-4f26-8fdf-17a8a4b54a2d';
 
-    await updateTask(task.id, 'venda');
+    await updateTaskCustomField(taskCloser[0].id, 'c15d7e46-1e1b-4e84-bafa-8a5c8a5f1fa2', '2bbc9f5e-997c-460c-9c5d-7c3715826a67');
+    await updateTaskCustomField2(taskCloser[0].id, 'c7e757be-20aa-47b6-b3e7-7c6e466ffc5e', '34130af9-a24f-4295-973f-76b74c4b9851');
+    await updateTaskCustomField2(taskCloser[0].id, '35718d99-a871-42e6-9afc-92153c9d6647', cor);
+    await updateTaskCustomField2(taskCloser[0].id, '592bfb7c-bae8-4ed2-a38d-c3ee3895a7a2', data.total);
+    await updateTaskCustomField2(taskCloser[0].id, 'de23f8da-1e59-438f-b48f-fa861538e2c2', daqui10dias, true);
+
+    await updateTask(taskCloser[0].id, 'venda');
 
     const message1 = `Olá, ${billingAddress.firstName} . Sua compra foi realizada com sucesso!`;
 
@@ -64,14 +125,14 @@ export async function ProccessOrder(data: any) {
   title: 'MENSAGEM 1 ECOMMERCE',
   message_text: message1,
   sent:true,
-  leadId: lead[0].id,
+  leadId: leadData.id,
  }
 
   const objmsg2 = {
   title: 'MENSAGEM 2 ECOMMERCE',
   message_text: message2,
   sent:true,
-  leadId: lead[0].id,
+  leadId: leadData.id,
  }
   await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
 
