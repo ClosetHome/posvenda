@@ -555,4 +555,17 @@ return mensagens[index]
 }
 
 
+export function mensagemFerias(name:string){
+return `Olá! Parabéns pela sua compra na Closet Home, é um prazer ter você com a gente!
+
+Queremos te avisar que estaremos em férias coletivas de 19/12 até 04/01, retornando normalmente no dia 05/01.
+Fique tranquilo(a): seu pedido já está garantido no sistema, e assim que voltarmos daremos sequência com toda atenção e carinho que você merece. ✨
+
+Agradecemos sua compreensão e desejamos um final de ano maravilhoso!
+Com carinho, Time Closet Home
+`
+}
+
+
+
 

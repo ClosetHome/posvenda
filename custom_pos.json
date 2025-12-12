@@ -1,0 +1,628 @@
+{
+  "fields": [
+    {
+      "id": "08a01531-46e4-479a-990e-0670c8214132",
+      "name": "⚠️ Transportadora",
+      "type": "labels",
+      "type_config": {
+        "sorting": "manual",
+        "options": [
+          {
+            "id": "927438e5-0eda-4536-9891-5a3e0f64456b",
+            "label": "Rodonaves",
+            "color": "#3082B7",
+            "orderindex": 0
+          },
+          {
+            "id": "0cbb9232-d82c-41ed-9129-6cf42b0f3ee0",
+            "label": "Expresso São Miguel",
+            "color": "#E65100",
+            "orderindex": 1
+          },
+          {
+            "id": "7750df19-0351-45d0-942d-dcb3ee04aa9d",
+            "label": "Braspress",
+            "color": "#04A9F4",
+            "orderindex": 2
+          }
+        ]
+      },
+      "date_created": "1765479906378",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "294fe29d-11af-41a8-9dad-5dce8bf68e4d",
+      "name": "👤 Email Cliente",
+      "type": "short_text",
+      "type_config": {},
+      "date_created": "1737206408714",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "329ee3ef-c499-47fb-a66d-6a407a3222cb",
+      "name": "👤 Telefone Cliente",
+      "type": "phone",
+      "type_config": {},
+      "date_created": "1737206374885",
+      "hide_from_guests": false,
+      "required": true
+    },
+    {
+      "id": "35718d99-a871-42e6-9afc-92153c9d6647",
+      "name": "⚠️ Cor",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "a39d1e36-7b54-4238-acfb-9e41dfc285fe",
+            "name": "Branco",
+            "color": "#ffffff",
+            "orderindex": 0
+          },
+          {
+            "id": "f89ca60b-5a59-4f26-8fdf-17a8a4b54a2d",
+            "name": "Preto",
+            "color": "#000000",
+            "orderindex": 1
+          },
+          {
+            "id": "e59c1854-7ab2-4a73-ae56-2c61bd316b14",
+            "name": "Arenas",
+            "color": "#f3f3d0",
+            "orderindex": 2
+          },
+          {
+            "id": "0ebd1175-f8f2-4f89-8c2e-823593bdb530",
+            "name": "Mel",
+            "color": "#AF7E2E",
+            "orderindex": 3
+          },
+          {
+            "id": "a354635f-4788-4a50-b9b7-b8836f84f73a",
+            "name": "Grafite",
+            "color": "#b5bcc2",
+            "orderindex": 4
+          }
+        ]
+      },
+      "date_created": "1741097411374",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "3756f5e9-e2c8-4fec-a3a2-e99c312f2c79",
+      "name": "⚠️ Observação",
+      "type": "text",
+      "type_config": {},
+      "date_created": "1741097467025",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "3c7fbdf9-78d9-490c-95cd-fb581da3bc98",
+      "name": "🤷‍♂️ Perfil Comportamental",
+      "type": "labels",
+      "type_config": {
+        "sorting": "manual",
+        "options": [
+          {
+            "id": "0fbd4984-ee85-4abe-a8ab-a67c6a8da665",
+            "label": "Dominante",
+            "color": "#e50000",
+            "orderindex": 0
+          },
+          {
+            "id": "d0ecea3b-015f-409b-ab44-9d0c249bb354",
+            "label": "Influente",
+            "color": "#ff7800",
+            "orderindex": 1
+          },
+          {
+            "id": "43c9ae90-0243-41f9-a6c8-00e904068eb2",
+            "label": "Estável",
+            "color": "#f9d900",
+            "orderindex": 2
+          },
+          {
+            "id": "97a6781c-fbe5-4710-842a-8f6da48b329a",
+            "label": "Conforme",
+            "color": "#3397dd",
+            "orderindex": 3
+          }
+        ]
+      },
+      "date_created": "1743604003021",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "4b8edb1b-13cd-41f3-a74d-f659ad09203c",
+      "name": "⚠️ Forma de PGTO",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "a7d55397-40f6-4c66-92cb-f78363bcafcd",
+            "name": "Pix + 10x credito",
+            "color": null,
+            "orderindex": 0
+          },
+          {
+            "id": "30753863-e400-49a4-9924-594de23ce246",
+            "name": "PIX - á vista",
+            "color": "#fff",
+            "orderindex": 1
+          },
+          {
+            "id": "bd014959-efed-47ce-96a6-1f7bfc37d64d",
+            "name": "Débito",
+            "color": null,
+            "orderindex": 2
+          },
+          {
+            "id": "11c7fa7e-d222-4938-88a3-5a34c4e73dc6",
+            "name": "Crédito - á vista",
+            "color": null,
+            "orderindex": 3
+          },
+          {
+            "id": "54c8c965-d50b-419a-942d-beec3d01cbb4",
+            "name": "Crédito 1x",
+            "color": null,
+            "orderindex": 4
+          },
+          {
+            "id": "10c008f5-be17-4f64-a893-9c9b4cc1a6cc",
+            "name": "Crédito 2x",
+            "color": null,
+            "orderindex": 5
+          },
+          {
+            "id": "a52251be-6ee2-493c-bf10-e6f9e83aaa8f",
+            "name": "Crédito 3x",
+            "color": null,
+            "orderindex": 6
+          },
+          {
+            "id": "16a24f83-ba9d-4c59-b30c-baac198448aa",
+            "name": "Crédito 4x",
+            "color": null,
+            "orderindex": 7
+          },
+          {
+            "id": "5f25805d-9c04-49a5-a98a-7ad88208c252",
+            "name": "Crédito 5x",
+            "color": null,
+            "orderindex": 8
+          },
+          {
+            "id": "da531f2a-c113-441a-932c-796e3c52ad7b",
+            "name": "Crédito 6x",
+            "color": null,
+            "orderindex": 9
+          },
+          {
+            "id": "bdc6c970-ca1d-417d-9f20-a8cdf052ddf9",
+            "name": "Crédito 7x",
+            "color": null,
+            "orderindex": 10
+          },
+          {
+            "id": "01f330f6-2469-4640-bafe-c6121261c31e",
+            "name": "Crédito 8x",
+            "color": null,
+            "orderindex": 11
+          },
+          {
+            "id": "cee3fcac-872e-4d15-95b4-64fc1a6a5758",
+            "name": "Crédito 9x",
+            "color": null,
+            "orderindex": 12
+          },
+          {
+            "id": "59b2274a-eff1-424b-8879-cad2589fbc1f",
+            "name": "Crédito 10x",
+            "color": null,
+            "orderindex": 13
+          },
+          {
+            "id": "499cf218-90ce-4586-b91a-7539909a8ced",
+            "name": "Crédito 11x",
+            "color": null,
+            "orderindex": 14
+          },
+          {
+            "id": "82fb2836-dc20-40c4-be3d-a35423ed06fe",
+            "name": "Crédito 12x",
+            "color": null,
+            "orderindex": 15
+          },
+          {
+            "id": "b40d980e-0827-48f8-ac5d-a12d140b5ba6",
+            "name": "Crédito 13x",
+            "color": null,
+            "orderindex": 16
+          },
+          {
+            "id": "4c6da605-705e-4dd6-826e-e0e70779cbfe",
+            "name": "Crédito 14x",
+            "color": null,
+            "orderindex": 17
+          },
+          {
+            "id": "560f4902-ad7f-448f-9a3a-4b18c735113c",
+            "name": "Dinheiro",
+            "color": null,
+            "orderindex": 18
+          }
+        ]
+      },
+      "date_created": "1741097368305",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "592bfb7c-bae8-4ed2-a38d-c3ee3895a7a2",
+      "name": "💰 Valor do Negócio ",
+      "type": "currency",
+      "type_config": {
+        "precision": 2,
+        "currency_type": "BRL"
+      },
+      "date_created": "1739198332324",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "5c72c7bc-ba46-4b9c-9120-9d9fdecbc583",
+      "name": "🎂 Aniversário",
+      "type": "date",
+      "type_config": {},
+      "date_created": "1743188999970",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "6718437d-d4d9-47a0-8295-92553a56f8fc",
+      "name": "🤖 Pipeline - Closer",
+      "type": "tasks",
+      "type_config": {
+        "fields": []
+      },
+      "date_created": "1739119178567",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "7b2ee04e-4ea5-4dc7-b177-2998f0a0278c",
+      "name": "🤖 Pipeline - Pós Venda",
+      "type": "tasks",
+      "type_config": {
+        "fields": []
+      },
+      "date_created": "1739119195806",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "844fb633-07fe-4b7b-93d8-3c80c2b15dc7",
+      "name": "⚠️ Comissão",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "466c8801-d620-4fe1-a487-1fe3f3da80cd",
+            "name": "Diego Elite",
+            "color": null,
+            "orderindex": 0
+          },
+          {
+            "id": "1c1e4068-7332-4d51-bef8-ef4d17fee777",
+            "name": "Diego Wood",
+            "color": null,
+            "orderindex": 1
+          },
+          {
+            "id": "babb34e6-171f-469a-953d-06367d07f9da",
+            "name": "Diego Econ",
+            "color": null,
+            "orderindex": 2
+          },
+          {
+            "id": "e41fa2a2-bb25-4134-9935-6b9d3ed7cb11",
+            "name": "Augusto Elite",
+            "color": null,
+            "orderindex": 3
+          },
+          {
+            "id": "a4435751-41ac-4efd-9693-409255c71fba",
+            "name": "Augusto Wood",
+            "color": null,
+            "orderindex": 4
+          },
+          {
+            "id": "92ff3d59-7ada-4ee9-8b59-2fd81aac0523",
+            "name": "Augusto Econ",
+            "color": null,
+            "orderindex": 5
+          }
+        ]
+      },
+      "date_created": "1741113770847",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "86caa8c6-8691-4969-88d0-fdf7c9cae508",
+      "name": "💲 Estágios do Pos-vendas",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "d65753e8-fac8-4d16-bfbe-53d666e7341c",
+            "name": "1",
+            "color": "#FF7FAB",
+            "orderindex": 0
+          },
+          {
+            "id": "531aba77-3f44-4700-b012-b5b024bbb6d9",
+            "name": "2",
+            "color": "#e50000",
+            "orderindex": 1
+          },
+          {
+            "id": "b7a2f222-17c4-4c4b-9bd0-7395ca0fc473",
+            "name": "3",
+            "color": "#9b59b6",
+            "orderindex": 2
+          }
+        ]
+      },
+      "date_created": "1743188587413",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "9843f898-50a6-49b3-b407-35339179b83f",
+      "name": "‼️ lead_id (NUNCA, JAMAIS ALTERAR ESSE VALOR OU EXCLUIR ESSE CAMPO 😥🔫)",
+      "type": "short_text",
+      "type_config": {},
+      "date_created": "1757797889193",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "9bf38024-53f4-4427-bfc9-c8bf14fbcfdd",
+      "name": "🤖 Pipeline - SDR",
+      "type": "tasks",
+      "type_config": {
+        "fields": []
+      },
+      "date_created": "1739119247401",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "aac22986-2f18-40d1-a35d-cb2811e87436",
+      "name": "⚠️ Brinde",
+      "type": "text",
+      "type_config": {},
+      "date_created": "1741097452768",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "bc9d8f85-de02-4c61-b1a2-8345bef1964e",
+      "name": "⚠️ Stage",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "37ab3361-dba3-4ee5-a238-0001e88e2ba7",
+            "name": "Confirmação",
+            "color": null,
+            "orderindex": 0
+          },
+          {
+            "id": "f1476162-f62d-4b4d-90be-d2c71ba7fc80",
+            "name": "Em Andamento",
+            "color": "#f9d900",
+            "orderindex": 1
+          },
+          {
+            "id": "1ba5c765-c501-4c23-adf0-91fc3a0b5a27",
+            "name": "Ganho",
+            "color": "#2ecd6f",
+            "orderindex": 2
+          },
+          {
+            "id": "52c86cef-9fb2-4ab8-847b-6cefc914ddbc",
+            "name": "Congelado",
+            "color": "#02BCD4",
+            "orderindex": 3
+          },
+          {
+            "id": "bc03e2e7-984e-46e8-be25-a38c7133fbd0",
+            "name": "Perdido",
+            "color": "#e50000",
+            "orderindex": 4
+          }
+        ]
+      },
+      "date_created": "1737207003964",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "c15d7e46-1e1b-4e84-bafa-8a5c8a5f1fa2",
+      "name": "⚠️ Categoria do Ganho",
+      "type": "labels",
+      "type_config": {
+        "options": [
+          {
+            "id": "f97f984e-5231-43aa-bf57-7f054a8418f1",
+            "label": "Indicação de terceiros",
+            "color": null,
+            "orderindex": 0
+          },
+          {
+            "id": "30693677-f62a-4699-9222-4657ab0a2dcf",
+            "label": "Conceito aberto e Flexibilidade ",
+            "color": null,
+            "orderindex": 1
+          },
+          {
+            "id": "90dc4835-cd38-47cb-abbc-e226aeebfbf4",
+            "label": "Solução contra mofo",
+            "color": null,
+            "orderindex": 2
+          },
+          {
+            "id": "6953e7a7-43b9-4ade-a95b-f5b447dca9a0",
+            "label": "Necessidade de organização",
+            "color": null,
+            "orderindex": 3
+          },
+          {
+            "id": "be77d850-13eb-4bc1-ac6e-591908e45109",
+            "label": "Espaço específico para closet",
+            "color": null,
+            "orderindex": 4
+          },
+          {
+            "id": "b36a404b-6e9a-499f-a07e-12c972caefa0",
+            "label": "Mudança de casa ou reforma",
+            "color": null,
+            "orderindex": 5
+          },
+          {
+            "id": "3caac9b0-e1ae-407e-b5d4-aca2772ca40d",
+            "label": "Problema com móveis antigos",
+            "color": null,
+            "orderindex": 6
+          },
+          {
+            "id": "9101e201-d1b5-496e-9b66-5ad9a4e57d02",
+            "label": "Acompanhamento compra ecommerce",
+            "color": null,
+            "orderindex": 7
+          },
+          {
+            "id": "accded7c-12eb-4bb7-8008-7e8fec7901b0",
+            "label": "Araras improvisadas ou roupas em caixas",
+            "color": null,
+            "orderindex": 8
+          },
+          {
+            "id": "76d0e767-c4b0-438e-a296-11fd717a5bcc",
+            "label": "Facilidade de montagem e desmontagem",
+            "color": null,
+            "orderindex": 9
+          },
+          {
+            "id": "2bbc9f5e-997c-460c-9c5d-7c3715826a67",
+            "label": "E-commerce",
+            "color": "#fff",
+            "orderindex": 10
+          },
+          {
+            "id": "8a2f8a0b-da2a-4e30-8270-f1d495ca5a70",
+            "label": "Sem espaço para calçados e acessórios",
+            "color": null,
+            "orderindex": 11
+          },
+          {
+            "id": "8decc387-7440-4087-9bdc-d56e6cbe0c93",
+            "label": "RECOMPRA",
+            "color": "#fff",
+            "orderindex": 12
+          }
+        ]
+      },
+      "date_created": "1741279556545",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "c7e757be-20aa-47b6-b3e7-7c6e466ffc5e",
+      "name": "⚠️ Cliente Retira",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "options": [
+          {
+            "id": "f69d4416-e67f-4e4c-a8f4-e5b7ac895f2a",
+            "name": "Sim",
+            "color": "#2ecd6f",
+            "orderindex": 0
+          },
+          {
+            "id": "34130af9-a24f-4295-973f-76b74c4b9851",
+            "name": "Não",
+            "color": "#f9d900",
+            "orderindex": 1
+          }
+        ]
+      },
+      "date_created": "1741097441317",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "dd1a461d-0ea2-41e8-b280-a02e151d9878",
+      "name": "🎁 Cupom",
+      "type": "drop_down",
+      "type_config": {
+        "sorting": "manual",
+        "new_drop_down": true,
+        "options": [
+          {
+            "id": "2c229839-6d43-4d1a-9aa5-abb7adc35432",
+            "name": "1 - Cupom presente",
+            "color": "#2ecd6f",
+            "orderindex": 0
+          },
+          {
+            "id": "9fa6f2e3-f90a-489a-8b5c-acee0c7a63e5",
+            "name": "2 - Cupom Logo",
+            "color": "#b5bcc2",
+            "orderindex": 1
+          }
+        ]
+      },
+      "date_created": "1743188750030",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "de23f8da-1e59-438f-b48f-fa861538e2c2",
+      "name": "⚠️ Prazo de Entrega",
+      "type": "date",
+      "type_config": {},
+      "date_created": "1741097340644",
+      "hide_from_guests": false,
+      "required": false
+    },
+    {
+      "id": "ec9531c6-cddb-44a6-994a-ecee6ac4b479",
+      "name": "Data da venda",
+      "type": "date",
+      "type_config": {},
+      "date_created": "1740589455072",
+      "hide_from_guests": false,
+      "required": false
+    }
+  ]
+}

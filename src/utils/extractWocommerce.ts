@@ -27,6 +27,26 @@ export interface ExtractedBilling {
   normalizedPhone: string | null;
 }
 
+export interface ShippingAddress {
+  firstName: string;
+  lastName: string;
+  company: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  postcode: string;
+  country: string;
+  number: string;
+  neighborhood: string;
+  phone: string;
+}
+
+export interface ExtractedShipping {
+  shippingAddress: ShippingAddress;
+  normalizedPhone: string | null;
+}
+
 // Normaliza telefone para o formato +55XXXXXXXXXXX removendo qualquer formatacao.
 export function normalizePhone(rawPhone?: string, countryCode = '+55'): string | null {
   if (!rawPhone) return null;
@@ -69,4 +89,29 @@ export function extractBilling(order: any): ExtractedBilling {
   const normalizedPhone = normalizePhone(billing.cellphone || billing.phone);
 
   return { billingAddress, normalizedPhone };
+}
+
+// Extrai campos de shipping e inclui telefone normalizado.
+export function extractShipping(order: any): ExtractedShipping {
+  const shipping = order?.shipping ?? {};
+  const billing = order?.billing ?? {};
+
+  const shippingAddress: ShippingAddress = {
+    firstName: shipping.first_name ?? '',
+    lastName: shipping.last_name ?? '',
+    company: shipping.company ?? '',
+    address1: shipping.address_1 ?? '',
+    address2: shipping.address_2 ?? '',
+    city: shipping.city ?? '',
+    state: shipping.state ?? '',
+    postcode: shipping.postcode ?? '',
+    country: shipping.country ?? '',
+    number: shipping.number ?? '',
+    neighborhood: shipping.neighborhood ?? '',
+    phone: shipping.phone ?? '',
+  };
+
+  const normalizedPhone = normalizePhone(shipping.phone || billing.cellphone || billing.phone);
+
+  return { shippingAddress, normalizedPhone };
 }

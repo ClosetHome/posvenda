@@ -13,7 +13,7 @@ import {scheduleMessages, MessageToSchedule} from '../utils/dateCalculator'
 
 
 
-import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages } from './clickupMessages'
+import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages, mensagemFerias } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
 import { writeFile } from 'fs/promises';
 
@@ -145,7 +145,6 @@ export async function webHook(req: any) {
       const categoryOpts = getSelectedArray(ownCategory);
       const category = categoryOpts[0];
 
-
     let modelsFirst = modelsFirtsContact
     let messages:any
     let clienteRetira:any = 'off'
@@ -162,7 +161,10 @@ export async function webHook(req: any) {
       ? (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
       : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
-
+   /* if(category === 'E-commerce'){
+    await sendMessage(leadCapture.subscriberbot, 'text', mensagemFerias(firstName))
+    return null
+    } */
    /*if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
@@ -183,6 +185,8 @@ export async function webHook(req: any) {
       messageBot: `${message1[0].message_text}\n${message2[0].message_text}`,
     } 
     messages.push(formatMessagesDados);
+    await 
+
   }*/
     const messagesData = messages.map((m: any) => ({
       title: m.modelo,
@@ -205,6 +209,7 @@ export async function webHook(req: any) {
       .join('\n');
 
     // Media conforme cor (somente quando cliente retira)
+    if(!category || category !== 'E-commerce') {
     if (!clienteRetira) {
       messages.push({ modelo: '', message: mediaMessages[3], messageBot: '' });
     } else if (clienteRetira && clienteRetira !== 'off'){
@@ -214,6 +219,7 @@ export async function webHook(req: any) {
       const media    = isBranco ? mediaMessages[4] : mediaMessages[5];
       messages.push({ modelo: '', message: media, messageBot: '' });
     }
+  }
 
    if(category === 'RECOMPRA') {
       await sendMessage(leadCapture.subscriberbot, 'text', messages.find((message: { modelo: string; }) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message)
@@ -348,14 +354,17 @@ export async function webHook(req: any) {
       }
 
       // Histórico para contexto do bot
-      const sentHistory = await messageService.findByLeadId(leadToUpdate.leadId, true);
-      messagesHistory = (sentHistory ?? [])
-        .filter((m: any) => m?.sent === true)
-        .map((m: any) => {
-          const botMsg = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? m.message_text;
-          return `\n   role: assistant,\n   content: ${botMsg}\n    `;
-        })
-        .join('\n');
+       const sentHistory = await messageService.findByLeadId(leadCustom?.id, true);
+      const messagesHistoryArr: string[] = [];
+      for (const m of (sentHistory ?? []).filter((msg: any) => msg?.sent === true)) {
+        try {
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? m.message_text;
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${messagesSent}\n    `);
+        } catch (err) {
+          // MantÇ¸m o histÇürico mesmo que alguma mensagem quebre o messagesReturn
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${m?.message_text ?? ''}\n    `);
+        }
+      }  
 
       await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
 
@@ -561,18 +570,45 @@ if (urls.length === 0 && history.length === 0) return { ok: false, reason: 'no_a
     const retiraOpts  = getSelectedArray(retiraField);
     const clienteRetira = retiraOpts.includes('Sim');
     const firsName = utils.extractFirstName(task?.lead?.name)
-    const messageFirst = clienteRetira? `Ola ${firsName}, segue em anexo a notafiscal do seu Closet` : `Ola ${firsName}, segue em anexo a notafiscal do seu Closet. Referente ao seu código de rastreio você vai entrar neste link, selecionar Nota Fiscal, digitar o número da sua nota, juntamente com seu CPF:
+    const taskPosVenda: any = await clickup.tasks.get(req.body.task_id);
+   const customFields = utils.extractCustomFields(taskPosVenda.body.custom_fields);
+    const transField = getField(customFields, "Transportadora");
+    const transOpts  = getSelectedArray(transField);
+    const Miguel = transOpts.includes('Expresso São Miguel');
+    const Rodonaves = transOpts.includes('Rodonaves');
+    const Braspress = transOpts.includes('Braspress');
+
+   let messageFirst:any
+    if(clienteRetira){
+     messageFirst = `Ola ${firsName}, segue em anexo a notafiscal do seu Closet`
+    } else if(Miguel){
+       messageFirst = `Ola ${firsName}, segue em anexo a notafiscal do seu Closet. Referente ao seu código de rastreio você vai entrar neste link, selecionar Nota Fiscal, digitar o número da sua nota, juntamente com seu CPF:
 https://portaldocliente.expressosaomiguel.com.br:2041/track
-Depois é só confirmar a sequência de letras que o sistema pedir, e prontinho! Você terá acesso a todas as informações do seu envio e vai poder acompanhar este pedido até a sua casa!`
+Depois é só confirmar a sequência de letras que o sistema pedir, e prontinho! Você terá acesso a todas as informações do seu envio e vai poder acompanhar este pedido até a sua casa!
+`} else if(Rodonaves) {
+  messageFirst = `Olá${firsName}, segue em anexo a Nota Fiscal do seu Closet. Referente o seu código de rastreio, você ira entrar neste link, selecionar Nota Fiscal, digitar o número da nota, juntamente do número do CNPJ da nossa empresa!
+https://www.rodonaves.com.br/rastreio-de-mercadoria?cpfcnpj=90771452000160&numnf=8626&rastreiemercadoria=2
+CNPJ da nossa empresa: 90 771 452 0001-60`
+}
+ else if (Braspress) {
+ messageFirst = `Olá${firsName}, segue em anexo a Nota Fiscal do seu Closet. Referente o seu código de rastreio, você ira entrar neste link, selecionar Nota Fiscal, digitar o número da nota, juntamente do número do CNPJ da nossa empresa!
+https://www.rodonaves.com.br/rastreio-de-mercadoria?cpfcnpj=90771452000160&numnf=8626&rastreiemercadoria=2
+CNPJ da nossa empresa: 90 771 452 0001-60`
+ }
+
          const dataEntrega = task?.lead?.customFields.find((field: { fieldName: string; }) => field.fieldName === "⚠️ Prazo de Entrega")?.selectedOptions || 0
 
       const sentHistory = await messageService.findByLeadId(task?.lead?.id, true);
-      let messagesHistoryArr = (sentHistory ?? [])
-        .filter((m: any) => m?.sent === true)
-        .map((m: any) => {
-          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0].messageBot ?? m.message_text;
-          return `\n   role: assistant,\n   content: ${messagesSent}\n    `;
-        });   
+      const messagesHistoryArr: string[] = [];
+      for (const m of (sentHistory ?? []).filter((msg: any) => msg?.sent === true)) {
+        try {
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? m.message_text;
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${messagesSent}\n    `);
+        } catch (err) {
+          // MantÇ¸m o histÇürico mesmo que alguma mensagem quebre o messagesReturn
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${m?.message_text ?? ''}\n    `);
+        }
+      }   
 
       messagesHistoryArr.push(messageFirst);
       let messagesHistory = messagesHistoryArr.join('');
@@ -624,12 +660,16 @@ await sendMessage(subscriberId, 'file', toSend[0])
   
       const sentHistory = await messageService.findByLeadId(leadCustom.id, true);
    
-      let messagesHistoryArr = (sentHistory ?? [])
-        .filter((m: any) => m?.sent === true)
-        .map((m: any) => {
-          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0].messageBot ?? m.message_text;
-          return `\n   role: assistant,\n   content: ${messagesSent}\n    `;
-        });
+      const messagesHistoryArr: string[] = [];
+      for (const m of (sentHistory ?? []).filter((msg: any) => msg?.sent === true)) {
+        try {
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? m.message_text;
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${messagesSent}\n    `);
+        } catch (err) {
+          // MantÇ¸m o histÇürico mesmo que alguma mensagem quebre o messagesReturn
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${m?.message_text ?? ''}\n    `);
+        }
+      }
       const reschaduleMessage = `Olá ${firsName}, por meio deste gostaria de informar que o prazo de entrega do seu Closet foi alterado para dia ${dataEntrega}`;
       messagesHistoryArr.push(reschaduleMessage);
       let messagesHistory = messagesHistoryArr.join('');
@@ -720,23 +760,27 @@ await messageService.bulkCreate(toCreate);
       });
       const customDataBotString = customDataBot.join('\n');
   
-      const sentHistory = await messageService.findByLeadId(leadCustom.id, true);
-      let messagesHook:any[] = []
-      const messagesHistory = (sentHistory ?? [])
-        .filter((m: any) => m?.sent === true)
-        .map((m: any) => {
-          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0].messageBot ?? m.message_text;
-          return `\n   role: assistant,\n   content: ${messagesSent}\n    `;
-        })
-        .join('\n');
 
+      let messagesHook:any[] = []
+
+      const sentHistory = await messageService.findByLeadId(task?.lead?.id, true);
+      const messagesHistoryArr: string[] = [];
+      for (const m of (sentHistory ?? []).filter((msg: any) => msg?.sent === true)) {
+        try {
+          const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0]?.messageBot ?? m.message_text;
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${messagesSent}\n    `);
+        } catch (err) {
+          // MantÇ¸m o histÇürico mesmo que alguma mensagem quebre o messagesReturn
+          messagesHistoryArr.push(`\n   role: assistant,\n   content: ${m?.message_text ?? ''}\n    `);
+        }
+      }   
         messagesHook = (sentHistory ?? [])
         .filter((m: any) => m?.sent === true)
         .map((m: any) => {
           const messagesSent = messagesReturn(firsName, [m.title], dataEntrega)?.[0];
           return messagesSent;
         });
-
+      let messagesHistory = messagesHistoryArr.join('');
  
     const messageHistoryId  = getCustomFieldId('messagehistory')
     const customData = getCustomFieldId('dados pedido')

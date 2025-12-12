@@ -518,7 +518,7 @@ function formatPhoneDual(input: string, countryCode = '+55') {
   // Para campos do tipo "drop_down" (value Ǹ ��ndice numǸrico)
   else if (customField.type === "drop_down" && typeof customField.value === "number") {
     const selectedOption = customField.type_config.options[customField.value];
-    if (selectedOption) {
+    if (selectedOption) { 
       selectedOptions = [selectedOption];
     }
   }
