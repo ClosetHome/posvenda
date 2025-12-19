@@ -47,12 +47,12 @@ async function main() {
    
 */
   const resArray = [req1/*, req3, req2, req4, req5*/]
-
+/*
    await Promise.all(resArray.map(async (req) => {
     await webHook(req)
    }))
     
-    
+    */
   //clickupServices.updateClickupPre('+55 51 98349674', 'ganho', '868fz1y5f', 'ecommerce')
 //followUpLost('follow-up 3')
 /*
