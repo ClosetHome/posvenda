@@ -121,7 +121,7 @@ export async function ProccessOrder(data: any) {
  telefone: ${billingAddress?.phone || billingAddress?.cellphone || 'Não informado'},
  cep: ${billingAddress.postcode},
  `;
-
+/*
  const objmsg1 = {
   title: 'MENSAGEM 1 ECOMMERCE',
   message_text: message1,
@@ -134,8 +134,8 @@ export async function ProccessOrder(data: any) {
   message_text: message2,
   sent:true,
   leadId: leadData.id,
- }
-  await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
+ }*/
+  //await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
   await updateTask(taskCloser[0].id, 'venda');
     return message2;
   } catch (error: any) {
