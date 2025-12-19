@@ -162,11 +162,11 @@ export async function webHook(req: any) {
       ? (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
       : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
-   if(category === 'E-commerce'){
+   /*if(category === 'E-commerce'){
     await sendMessage(leadCapture.subscriberbot, 'text', mensagemFerias(firstName))
     return null
     } 
-   /*if(category === 'E-commerce') {
+   if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
     leadId: leadCapture.id,
