@@ -137,6 +137,7 @@ export async function webHook(req: any) {
     }
 
     // Prazo de entrega (opcional)
+    
     const prazoField = getField(customFields, '⚠️ Prazo de Entrega');
     const prazoOpts  = getSelectedArray(prazoField);
     const dataEntrega:any = prazoOpts[0] ?? 0;
@@ -161,10 +162,10 @@ export async function webHook(req: any) {
       ? (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
       : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
-   /* if(category === 'E-commerce'){
+   if(category === 'E-commerce'){
     await sendMessage(leadCapture.subscriberbot, 'text', mensagemFerias(firstName))
     return null
-    } */
+    } 
    /*if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
@@ -231,11 +232,10 @@ export async function webHook(req: any) {
       ? await clickupServices.updateTask(taskDataPosVenda.id, 'cliente retira', '', 170448045 )
       : await clickupServices.updateTask(taskDataPosVenda.id, 'envio do closet', '', 170448045 )
     } else {
+      console.log('Não chegou aqui')
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
    }
    
-    
-    
     return leadCapture;
   } catch (error) {
     console.log(error);
@@ -366,7 +366,8 @@ export async function webHook(req: any) {
         }
       }  
 
-      await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
+    //
+    await sendHookSegundaEtapa(leadCustom.phone, messagesPosDirect, messagesHistory);
 
       // Retorna o lead atualizado para o caller
       return leadCustom;
