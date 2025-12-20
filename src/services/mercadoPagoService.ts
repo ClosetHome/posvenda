@@ -16,7 +16,7 @@ export async function ProccessOrder(data: any) {
   let taskSdr: any[] = [];
   let taskCloser: any[] = [];
   try {
-  //  if (data.status !== 'processing') return;
+    if (data.status !== 'processing') return;
     const { billingAddress, normalizedPhone } = extractBilling(data);
     if (!normalizedPhone) return;
     const last8 = utils.last8DigitsPhone(normalizedPhone);
