@@ -62,7 +62,7 @@ export async function ProccessOrder(data: any) {
     }
 
     if (taskCloser.length === 0 && taskSdr.length > 0) {
-      await clickup.updateClickupPre(normalizedPhone, 'encaminhado closer', taskSdr[0].id, 'ecommerce');
+      await clickup.updateClickupPre(normalizedPhone, 'ganho', taskSdr[0].id, 'ecommerce');
       await new Promise((resolve) => setTimeout(resolve, 10000));
       taskCloser = await getTasksCustom(901108902349, normalizedPhone);
     }
