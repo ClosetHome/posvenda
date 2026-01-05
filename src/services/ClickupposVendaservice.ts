@@ -11,8 +11,6 @@ import {getLostFollowUpStatusDate, setLostFollowUpStatusDate, clearLostFollowUpC
 import {redis2} from '../db'
 import {scheduleMessages, MessageToSchedule} from '../utils/dateCalculator'
 
-
-
 import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages, mensagemFerias } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
 import { writeFile } from 'fs/promises';
@@ -162,10 +160,12 @@ export async function webHook(req: any) {
       ? (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'ENTREGA VIA TRANSPORTADORA')
       : (messages as { modelo: string; message: string; messageBot?: string }[]).filter((m: { modelo: string }) => m.modelo !== 'CLIENTE RETIRA');
    }
+   /*
    if(category === 'E-commerce'){
     await sendMessage(leadCapture.subscriberbot, 'text', mensagemFerias(firstName))
     return null
-    } /*
+    } */
+   /*
    if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
@@ -186,8 +186,7 @@ export async function webHook(req: any) {
       messageBot: `${message1[0].message_text}\n${message2[0].message_text}`,
     } 
     messages.push(formatMessagesDados);
-    await 
-
+   
   }*/
     const messagesData = messages.map((m: any) => ({
       title: m.modelo,

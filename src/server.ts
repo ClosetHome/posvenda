@@ -5,10 +5,11 @@ import {cronJobMessages, cronJobMessagesFollowup1, cronJobMessagesFollowup2, cro
 import {verifyScheduledMessages, webHook, followUpLost, schaduleBlack} from './services/ClickupposVendaservice.js'
 import messagesMigration from './migrations/20250926-add-attachment-fields-to-posvendamessages.js'
 import clickupServices from './services/clickupServices.js';
-import { sendMessage } from './services/botconversaService.js';
+import { sendMessage, getSubscriber } from './services/botconversaService.js';
 import createUsersTable  from './migrations/add_colunm_active_leads.js';
 import  messageService  from './services/posvendaMessages.js';
 import {respChat} from './services/botconversaService.js';
+
 
 async function main() {
     console.log('🎯 Sistema de Email Marketing ClosetHome iniciado!');
@@ -47,7 +48,14 @@ async function main() {
    
 */
   const resArray = [req1/*, req3, req2, req4, req5*/]
-/*
+  /*
+const contact = await getSubscriber('+555198349674')
+console.log(contact)
+await sendMessage(contact.id, 'text', 'oi')
+*/
+
+  /*
+
    await Promise.all(resArray.map(async (req) => {
     await webHook(req)
    }))
