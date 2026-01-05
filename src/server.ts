@@ -63,13 +63,12 @@ await sendMessage(contact.id, 'text', 'oi')
     */
   //clickupServices.updateClickupPre('+55 51 98349674', 'ganho', '868fz1y5f', 'ecommerce')
 //followUpLost('follow-up 3')
-/*
+
 cronJobMessages()
 cronJobMessagesFollowup1()
 cronJobMessagesFollowup2()
 cronJobMessagesFollowup3()
 cronJobMessagesFollowup4()
-*/
 //clickupServices.getTasksCustom(901108902349, '+555198349674')
 
 //createUsersTable.up(sequelize.getQueryInterface())
