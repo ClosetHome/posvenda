@@ -446,7 +446,6 @@ Seu cupom de 15% continua ativo até ${ninetyTwoDaysAfter}! Me chama se quiser a
     message: `Oi, ${name}! Tudo bem?
 Passando para te lembrar que seu cupom exclusivo de 15% de desconto expira em 2 dias!
 Ainda temos algumas opções disponíveis para o seu espaço, mas o cupom está quase expirando.
-🔗 [Inserir link dos combos ou produtos]
 Se precisar de sugestão, estou aqui para te ajudar! 😊`,
     messageBot: `${name}, seu cupom de 15% expira em 2 dias. Opções: [link]. Quer sugestões para o seu espaço?`
   },
@@ -455,7 +454,6 @@ Se precisar de sugestão, estou aqui para te ajudar! 😊`,
     message: `Oi, ${name}! Tudo bem? 😊
 Quero te enviar um guia exclusivo de organização para deixar seu closet ainda mais funcional! 📖✨
 Ele está cheio de dicas práticas para te ajudar a aproveitar cada cantinho do seu espaço da melhor forma.
-🔗 [Inserir link do guia]
 Depois me conta qual delas foi mais útil para você! Vou adorar saber. 😉`,
     messageBot: `Guia rápido de organização para otimizar seu closet: [link]. Depois me conte o que foi mais útil.`
   },
