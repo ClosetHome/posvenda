@@ -1,6 +1,6 @@
 
 import { extractBilling } from '../utils/extractWocommerce';
-import {getSubscriber, sendMessage} from '../services/botconversaService'
+import {createSubscriber, getSubscriber, sendMessage} from '../services/botconversaService'
 import utils from '../utils/utils'
 import PosVendaLeadsService from './posvendaLeads';
 import {getTasksCustom, updateTaskCustomField2, updateTaskCustomField, updateTask, createTaskClickup} from '../services/clickupServices'
@@ -16,15 +16,51 @@ export async function ProccessOrder(data: any) {
   let taskSdr: any[] = [];
   let taskCloser: any[] = [];
   try {
-    if (data.status !== 'processing') return;
+   // if (data.status !== 'processing') return;
     const { billingAddress, normalizedPhone } = extractBilling(data);
     if (!normalizedPhone) return;
+    const firstName = billingAddress?.firstName ?? '';
+    const lastName = billingAddress?.lastName ?? '';
+    const fullName = `${firstName} ${lastName}`.trim();
     const last8 = utils.last8DigitsPhone(normalizedPhone);
     const options = { phone: last8, includeTasks: true };
 
     const lead: any[] = await leadService.findAll(options);
-    const leadData = Array.isArray(lead) && lead.length > 0 ? lead[0] : null;
-   // if (!leadData) return;
+    let leadData = Array.isArray(lead) && lead.length > 0 ? lead[0] : null;
+
+    if (!leadData) {
+      let contact = await getSubscriber(normalizedPhone);
+      if (!contact) {
+        const created = await createSubscriber(normalizedPhone, firstName, lastName);
+        if (created?.id) {
+          contact = created;
+        } else if (created?.status === 200) {
+          contact = await getSubscriber(normalizedPhone);
+        }
+      }
+
+      const leadPayload: any = {
+        name: fullName || `${billingAddress?.firstName} ${billingAddress?.lastName}` || 'Sem nome',
+        phone: normalizedPhone,
+        subscriberbot: contact?.id,
+        email: billingAddress?.email,
+        city: billingAddress?.city,
+        neighborhood: billingAddress?.neighborhood,
+        street: billingAddress?.address1,
+        number: billingAddress?.number,
+        cep: billingAddress?.postcode,
+        cpf: billingAddress?.cpf
+      };
+
+      leadData = await leadService.create(leadPayload);
+    } else if (!leadData.subscriberbot) {
+      const contact = await getSubscriber(normalizedPhone);
+      if (contact?.id) {
+        await leadService.update(leadData.id, { subscriberbot: contact.id });
+        leadData.subscriberbot = contact.id;
+      }
+    }
+   
 
     const leadTasks = leadData?.tasks || [];
     const leadTaskSdr = leadTasks.filter((t: any) => t.listId === 901108902340);
@@ -106,40 +142,48 @@ export async function ProccessOrder(data: any) {
     await updateTaskCustomField2(taskCloser[0].id, 'c7e757be-20aa-47b6-b3e7-7c6e466ffc5e', cliente_retira);
     await updateTaskCustomField2(taskCloser[0].id, 'de23f8da-1e59-438f-b48f-fa861538e2c2', daqui10dias, true);
 
-    const message1 = `Olá, ${billingAddress.firstName} . Sua compra foi realizada com sucesso!`;
+    const safeText = (value: any, fallback = 'Nao informado') => {
+      if (value === null || value === undefined) return fallback;
+      const text = String(value).trim();
+      return text.length > 0 ? text : fallback;
+    };
 
-    const message2 = `
- Para darmos continuidade na emissão da NF, poderia confirmar os dados a baixo.
- Nome Completo:${billingAddress.firstName} ${billingAddress.lastName},
- cidade: ${billingAddress.city},
- bairro: ${billingAddress.neighborhood},
- rua: ${billingAddress.address1},
- numero: ${billingAddress.number},
- cpf: ${billingAddress.cpf},
- email: ${billingAddress.email},
- data de nascimento: ${billingAddress.birthdate},
- telefone: ${billingAddress?.phone || billingAddress?.cellphone || 'Não informado'},
- cep: ${billingAddress.postcode},
- `;
-/*
- const objmsg1 = {
-  title: 'MENSAGEM 1 ECOMMERCE',
-  message_text: message1,
-  sent:true,
-  leadId: leadData.id,
- }
+    const message1 = `Ola, ${safeText(firstName, 'cliente')}! Sua compra foi realizada com sucesso!`;
 
-  const objmsg2 = {
-  title: 'MENSAGEM 2 ECOMMERCE',
-  message_text: message2,
-  sent:true,
-  leadId: leadData.id,
- }*/
-  //await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
-  await updateTask(taskCloser[0].id, 'venda');
+    const message2 = [
+      'Para darmos continuidade na emissao da NF, poderia confirmar os dados abaixo.',
+      `Nome Completo: ${safeText(fullName, 'Nao informado')}`,
+      `cidade: ${safeText(billingAddress?.city)}`,
+      `bairro: ${safeText(billingAddress?.neighborhood)}`,
+      `rua: ${safeText(billingAddress?.address1)}`,
+      `numero: ${safeText(billingAddress?.number)}`,
+      `cpf: ${safeText(billingAddress?.cpf)}`,
+      `email: ${safeText(billingAddress?.email)}`,
+      `data de nascimento: ${safeText(billingAddress?.birthdate)}`,
+      `telefone: ${safeText(billingAddress?.phone || billingAddress?.cellphone || normalizedPhone)}`,
+      `cep: ${safeText(billingAddress?.postcode)}`
+    ].join('\n');
+
+    const objmsg1 = {
+      title: 'MENSAGEM 1 ECOMMERCE',
+      message_text: message1,
+      sent: true,
+      leadId: leadData.id
+    };
+
+    const objmsg2 = {
+      title: 'MENSAGEM 2 ECOMMERCE',
+      message_text: message2,
+      sent: true,
+      leadId: leadData.id
+    };
+
+    await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
+    await updateTask(taskCloser[0].id, 'venda');
     return message2;
   } catch (error: any) {
     console.log(error.message);
     return null;
   }
 }
+

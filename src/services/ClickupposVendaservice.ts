@@ -165,7 +165,7 @@ export async function webHook(req: any) {
     await sendMessage(leadCapture.subscriberbot, 'text', mensagemFerias(firstName))
     return null
     } */
-   /*
+   
    if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
@@ -187,7 +187,7 @@ export async function webHook(req: any) {
     } 
     messages.push(formatMessagesDados);
    
-  }*/
+  }
     const messagesData = messages.map((m: any) => ({
       title: m.modelo,
       message_text: m.message,

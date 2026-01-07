@@ -17,6 +17,7 @@ interface CreateLeadPosVendaData {
   birthday?: Date;
   status: string;
   phone: string;
+  subscriberbot?: number;
 }
 
 interface UpdateLeadPosVendaData {
@@ -26,6 +27,7 @@ interface UpdateLeadPosVendaData {
   state?: string;
   street?: string;
   neighborhood?:string;
+  subscriberbot?: number;
   number?: string;
   cep?: string;
   cpf?: string;
