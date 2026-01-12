@@ -7,7 +7,7 @@ Tasks.belongsTo(LeadsPosVenda, {
   foreignKey: 'leadId',
   as: 'lead'
 });
-
+  
 LeadsPosVenda.hasMany(Tasks, { 
   foreignKey: 'leadId',
   as: 'tasks'
