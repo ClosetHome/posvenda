@@ -28,7 +28,18 @@ export const modelsSchadules = [
   'ÚLTIMO AVISO DO CUPOM',
   'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'
 ];
- export const mediaMessages = [`${backendUrl}/api/files/montagem1.mp4`, `${backendUrl}/api/files/montagem2.mp4`, `${backendUrl}/api/files/montagem3.mp4`, `${backendUrl}/api/files/imagempos.jpg`, `${backendUrl}/api/files/retira_closet_branco.jpg`, `${backendUrl}/api/files/retira_closet_preto.jpg`, `${backendUrl}/api/files/codigocupom.jpg`, `${backendUrl}/api/files/cupomaniversario.jpg`, `${backendUrl}/api/files/organizacao.mp4`, `${backendUrl}/api/files/blacknovemberimage.jpg`, `${backendUrl}/api/files/quartamensagem.jpg`]
+ export const mediaMessages = [
+  `${backendUrl}/api/files/montagem1.mp4`,
+  `${backendUrl}/api/files/montagem2.mp4`,
+  `${backendUrl}/api/files/montagem3.mp4`,
+  `${backendUrl}/api/files/imagempos.jpg`,
+  `${backendUrl}/api/files/retira_closet_branco.jpg`,
+  `${backendUrl}/api/files/retira_closet_preto.jpg`,
+  `${backendUrl}/api/files/codigocupom.jpg`,
+  `${backendUrl}/api/files/cupomaniversario.jpg`,
+  `${backendUrl}/api/files/organizacao.mp4`,
+  `${backendUrl}/api/files/blacknovemberimage.jpg`,
+  `${backendUrl}/api/files/quartamensagem.jpg`]
 
 export function treatMessageType(modelo:string){
  if(modelo === 'FOLLOW-UP 01 - AVISO ENTREGA AMANHÃ'){

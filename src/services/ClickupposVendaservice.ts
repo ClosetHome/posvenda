@@ -240,8 +240,8 @@ export async function webHook(req: any) {
     console.log(error);
     return [];
   }
-}
-
+}           
+ 
   export async function getMessageBot(task_id: string, description: string): Promise<any> {
 
     let directMessages: any[] = [];
@@ -252,7 +252,7 @@ export async function webHook(req: any) {
     let extractedCadastro: any;
     let messagesHistory: string = '';
     let dataEntrega: string | undefined;
-
+ 
     try {
       // Tenta JSON; se falhar, faz parsing heurístico
       try {
@@ -419,6 +419,9 @@ const messagesHistory = [
       }
       if(message.title === 'LEMBRETE DO CUPOM - 2 MESES'){
         await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[8])
+      }  
+        if(message.title === 'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'){
+        await sendMessage(Number(message.leadposvenda.subscriberbot), "text", ' https://drive.google.com/file/d/1HMgGoOtNQfiSNat6Ul3bFmreAruPMPk7/view?usp=drive_link')
       }
         if(message.title === 'ANIVERSÁRIO - INÍCIO DO MÊS'){
             if (!status) return;
@@ -1076,4 +1079,9 @@ export async function extractData() {
   const outputPath = './leads-posvenda.json';
   await writeFile(outputPath, JSON.stringify(leadsArray, null, 2), 'utf-8');
   console.log(`Arquivo salvo em ${outputPath} com ${leadsArray.length} registros.`);
+}
+
+
+async function updateHookPre(task: any) {
+  
 }

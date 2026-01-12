@@ -65,11 +65,7 @@ export async function updateTask(taskId:string, status?:string, description?: st
 }
 
 export async function updateTaskCustomField(taskId:string, field_id:string, label_id?:any) {
-  
-   
   const data = {value:[label_id]}
-  
-
     try{
     const response:any = await clickup.tasks.addCustomFieldValue(taskId, field_id, data);
   return response.body
@@ -80,7 +76,6 @@ export async function updateTaskCustomField(taskId:string, field_id:string, labe
 
 export async function updateTaskCustomField2(taskId:string, field_id:string, label_id?:any, option?:boolean) {
   
-   
   let data:any = {value:label_id}
 
   if(option){

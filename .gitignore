@@ -4,6 +4,7 @@
 /build
 /uploads
 /test
+files/guiadeorganizacao.pdf
 # Logs
 *.log
 npm-debug.log*

@@ -9,7 +9,7 @@ router.post('/fail', clickupHookFail);
 router.post('/chat', clickupHookChat);
 router.post('/task-updated', clickupTaskUpdatedHook);
 router.post('/chat-pre', clickupHookChatPre);
-router.post('/update-pre', clickupHookUpdatePre);
+router.post('/update-pre', clickupHookUpdatePre);   
 router.post('/create-cupom', clickupHookCreateCupom);
 
 
