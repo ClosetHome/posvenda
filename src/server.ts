@@ -19,7 +19,7 @@ async function main() {
    
    const req1 = {
     body: {
-      task_id:'868gz1m22'
+      task_id:'868h4281n'
     },
    }
 /*
@@ -54,8 +54,8 @@ console.log(contact)
 await sendMessage(contact.id, 'text', 'oi')
 */
 
-  /*
-
+  
+/*
    await Promise.all(resArray.map(async (req) => {
     await webHook(req)
    }))
