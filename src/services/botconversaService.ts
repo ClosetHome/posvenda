@@ -471,7 +471,7 @@ if(!taskPre) {
         phone = phone.replace(/[^\d+]/g, '');
       let contact = await getSubscriber(phone);
     if (!contact) contact = await createSubscriber(phone, firstName, lastName);
-    if(contact.status === 200){
+    if(contact?.status === 200){
       contact = await getSubscriber(phone);
     }
       const leadData = {

@@ -230,10 +230,9 @@ export async function webHook(req: any) {
       clienteRetira
       ? await clickupServices.updateTask(taskDataPosVenda.id, 'cliente retira', '', 170448045 )
       : await clickupServices.updateTask(taskDataPosVenda.id, 'envio do closet', '', 170448045 )
-    } else {
-      console.log('Não chegou aqui')
+      return leadCapture
+    } 
     await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
-   }
    
     return leadCapture;
   } catch (error) {
