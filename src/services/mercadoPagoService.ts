@@ -7,6 +7,9 @@ import {getTasksCustom, updateTaskCustomField2, updateTaskCustomField, updateTas
 import clickup from '../services/clickupServices'
 import TaskService from './taskService';
 import PosVendaMessagesService from './posvendaMessages';
+import brainService from './brainSideService'
+import axios from 'axios';
+import brainSideService from './brainSideService';
 
 const leadService = new PosVendaLeadsService()
 const taskService = new TaskService()
@@ -16,7 +19,7 @@ export async function ProccessOrder(data: any) {
   let taskSdr: any[] = [];
   let taskCloser: any[] = [];
   try {
-    if (data.status !== 'processing') return;
+    //if (data.status !== 'processing') return;
     const { billingAddress, normalizedPhone } = extractBilling(data);
     if (!normalizedPhone) return;
     const firstName = billingAddress?.firstName ?? '';
@@ -161,19 +164,19 @@ export async function ProccessOrder(data: any) {
 
     const message1 = `Ola, ${safeText(firstName, 'cliente')}! Sua compra foi realizada com sucesso!`;
 
-    const message2 = [
-      'Para darmos continuidade na emissao da NF, poderia confirmar os dados abaixo.',
-      `Nome Completo: ${safeText(fullName, 'Nao informado')}`,
-      `cidade: ${safeText(billingAddress?.city)}`,
-      `bairro: ${safeText(billingAddress?.neighborhood)}`,
-      `rua: ${safeText(billingAddress?.address1)}`,
-      `numero: ${safeText(billingAddress?.number)}`,
-      `cpf: ${safeText(billingAddress?.cpf)}`,
-      `email: ${safeText(billingAddress?.email)}`,
-      `data de nascimento: ${safeText(billingAddress?.birthdate)}`,
-      `telefone: ${safeText(billingAddress?.phone || billingAddress?.cellphone || normalizedPhone)}`,
-      `cep: ${safeText(billingAddress?.postcode)}`
-    ].join('\n');
+    const message2 = 
+      `Para darmos continuidade na emissao da NF, poderia confirmar os dados abaixo.
+      Nome Completo: ${safeText(fullName, 'Nao informado')}
+      cidade: ${safeText(billingAddress?.city)}
+      bairro: ${safeText(billingAddress?.neighborhood)}
+      rua: ${safeText(billingAddress?.address1)}
+      numero: ${safeText(billingAddress?.number)}
+      cpf: ${safeText(billingAddress?.cpf)}
+      email: ${safeText(billingAddress?.email)}
+      data de nascimento: ${safeText(billingAddress?.birthdate)}
+      telefone: ${safeText(billingAddress?.phone || billingAddress?.cellphone || normalizedPhone)}
+      cep: ${safeText(billingAddress?.postcode)}`
+    
 
     const objmsg1 = {
       title: 'MENSAGEM 1 ECOMMERCE',
@@ -189,18 +192,31 @@ export async function ProccessOrder(data: any) {
       leadId: leadData.id
     };
 
-    await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
+ //  await posVendaMessagesService.bulkCreate([objmsg1, objmsg2]);
  const descritpion = `
   produtos: ${produtos},
   desconto cupom: ${paymentInfo.couponDiscount},
   desconto pix: ${paymentInfo.pixDiscount},
   valor do frete: ${paymentInfo.shippingTotal}
   `
+  const obj ={
+      phone: normalizedPhone,
+      name:fullName,
+      message1: message1,
+      message2: message2
+    }
+
+    await brainSideService.sendEcommerceBrain(obj)
     await updateTask(taskCloser[0].id, 'venda', descritpion);
+
+    
     return message2;
   } catch (error: any) {
     console.log(error.message);
     return null;
   }
 }
+
+
+
 

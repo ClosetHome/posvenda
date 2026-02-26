@@ -99,7 +99,13 @@ export async function sendHook(phone: string, task_id:string , messages:any[], c
   try{
 let data = {}
 let url
-   if(!messages.find((message) => message.modelo === '')){
+   const hasMedia = messages.some(
+     (message) =>
+       message?.modelo === '' &&
+       typeof message?.message === 'string' &&
+       message.message.trim().length > 0
+   );
+  if(!hasMedia){
    data = {
     "phone": phone,
     "task_id": task_id,
@@ -113,7 +119,7 @@ let url
   url = `https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/150860/5ik8HZQcD3bI/`
    
    } else {
-    data = {
+    data = {  
         "phone": phone,
         "task_id": task_id,
         "message_1": messages.find((message) => message.modelo === 'RESPONSÁVEL PELO PÓS-VENDA (01° CONTATO)').message,
@@ -623,3 +629,5 @@ try{
   console.log(error.message)
 }
 }
+
+

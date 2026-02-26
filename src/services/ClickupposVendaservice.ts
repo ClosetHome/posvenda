@@ -10,7 +10,7 @@ import posvendaMessages from './posvendaMessages'
 import {getLostFollowUpStatusDate, setLostFollowUpStatusDate, clearLostFollowUpCache} from './followupTimer'
 import {redis2} from '../db'
 import {scheduleMessages, MessageToSchedule} from '../utils/dateCalculator'
-
+import brainSideService from './brainSideService';
 import {messagesReturn, treatMessageType, treatMessageDate, treatMessageBirthday, modelsDirect, modelsFirtsContact, modelsAniversary, modelsSchadules, mediaMessages, mediaPre, blacknovemberMessages, mensagemFerias } from './clickupMessages'
 import { calculateTriggerDates } from '../utils/dateCalculator';
 import { writeFile } from 'fs/promises';
@@ -52,7 +52,7 @@ export async function webHook(req: any) {
   let leadCapture:any
   try {
     const taskPosVenda: any = await clickup.tasks.get(req.body.task_id);
-
+    
     let phone: string | undefined =
       taskPosVenda?.body?.custom_fields
         ?.find((f: any) => f?.name === '👤 Telefone Cliente')
@@ -138,7 +138,9 @@ export async function webHook(req: any) {
     
     const prazoField = getField(customFields, '⚠️ Prazo de Entrega');
     const prazoOpts  = getSelectedArray(prazoField);
-    const dataEntrega:any = prazoOpts[0] ?? 0;
+    const dataEntrega = prazoOpts[0] ?? '';
+    const hasEntrega =
+      typeof dataEntrega === 'string' ? dataEntrega.trim().length > 0 : Boolean(dataEntrega);
 
       const ownCategory = getField(customFields ?? [], '⚠️ Categoria do Ganho');
       const categoryOpts = getSelectedArray(ownCategory);
@@ -147,7 +149,7 @@ export async function webHook(req: any) {
     let modelsFirst = modelsFirtsContact
     let messages:any
     let clienteRetira:any = 'off'
-   if(dataEntrega === 0){
+   if (!hasEntrega) {
       modelsFirst = modelsFirtsContact.filter((m) => m !== 'CLIENTE RETIRA' && m !== 'ENTREGA VIA TRANSPORTADORA');
       messages = messagesReturn(firstName, modelsFirst)
    } else {
@@ -165,7 +167,7 @@ export async function webHook(req: any) {
     await sendMessage(leadCapture.subscriberbot, 'text', mensagemFerias(firstName))
     return null
     } */
-   
+   /*
    if(category === 'E-commerce') {
     messages = messages.filter((m: any) => m.modelo !== 'DADOS PARA CADASTRO');
     const options1 = {
@@ -187,7 +189,7 @@ export async function webHook(req: any) {
     } 
     messages.push(formatMessagesDados);
    
-  }
+  }*/
     const messagesData = messages.map((m: any) => ({
       title: m.modelo,
       message_text: m.message,
@@ -209,7 +211,7 @@ export async function webHook(req: any) {
       .join('\n');
 
     // Media conforme cor (somente quando cliente retira)
-    if(!category || category !== 'E-commerce') {
+    if (hasEntrega && (!category || category !== 'E-commerce')) {
     if (!clienteRetira) {
       messages.push({ modelo: '', message: mediaMessages[3], messageBot: '' });
     } else if (clienteRetira && clienteRetira !== 'off'){
@@ -232,8 +234,8 @@ export async function webHook(req: any) {
       : await clickupServices.updateTask(taskDataPosVenda.id, 'envio do closet', '', 170448045 )
       return leadCapture
     } 
-    await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
-   
+    //await sendHook(contact.phone, req.body.task_id, messages, customDataBotString, messagesHistory);
+   await brainSideService.envioPosPrimeiraEtapa(taskPosVenda.body)
     return leadCapture;
   } catch (error) {
     console.log(error);
@@ -410,24 +412,24 @@ const messagesHistory = [
        const messageHistoryId  = getCustomFieldId('messagehistory')
    
        await setCustomFieldValue(Number(message.leadposvenda.subscriberbot), messageHistoryId[0].id, messagesHistory)
-       await sendMessage(Number(message.leadposvenda.subscriberbot), "text", message.message_text)
+       await brainSideService.sendMessageBrainsailes(message.leadposvenda.subscriberbot, message.leadposvenda.name, message.message_text)
        await utils.delay(5000);
         const status = treatMessageType(message.title);
       if(message.title === 'FOLLOW-UP 02 - RECEBEU O CLOSET' || message.title === 'FOLLOW-UP 02 - BUSCOU O CLOSET'){
-        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[6])
+      await brainSideService.sendMessageBrainsailesMidias(message.leadposvenda.phone, message.leadposvenda.name,mediaMessages[6])
       }
       if(message.title === 'LEMBRETE DO CUPOM - 2 MESES'){
-        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[8])
+        await brainSideService.sendMessageBrainsailesMidias(message.leadposvenda.phone, message.leadposvenda.name, mediaMessages[8])
       }  
         if(message.title === 'DICAS DE ORGANIZAÇÃO - 2 MESES APÓS CUPOM'){
-        await sendMessage(Number(message.leadposvenda.subscriberbot), "text", ' https://drive.google.com/file/d/1HMgGoOtNQfiSNat6Ul3bFmreAruPMPk7/view?usp=drive_link')
+        await brainSideService.sendMessageBrainsailes(message.leadposvenda.phone, message.leadposvenda.name, ' https://drive.google.com/file/d/1HMgGoOtNQfiSNat6Ul3bFmreAruPMPk7/view?usp=drive_link')
       }
         if(message.title === 'ANIVERSÁRIO - INÍCIO DO MÊS'){
             if (!status) return;
         const phoneField = getField(message.leadposvenda?.customFields ?? [], '👤 Telefone Cliente');
         const phoneOpts = getSelectedArray(phoneField);
         const taskCreated = await clickupServices.cliCkupTask(901111606565 ,message.leadposvenda.name, status, undefined, phoneOpts[0])
-        await sendMessage(Number(message.leadposvenda.subscriberbot), "file", mediaMessages[8])
+        await brainSideService.sendMessageBrainsailesMidias(message.leadposvenda.subscriberbot, message.leadposvenda.name, mediaMessages[8])
 
          const taskDataPosVenda = {
       id: taskCreated.id,

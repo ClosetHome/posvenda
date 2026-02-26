@@ -4,6 +4,7 @@ import {sendMessage} from './botconversaService.js'
 import { Op } from 'sequelize';
 import Tasks from '../modules/clickupTasks.js';
 import { DateTime } from 'luxon';
+import brainSideService from './brainSideService';
 
 interface CreatePosVendaMessageData {
   title: string;
@@ -607,11 +608,11 @@ const blockedTitles = new Set([
         return null;
       }
      if(message.message_text){ 
-     await sendMessage(Number(message.leadposvenda.subscriberbot), 'text', message.message_text)
+     await brainSideService.sendMessageBrainsailes(message.leadposvenda.phone, message.leadposvenda.name, message.message_text)
      } 
      if(message.mediaurl){
       console.log(message.mediaurl)
-      await sendMessage(Number(message.leadposvenda.subscriberbot), 'file', message.mediaurl)
+      await brainSideService.sendMessageBrainsailesMidias(message.leadposvenda.phone, message.leadposvenda.name, message.mediaurl)
      }
 
       await message.update({ sent: true });
