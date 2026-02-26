@@ -46,9 +46,9 @@ try {
 async function sendMessageBrainsailes(phone: number, name:string, value:string): Promise<any> {
   try{
     const data = {
-        "telefone": phone,
+        "phone": phone,
         "name": name,
-        "value": value
+        "message": value
     }
 
 const response = await axios.post(
@@ -71,9 +71,9 @@ return response.data;
 async function sendMessageBrainsailesMidias(phone: number, name:string, value:string): Promise<any> {
   try{
     const data = {
-        "telefone": phone,
+        "phone": phone,
         "name": name,
-        "value": value
+        "message": value
     }
 
 const response = await axios.post(
